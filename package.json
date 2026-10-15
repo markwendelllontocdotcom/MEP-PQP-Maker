@@ -1,0 +1,31 @@
+{
+  "name": "pqp-maker",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "PQP Maker - Project Quality Plan generator (PWA). Developed by Mark Lontoc | Dubai, United Arab Emirates | (c) 2026 MLWorks. All rights reserved.",
+  "scripts": {
+    "extract": "python3 tools/extract_r1.py",
+    "fonts": "python3 tools/make_fonts.py",
+    "dev": "vite",
+    "build": "vite build && vite build --mode single && node tools/postbuild.mjs",
+    "samples": "tsx tests/make_samples.ts",
+    "test": "tsx tests/unit.ts"
+  },
+  "dependencies": {
+    "idb-keyval": "6.2.1",
+    "jszip": "3.10.1",
+    "pdfmake": "0.2.20",
+    "preact": "10.26.5"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "2.10.1",
+    "@resvg/resvg-js": "2.6.2",
+    "@types/pdfmake": "0.2.11",
+    "tsx": "4.19.4",
+    "typescript": "5.8.3",
+    "vite": "6.3.5",
+    "vite-plugin-pwa": "1.0.0",
+    "vite-plugin-singlefile": "2.2.0"
+  }
+}

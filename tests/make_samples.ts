@@ -1,0 +1,22 @@
+import { writeFileSync, mkdirSync } from 'node:fs';
+import { buildDoc } from '../src/content/build';
+import { makeDocx } from '../src/gen/docx';
+import { makePdf } from '../src/gen/pdf';
+import { defaultSettings, testProject } from '../src/model/defaults';
+import { outputBaseName } from '../src/model/format';
+import { nodePlatform } from './node-platform';
+
+const outDir = process.argv[2] || 'samples';
+mkdirSync(outDir, { recursive: true });
+const s = defaultSettings();
+const p = testProject(s);
+const t0 = Date.now();
+const model = await buildDoc(p, s, nodePlatform);
+const pdf = await makePdf(model);
+model.tocPages = pdf.pages;
+const docx = await makeDocx(model);
+const base = 'SAMPLE - ' + outputBaseName(p);
+writeFileSync(`${outDir}/${base}.pdf`, pdf.bytes);
+writeFileSync(`${outDir}/${base}.docx`, docx);
+console.log('blocks', model.blocks.length, 'pdf pages', pdf.pageCount, 'toc pages', Object.keys(pdf.pages).length, 'ms', Date.now() - t0);
+console.log(base);

@@ -1,0 +1,534 @@
+[
+ {
+  "id": "MEC-01",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of GI, PI & Fire Rated Ductwork with Accessories",
+  "related_materials": "MEC-02 GI DUCTWORK; MEC-03 PI DUCTWORK; MEC-04 FIRE RATED DUCTWORK"
+ },
+ {
+  "id": "MEC-02",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of Flexible Ducts & Flexible Duct Connectors",
+  "related_materials": "MEC-08 FLEXIBLE DUCT; MEC-09 FLEXIBLE DUCT CONNECTOR"
+ },
+ {
+  "id": "MEC-03",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of Duct Insulation & Acoustic Duct Liner",
+  "related_materials": "MEC-05 DUCT INSULATION; MEC-06 ACOUSTIC DUCT LINER; MEC-07 ADHESIVE & SEALANT"
+ },
+ {
+  "id": "MEC-04",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of Chilled Water Piping, Fittings & Valves",
+  "related_materials": "MEC-12 CHILLED WATER PIPES; MEC-13 CHILLED WATER PIPE FITTINGS; MEC-18 CHILLED WATER VALVES"
+ },
+ {
+  "id": "MEC-05",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of Mechanical Pipe Supports, Hangers & Vibration Isolators",
+  "related_materials": "MEC-01 MECHANICAL PIPE SUPPORTS; MEC-27 VIBRATION ISOLATOR; MEC-15 FLEXIBLE PIPE CONNECTOR"
+ },
+ {
+  "id": "MEC-06",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of Chilled Water Pipe Insulation & Aluminium Cladding",
+  "related_materials": "MEC-14 CHW PIPE INSULATION; MEC-16 ALUMINIUM CLADDING"
+ },
+ {
+  "id": "MEC-07",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of Refrigerant Copper Piping, Fittings & Accessories",
+  "related_materials": "MEC-11 REFRIGERANT COPPER PIPES & FITTINGS"
+ },
+ {
+  "id": "MEC-08",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of Dampers, Louvers, Air Outlets & Sound Attenuators",
+  "related_materials": "MEC-10 DAMPERS (VCD / NRD / FD / MSD / MSFD); MEC-30 SOUND ATTENUATOR; MEC-31 LOUVERS; MEC-32 AIR OUTLETS"
+ },
+ {
+  "id": "MEC-09",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of FCUs with PICV Valve Packages",
+  "related_materials": "MEC-17 FCU; MEC-19 FCU VALVE PACKAGE - PICV"
+ },
+ {
+  "id": "MEC-10",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of FAHUs & Ventilation Fans",
+  "related_materials": "MEC-21 FAHU; MEC-22 VENTILATION FANS"
+ },
+ {
+  "id": "MEC-11",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of Air Cooled Chillers, CHW Pumps & Pressurization Unit",
+  "related_materials": "MEC-26 AIR COOLED CHILLER; MEC-23 CHILLED WATER PUMP; MEC-24 CHILLED WATER PRESSURIZATION UNIT"
+ },
+ {
+  "id": "MEC-12",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of DX Split Units",
+  "related_materials": "MEC-28 DX SPLIT UNITS"
+ },
+ {
+  "id": "MEC-13",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of Chilled Water Chemical Treatment & Dosing System",
+  "related_materials": "MEC-25 CHILLED WATER CHEMICAL TREATMENT SYSTEM"
+ },
+ {
+  "id": "MEC-14",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of BTU Meters & FAHU Control Valves (PICV)",
+  "related_materials": "MEC-29 BTU METER; MEC-20 PRESSURE INDEPENDENT CONTROL VALVE"
+ },
+ {
+  "id": "MEC-15",
+  "disc": "MEC",
+  "stage": "INS",
+  "title": "Installation of BMS Panels, Field Devices & Control Cabling",
+  "related_materials": "MEC-33 BMS"
+ },
+ {
+  "id": "MEC-16",
+  "disc": "MEC",
+  "stage": "TC",
+  "title": "Duct Leak Testing, Cleaning & Air Tightness Testing",
+  "related_materials": "MEC-02 GI DUCTWORK; MEC-03 PI DUCTWORK; MEC-04 FIRE RATED DUCTWORK"
+ },
+ {
+  "id": "MEC-17",
+  "disc": "MEC",
+  "stage": "TC",
+  "title": "Pressure Testing, Flushing & Chemical Cleaning of Chilled Water Piping System",
+  "related_materials": "MEC-12 CHILLED WATER PIPES; MEC-13 CHILLED WATER PIPE FITTINGS; MEC-18 CHILLED WATER VALVES"
+ },
+ {
+  "id": "MEC-18",
+  "disc": "MEC",
+  "stage": "TC",
+  "title": "Testing & Commissioning of Chillers, CHW Pumps & Pressurization Unit",
+  "related_materials": "MEC-26 AIR COOLED CHILLER; MEC-23 CHILLED WATER PUMP; MEC-24 CHILLED WATER PRESSURIZATION UNIT"
+ },
+ {
+  "id": "MEC-19",
+  "disc": "MEC",
+  "stage": "TC",
+  "title": "Testing & Commissioning of FAHUs, FCUs, DX Split Units & Ventilation Fans",
+  "related_materials": "MEC-21 FAHU; MEC-17 FCU; MEC-28 DX SPLIT UNITS; MEC-22 VENTILATION FANS"
+ },
+ {
+  "id": "MEC-20",
+  "disc": "MEC",
+  "stage": "TC",
+  "title": "Testing, Adjusting & Balancing (TAB) of Air & Water Systems",
+  "related_materials": "MEC-10 DAMPERS (VCD / NRD / FD / MSD / MSFD); MEC-32 AIR OUTLETS; MEC-19 FCU VALVE PACKAGE - PICV; MEC-20 PRESSURE INDEPENDENT CONTROL VALVE"
+ },
+ {
+  "id": "MEC-21",
+  "disc": "MEC",
+  "stage": "TC",
+  "title": "Testing & Commissioning of BMS & System Integration",
+  "related_materials": "MEC-33 BMS"
+ },
+ {
+  "id": "PLU-01",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of Below Ground uPVC Drainage Piping & Fittings",
+  "related_materials": "PLU-01 UPVC DRAINAGE PIPES & FITTINGS; PLU-04 uPVC FABRICATION ITEMS"
+ },
+ {
+  "id": "PLU-02",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of Above Ground uPVC & Sound Proof Drainage Piping & Fitting",
+  "related_materials": "PLU-02 UPVC DRAINAGE PIPES & FITTINGS; PLU-05 SOUND PROOF DRAINAGE PIPES & FITTINGS"
+ },
+ {
+  "id": "PLU-03",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of uPVC & HDPE High Pressure Piping, Fittings & Accessories",
+  "related_materials": "PLU-03 UPVC HIGH PRESSURE PIPES & FITTINGS; PLU-07 HDPE PIPES & FITTINGS"
+ },
+ {
+  "id": "PLU-04",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of PPR & PEX Domestic Water Piping, Fittings & Accessories",
+  "related_materials": "PLU-08 PPR PIPES & FITTINGS; PLU-09 PEX PIPES & FITTINGS"
+ },
+ {
+  "id": "PLU-05",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of Plumbing Pipe Supports & Hangers",
+  "related_materials": "PLU-06 PLUMBING PIPE SUPPORTS"
+ },
+ {
+  "id": "PLU-06",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of Plumbing Pipe Insulation",
+  "related_materials": "PLU-10 PLUMBING PIPE INSULATION"
+ },
+ {
+  "id": "PLU-07",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of Plumbing Valves, Pressure Reducing Valves (PRV), Pressure Gauges & Thermometers",
+  "related_materials": "PLU-18 PLUMBING VALVES; PLU-17 PRESSURE REDUCING VALVES (PRV); PLU-15 PRESSURE GAUGE & THERMOMETER"
+ },
+ {
+  "id": "PLU-08",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of Angle Valves, Bib Taps, Float Valves, Flexible Hoses & Automatic Air Vents",
+  "related_materials": "PLU-14 ANGLE VALVE; PLU-11 BIB TAP & FLOAT VALVE; PLU-13 FLEXIBLE HOSE FOR WATER HEATER; PLU-12 AUTOMATIC AIR VENT"
+ },
+ {
+  "id": "PLU-09",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of GRP Water Storage Tanks",
+  "related_materials": "PLU-20 GRP WATER STORAGE TANK"
+ },
+ {
+  "id": "PLU-10",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of Plumbing Pumps (Transfer / Booster / Circulation / Sump / CDP)",
+  "related_materials": "PLU-21 PLUMBING PUMPS"
+ },
+ {
+  "id": "PLU-11",
+  "disc": "PLU",
+  "stage": "INS",
+  "title": "Installation of Electric Water Heaters",
+  "related_materials": "PLU-16 ELECTRIC WATER HEATER"
+ },
+ {
+  "id": "PLU-12",
+  "disc": "PLU",
+  "stage": "TC",
+  "title": "Pressure Testing, Flushing, Disinfection & Sterilization of Domestic Water System",
+  "related_materials": "PLU-03 UPVC HIGH PRESSURE PIPES & FITTINGS; PLU-07 HDPE PIPES & FITTINGS; PLU-08 PPR PIPES & FITTINGS; PLU-09 PEX PIPES & FITTINGS"
+ },
+ {
+  "id": "PLU-13",
+  "disc": "PLU",
+  "stage": "TC",
+  "title": "Testing & Commissioning of Plumbing System (Pumps, Water Heaters, Sanitary wares and accessories)",
+  "related_materials": "PLU-21 PLUMBING PUMPS; PLU-16 ELECTRIC WATER HEATER"
+ },
+ {
+  "id": "ELE-01",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of Earthing & Lightning Protection System",
+  "related_materials": "ELE-01 EARTHING & LIGHTNING PROTECTION SYSTEM"
+ },
+ {
+  "id": "ELE-02",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of PVC & GI Conduits, Back Boxes & Accessories",
+  "related_materials": "ELE-02 PVC CONDUITS & ACCESSORIES; ELE-06 GI CONDUITS & ACCESSORIES; ELE-04 GI BACK BOX; ELE-10 FLEXIBLE GI CONDUITS"
+ },
+ {
+  "id": "ELE-03",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of uPVC Cable Ducts & Underground Cable Route Works",
+  "related_materials": "ELE-03 UPVC CABLE DUCT & ACCESSORIES"
+ },
+ {
+  "id": "ELE-04",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of Cable Trays, Trunking, Ladders & Supports",
+  "related_materials": "ELE-05 CABLE TRAY, TRUNKING & ACCESSORIES"
+ },
+ {
+  "id": "ELE-05",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of LV Power & Control Cables, Glands, Lugs & Terminations",
+  "related_materials": "ELE-07 LV CABLES & WIRES; ELE-09 CABLE GLANDS & LUGS"
+ },
+ {
+  "id": "ELE-06",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of Fire Rated & Heat Resistant Cables",
+  "related_materials": "ELE-08 FIRE RATED POWER CABLES; ELE-12 HEAT RESISTANCE FLEXIBLE CABLES; ELE-13 FIRE ALARM & EMERGENCY LIGHTING CABLES"
+ },
+ {
+  "id": "ELE-07",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of LV Switchgear (MDB / SMDB / DB / ATS / MCC / Control Panels)",
+  "related_materials": "ELE-20 LV SWITCHGEAR"
+ },
+ {
+  "id": "ELE-08",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of Busbar Trunking System",
+  "related_materials": "ELE-21 BUS BAR"
+ },
+ {
+  "id": "ELE-09",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of Wiring Accessories, Isolators, Floor Boxes & Ceiling Roses",
+  "related_materials": "ELE-23 WIRING ACCESSORIES; ELE-11 ISOLATORS; ELE-16 FLOOR BOX; ELE-14 CEILING ROSE"
+ },
+ {
+  "id": "ELE-10",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of Lighting Fixtures & Lighting Control System",
+  "related_materials": "ELE-19 LIGHTING CONTROL SYSTEM"
+ },
+ {
+  "id": "ELE-11",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of Central Battery Emergency Lighting System",
+  "related_materials": "ELE-18 CENTRAL BATTERY EMERGENCY SYSTEM WITHOUT LIGHTS"
+ },
+ {
+  "id": "ELE-12",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of UPS & Kilowatt-Hour (Energy) Meters",
+  "related_materials": "ELE-22 UPS; ELE-25 KILOWATT-HOUR METER (ENERGY METER)"
+ },
+ {
+  "id": "ELE-13",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of Diesel Generator & Associated Works",
+  "related_materials": "ELE-24 DIESEL GENERATOR"
+ },
+ {
+  "id": "ELE-14",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of EV Chargers",
+  "related_materials": "ELE-26 EV CHARGER"
+ },
+ {
+  "id": "ELE-15",
+  "disc": "ELE",
+  "stage": "INS",
+  "title": "Installation of Fire Alarm, Voice Evacuation, Master Telephone & Smoke Management System",
+  "related_materials": "ELE-17 INTEGRATED FIRE ALARM WITH VOICE EVACUATION, MASTER TELEPHONE & SMOKE MANAGEMENT SYSTEM"
+ },
+ {
+  "id": "ELE-17",
+  "disc": "ELE",
+  "stage": "TC",
+  "title": "Testing & Commissioning of Earthing & Lightning Protection System",
+  "related_materials": "ELE-01 EARTHING & LIGHTNING PROTECTION SYSTEM"
+ },
+ {
+  "id": "ELE-18",
+  "disc": "ELE",
+  "stage": "TC",
+  "title": "Testing & Commissioning of LV Cables, Switchgear & Busbar Trunking",
+  "related_materials": "ELE-07 LV CABLES & WIRES; ELE-20 LV SWITCHGEAR; ELE-21 BUS BAR"
+ },
+ {
+  "id": "ELE-19",
+  "disc": "ELE",
+  "stage": "TC",
+  "title": "Testing & Commissioning of Diesel Generator, UPS & Central Battery System",
+  "related_materials": "ELE-24 DIESEL GENERATOR; ELE-22 UPS; ELE-18 CENTRAL BATTERY EMERGENCY SYSTEM WITHOUT LIGHTS"
+ },
+ {
+  "id": "ELE-20",
+  "disc": "ELE",
+  "stage": "TC",
+  "title": "Testing & Commissioning of Lighting, Lighting Control & Small Power Systems",
+  "related_materials": "ELE-19 LIGHTING CONTROL SYSTEM; ELE-23 WIRING ACCESSORIES"
+ },
+ {
+  "id": "ELE-21",
+  "disc": "ELE",
+  "stage": "TC",
+  "title": "Testing & Commissioning of Fire Alarm, Voice Evacuation & Smoke Management System",
+  "related_materials": "ELE-17 INTEGRATED FIRE ALARM WITH VOICE EVACUATION, MASTER TELEPHONE & SMOKE MANAGEMENT SYSTEM"
+ },
+ {
+  "id": "ELV-01",
+  "disc": "ELV",
+  "stage": "INS",
+  "title": "Installation of Structured Cabling System (Containment, Cabling, Racks & Outlets)",
+  "related_materials": "ELV-01 STRUCTURED CABLING SYSTEM"
+ },
+ {
+  "id": "ELV-02",
+  "disc": "ELV",
+  "stage": "INS",
+  "title": "Installation of Security Systems (CCTV, Access Control & Security Intercom)",
+  "related_materials": "ELV-05 CCTV SYSTEM; ELV-06 ACCESS CONTROL SYSTEM; ELV-07 SECURITY INTERCOM SYSTEM"
+ },
+ {
+  "id": "ELV-03",
+  "disc": "ELV",
+  "stage": "INS",
+  "title": "Installation of Audio Intercom & AV / BGM Systems",
+  "related_materials": "ELV-02 AUDIO INTERCOM SYSTEM; ELV-03 AV BGM SYSTEM"
+ },
+ {
+  "id": "ELV-04",
+  "disc": "ELV",
+  "stage": "INS",
+  "title": "Installation of Parking Management System",
+  "related_materials": "ELV-04 PARKING MANAGEMENT SYSTEM"
+ },
+ {
+  "id": "ELV-05",
+  "disc": "ELV",
+  "stage": "TC",
+  "title": "Testing & Commissioning of Structured Cabling System",
+  "related_materials": "ELV-01 STRUCTURED CABLING SYSTEM"
+ },
+ {
+  "id": "ELV-06",
+  "disc": "ELV",
+  "stage": "TC",
+  "title": "Testing & Commissioning of ELV Systems (CCTV, Access Control, Intercom, AV / BGM & Parking Management)",
+  "related_materials": "ELV-02 AUDIO INTERCOM SYSTEM; ELV-03 AV BGM SYSTEM; ELV-04 PARKING MANAGEMENT SYSTEM; ELV-05 CCTV SYSTEM; ELV-06 ACCESS CONTROL SYSTEM; ELV-07 SECURITY INTERCOM SYSTEM"
+ },
+ {
+  "id": "FF-01",
+  "disc": "FF",
+  "stage": "INS",
+  "title": "Installation of Fire Protection Piping, Grooved Fittings, Valves & Supports",
+  "related_materials": "FF-01 FIRE PROTECTION INSTALLATION MATERIALS; FF-02 GROOVED FITTINGS"
+ },
+ {
+  "id": "FF-02",
+  "disc": "FF",
+  "stage": "INS",
+  "title": "Installation of Sprinkler System, Fire Hose Reels & Fire Extinguishers",
+  "related_materials": "FF-04 SPRINKLER SYSTEM; FF-05 FIRE FIGHTING SYSTEM"
+ },
+ {
+  "id": "FF-03",
+  "disc": "FF",
+  "stage": "INS",
+  "title": "Installation of Fire Pump Set & Accessories",
+  "related_materials": "FF-06 FIRE PUMP SET"
+ },
+ {
+  "id": "FF-04",
+  "disc": "FF",
+  "stage": "INS",
+  "title": "Installation of Clean Agent Fire Suppression System (NOVEC)",
+  "related_materials": "FF-07 CLEAN AGENT FIRE SUPPRESSION SYSTEM"
+ },
+ {
+  "id": "FF-05",
+  "disc": "FF",
+  "stage": "INS",
+  "title": "Installation of Foam Deluge System (Generator Room)",
+  "related_materials": "FF-08 FOAM DELUGE SYSTEM"
+ },
+ {
+  "id": "FF-06",
+  "disc": "FF",
+  "stage": "INS",
+  "title": "Installation of Firestop Systems & Penetration Sealing",
+  "related_materials": "FF-03 FIRESTOP SYSTEMS"
+ },
+ {
+  "id": "FF-07",
+  "disc": "FF",
+  "stage": "TC",
+  "title": "Pressure Testing & Flushing of Fire Protection Piping Network",
+  "related_materials": "FF-01 FIRE PROTECTION INSTALLATION MATERIALS; FF-02 GROOVED FITTINGS"
+ },
+ {
+  "id": "FF-08",
+  "disc": "FF",
+  "stage": "TC",
+  "title": "Testing & Commissioning of Fire Pump Set, Sprinkler & Suppression Systems",
+  "related_materials": "FF-06 FIRE PUMP SET; FF-04 SPRINKLER SYSTEM; FF-07 CLEAN AGENT FIRE SUPPRESSION SYSTEM; FF-08 FOAM DELUGE SYSTEM"
+ },
+ {
+  "id": "LPG-01",
+  "disc": "LPG",
+  "stage": "INS",
+  "title": "Installation of LPG Piping, Fittings, Valves & Supports",
+  "related_materials": "LPG-01 LPG SYSTEM"
+ },
+ {
+  "id": "LPG-02",
+  "disc": "LPG",
+  "stage": "INS",
+  "title": "Installation of LPG Tanks, Vaporizers, Gas Panels, Meters & Regulators",
+  "related_materials": "LPG-02 LPG TANKS; LPG-01 LPG SYSTEM"
+ },
+ {
+  "id": "LPG-03",
+  "disc": "LPG",
+  "stage": "INS",
+  "title": "Installation of LPG Gas Detection System",
+  "related_materials": "LPG-01 LPG SYSTEM"
+ },
+ {
+  "id": "LPG-04",
+  "disc": "LPG",
+  "stage": "TC",
+  "title": "Pressure Testing & Purging of LPG Piping Network",
+  "related_materials": "LPG-01 LPG SYSTEM"
+ },
+ {
+  "id": "LPG-05",
+  "disc": "LPG",
+  "stage": "TC",
+  "title": "Testing & Commissioning of LPG System & Gas Detection System",
+  "related_materials": "LPG-01 LPG SYSTEM; LPG-02 LPG TANKS"
+ },
+ {
+  "id": "MEP-01",
+  "disc": "MEP",
+  "stage": "INS",
+  "title": "Builder's Work for MEP Services (Openings, Sleeves, Core Drilling, Chasing & Plinths)",
+  "related_materials": ""
+ },
+ {
+  "id": "MEP-02",
+  "disc": "MEP",
+  "stage": "INS",
+  "title": "Installation of MEP Identification Labels & Colour Coding",
+  "related_materials": "ELE-15 MEP IDENTIFICATION LABELS"
+ },
+ {
+  "id": "MEP-03",
+  "disc": "MEP",
+  "stage": "TC",
+  "title": "Integrated Systems Testing (IST) of MEP & Life Safety Systems",
+  "related_materials": ""
+ }
+]
