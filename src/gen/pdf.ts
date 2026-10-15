@@ -1,7 +1,7 @@
 import pdfMakeLib from 'pdfmake/build/pdfmake';
 import vfsJson from '../fonts/vfs.json';
 import type { Block, DocModel, Run, Row, Cell } from './model';
-import { PAGE, CONTENT_W, NAVY } from './model';
+import { PAGE, CONTENT_W, NAVY, COVER_BOX } from './model';
 import { assetDataUrl } from '../content/svgs';
 import { APP_NAME } from '../version';
 
@@ -95,28 +95,30 @@ export function pdfDefinition(m: DocModel, pages: Record<string, number>): any {
 
   // ---------------- cover
   content.push({ text: c.docRefLine, bold: true, fontSize: 10 });
-  content.push({ text: c.revLine, bold: true, fontSize: 10, margin: [0, 0, 0, 14] });
-  content.push({ text: c.title, bold: true, fontSize: 18, alignment: 'center', margin: [0, 0, 0, 10] });
-  const boxW = pt(9325), boxH = pt(5330);
+  content.push({ text: c.revLine, bold: true, fontSize: 10, margin: [0, 0, 0, 10] });
+  content.push({ text: c.title, bold: true, fontSize: 18, alignment: 'center', margin: [0, 0, 0, 8] });
+  // cover photo box: 16.5 cm x exactly 11.6 cm, centred; photo stretched to 16 x 11 cm
+  const boxW = pt(COVER_BOX.w), boxH = pt(COVER_BOX.h), line = 0.75;
+  const innerW = boxW - 2 * line, innerH = boxH - 2 * line;
   let photo: any;
   if (c.photo) {
-    const a = m.images[c.photo];
-    let w = boxW - 10, h = (w * a.h) / a.w;
-    if (h > boxH - 10) { h = boxH - 10; w = (h * a.w) / a.h; }
-    photo = { image: img(c.photo), width: w, height: h, alignment: 'center', margin: [0, (boxH - h) / 2 - 2, 0, 0] };
-  } else photo = { text: 'Project Cover Photo Here', alignment: 'center', fontSize: 11, margin: [0, boxH / 2 - 9, 0, 0] };
+    const pw = pt(COVER_BOX.photoW), ph = pt(COVER_BOX.photoH);
+    photo = { image: img(c.photo), width: pw, height: ph, margin: [(innerW - pw) / 2, (innerH - ph) / 2, 0, 0] };
+  } else photo = { text: 'Project Cover Photo Here', alignment: 'center', fontSize: 11, margin: [0, innerH / 2 - 7, 0, 0] };
   content.push({
-    columns: [{ width: '*', text: '' }, { width: 'auto', table: { widths: [boxW - 9], heights: [boxH - 3], body: [[photo]] }, layout: { hLineWidth: () => 0.75, vLineWidth: () => 0.75 } }, { width: '*', text: '' }],
+    table: { widths: [innerW], heights: [innerH], body: [[photo]] },
+    layout: { hLineWidth: () => line, vLineWidth: () => line, paddingLeft: () => 0, paddingRight: () => 0, paddingTop: () => 0, paddingBottom: () => 0 },
+    margin: [(pt(CONTENT_W) - boxW) / 2, 0, 0, 0],
   });
   if (c.logos.length) {
     content.push({ columns: c.logos.map((k) => ({ width: '*', stack: [{ image: img(k), fit: [180, 40], alignment: 'center' }] })), margin: [0, 6, 0, 0] });
   }
   content.push({
     table: { widths: [pt(2000) - 4, pt(340) - 4, '*'], body: c.parties.map(([k, v]) => [{ text: k, bold: true }, { text: ':', bold: true }, { text: v, bold: true }]) },
-    layout: { defaultBorder: false, paddingLeft: () => 2, paddingRight: () => 2, paddingTop: () => 3, paddingBottom: () => 3 },
-    fontSize: 10, margin: [0, 10, 0, 0],
+    layout: { defaultBorder: false, paddingLeft: () => 2, paddingRight: () => 2, paddingTop: () => 1.5, paddingBottom: () => 1.5 },
+    fontSize: 10, margin: [0, 8, 0, 0],
   });
-  content.push({ text: c.statement, fontSize: 10, alignment: 'justify', margin: [0, 12, 0, 6] });
+  content.push({ text: c.statement, fontSize: 10, alignment: 'justify', margin: [0, 8, 0, 5] });
   content.push({ text: [{ text: 'Document Status: ', bold: true }, c.status || '-'], fontSize: 10, margin: [0, 0, 0, 3] });
   const H = (t: string) => ({ text: t, bold: true, color: '#FFFFFF', fillColor: '#' + NAVY, alignment: 'center' });
   const L = (t: string) => ({ text: t, bold: true, fillColor: '#F2F2F2' });

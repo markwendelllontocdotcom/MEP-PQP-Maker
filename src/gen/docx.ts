@@ -1,7 +1,7 @@
 import JSZip from 'jszip';
 import partsJson from '../content/docx-parts.json';
 import type { Block, DocModel, Run, Row, Cell, CellPara } from './model';
-import { PAGE, CONTENT_W, NAVY } from './model';
+import { PAGE, CONTENT_W, NAVY, COVER_BOX } from './model';
 import { APP_NAME, APP_VERSION } from '../version';
 
 const parts: any = partsJson;
@@ -137,15 +137,13 @@ export async function makeDocx(m: DocModel): Promise<Uint8Array> {
   out.push(para({ after: 120 }, ''));
   out.push(para({ jc: 'center', after: 200 }, run({ x: c.title, b: 1, sz: 36 })));
   // photo box
-  const boxW = 9325, boxH = 5330;
+  const boxW = COVER_BOX.w, boxH = COVER_BOX.h;
   let photoCell: string;
   if (c.photo) {
-    const a = m.images[c.photo];
-    let w = boxW - 200, h = Math.round((w * a.h) / a.w);
-    if (h > boxH - 200) { h = boxH - 200; w = Math.round((h * a.w) / a.h); }
-    photoCell = para({ jc: 'center', after: 0 }, inlineImg(body.rid(c.photo), w, h, 'Cover photo'));
+    // the photo is stretched to exactly 16 x 11 cm (user's layout), not scaled to keep its proportions
+    photoCell = para({ jc: 'center', after: 0, before: 0, line: 240 }, inlineImg(body.rid(c.photo), COVER_BOX.photoW, COVER_BOX.photoH, 'Cover photo'));
   } else photoCell = para({ jc: 'center', after: 0 }, run({ x: 'Project Cover Photo Here', sz: 22 }));
-  out.push(`<w:tbl><w:tblPr><w:tblW w:w="${boxW}" w:type="dxa"/><w:jc w:val="center"/>${BORDERS}<w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid><w:gridCol w:w="${boxW}"/></w:tblGrid><w:tr><w:trPr><w:trHeight w:val="${boxH}" w:hRule="exact"/></w:trPr><w:tc><w:tcPr><w:tcW w:w="${boxW}" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>${photoCell}</w:tc></w:tr></w:tbl>`);
+  out.push(`<w:tbl><w:tblPr><w:tblW w:w="${boxW}" w:type="dxa"/><w:jc w:val="center"/>${BORDERS}<w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid><w:gridCol w:w="${boxW}"/></w:tblGrid><w:tr><w:trPr><w:trHeight w:val="${boxH}" w:hRule="exact"/></w:trPr><w:tc><w:tcPr><w:tcW w:w="${boxW}" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>${photoCell}</w:tc></w:tr></w:tbl>`);
   if (c.logos.length) {
     const cells = c.logos.map((k) => {
       const a = m.images[k];

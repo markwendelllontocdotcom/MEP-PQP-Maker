@@ -204,7 +204,6 @@ export async function buildDoc(p: Project, s: Settings, plat: Platform): Promise
           disc.forEach((d) => LI('bullet', [txt(d)], 1134));
         }
         P([txt('Project Information', { b: 1, u: 1 })], 567, { keep: true, jc: 'left' });
-        const dur = durationDays(p);
         const loc = [p.P05.trim(), p.P04, 'UAE'].filter(Boolean).join(', ');
         const info: [string, string][] = [
           ['Project', p.P01 || '[Project Name]'],
@@ -213,9 +212,6 @@ export async function buildDoc(p: Project, s: Settings, plat: Platform): Promise
           ['Project Type', (p.P06 || []).join(', ')],
           ['Contract Type', p.P09],
           ['Our Role', p.R05],
-          ['Commencement Date', dmy(p.P10)],
-          ['Completion Date', dmy(p.P11)],
-          ['Contract Duration', dur != null ? `${dur} days` : ''],
           ['Building Configuration / Description', p.P13.trim()],
           ['Approving Authorities', authorityList(true).join(', ')],
         ];

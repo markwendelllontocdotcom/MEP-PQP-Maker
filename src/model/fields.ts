@@ -45,9 +45,9 @@ export const FIELDS: FieldSpec[] = [
   { id: 'P07', group: 'project', label: 'Scope of Work (summary)', type: 'longtext', mandatory: true, max: 2000, help: 'Summary of the works covered by this PQP. It follows R1’s standard scope paragraph in Section 2.', usedIn: '2 Scope of Works' },
   { id: 'P08', group: 'project', label: 'Disciplines', type: 'multi', mandatory: true, options: DISCIPLINES, help: 'Drives the discipline list, the org chart and Annexure 8.5', usedIn: '2 Scope, Annexures 8.1 and 8.5' },
   { id: 'P09', group: 'project', label: 'Contract Type', type: 'dropdown', mandatory: false, options: CONTRACT_TYPES, usedIn: 'Project Information table' },
-  { id: 'P10', group: 'project', label: 'Commencement Date', type: 'date', mandatory: true, usedIn: 'Project Information table' },
-  { id: 'P11', group: 'project', label: 'Completion Date', type: 'date', mandatory: true, help: 'Must be after the Commencement Date', usedIn: 'Project Information table' },
-  { id: 'P12', group: 'project', label: 'Contract Duration (days)', type: 'calc', mandatory: false, help: 'Completion Date minus Commencement Date', usedIn: 'Project Information table' },
+  { id: 'P10', group: 'project', label: 'Commencement Date', type: 'date', mandatory: false, usedIn: 'Not printed (kept with the project for reference)' },
+  { id: 'P11', group: 'project', label: 'Completion Date', type: 'date', mandatory: false, help: 'Must be after the Commencement Date', usedIn: 'Not printed (kept with the project for reference)' },
+  { id: 'P12', group: 'project', label: 'Contract Duration (days)', type: 'calc', mandatory: false, help: 'Completion Date minus Commencement Date', usedIn: 'Not printed' },
   { id: 'P13', group: 'project', label: 'Building Configuration / Description', type: 'longtext', mandatory: false, max: 500, help: 'e.g. B+G+20+R, built-up area', usedIn: 'Project Information table' },
 
   { id: 'R01', group: 'parties', label: 'Client / Employer', type: 'text', mandatory: true, help: 'Enter the name without "M/s." (the cover adds it)', usedIn: 'Cover, 2 Scope' },

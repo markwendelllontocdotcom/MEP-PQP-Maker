@@ -54,3 +54,6 @@ export interface Platform {
 export const PAGE = { w: 11906, h: 16838, top: 1728, bottom: 1134, left: 1440, right: 994, header: 0, footer: 425 };
 export const CONTENT_W = PAGE.w - PAGE.left - PAGE.right; // 9472 twips
 export const NAVY = '002060';
+/** Cover photo box (user, 15 Oct 2026): cell 16.5 cm wide x exactly 11.6 cm high, centred; photo stretched to 16 x 11 cm. */
+export const CM = 1440 / 2.54; // twips per cm
+export const COVER_BOX = { w: Math.round(16.5 * CM), h: Math.round(11.6 * CM), photoW: Math.round(16 * CM), photoH: Math.round(11 * CM) };
