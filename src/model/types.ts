@@ -22,6 +22,14 @@ export interface RevRow {
   desc: string;
 }
 
+export interface CertRow {
+  std: string;       // e.g. ISO 9001:2015 (matches the QMS / ISMS Standards options)
+  no: string;        // certificate number
+  body: string;      // certifying body
+  expiry: string;    // ISO yyyy-mm-dd
+  image: ImageData | null; // null = the certificate scan built into the app (when there is one)
+}
+
 export interface FormRow {
   code: string;
   title: string;
@@ -33,7 +41,7 @@ export interface Project {
   modified: string;
   appVersion: string;
   // 1. Project Information
-  P01: string; P02: string; P03: string; P04: string; P05: string; P06: string;
+  P01: string; P02: string; P03: string; P04: string; P05: string; P06: string[];
   P07: string; P08: string[]; P09: string; P10: string; P11: string; P13: string;
   // 2. Project Parties
   R01: string; R02: string; R03: string; R04: string; R05: string;
@@ -52,7 +60,9 @@ export interface Project {
   K01: Person; K02: Person; K03: Person; K04: Person; K05: Person;
   K06: ExtraPerson[];
   // 5. Quality System
-  Q01: string[]; Q02: string; Q03: string;
+  Q01: string[];
+  CERTS: CertRow[];
+  Q02?: string; Q03?: string; // replaced by CERTS (15 Oct 2026); kept so older project files still open
   Q04: string; Q05: string; Q06: string; // kept as typed text, validated as whole numbers
   Q07: string[]; Q07other: string;
   Q08off: string[]; // section ids switched off

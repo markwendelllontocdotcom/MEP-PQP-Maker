@@ -1,8 +1,9 @@
 import { useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import type { FieldSpec } from '../model/fields';
-import type { ImageData, Person, ExtraPerson, RevRow, FormRow } from '../model/types';
-import { readImageFile } from '../platform-browser';
+import type { ImageData, Person, ExtraPerson, RevRow, FormRow, CertRow } from '../model/types';
+import { readImageFile, CERT_URLS } from '../platform-browser';
+import { todayISO } from '../model/format';
 import { dmy } from '../model/format';
 import { R1_FORMS } from '../model/defaults';
 
@@ -197,6 +198,40 @@ export function Forms(props: { id: string; value: FormRow[]; onChange: (v: FormR
       blank={() => ({ title: '', code: '' })}
       extra={<button type="button" class="btn small ghost" onClick={() => props.onChange(R1_FORMS.map((f) => ({ ...f })))}>Reset to R1 list</button>}
       render={(r, set) => [inp(r.title, (v) => set({ ...r, title: v })), inp(r.code, (v) => set({ ...r, code: v }))]} />
+  );
+}
+
+/** One row per standard: number, certifying body, expiry and the scan printed in Annexure 8.2. */
+export function Certs(props: { id: string; value: CertRow[]; ticked: string[]; onChange: (v: CertRow[]) => void; onError: (m: string) => void }) {
+  const today = todayISO();
+  const soon = new Date(Date.now() + 60 * 86400000).toISOString().slice(0, 10);
+  const set = (i: number, c: CertRow) => props.onChange(props.value.map((x, j) => (j === i ? c : x)));
+  return (
+    <div class="certs" id={props.id}>
+      {props.value.map((c, i) => {
+        const on = props.ticked.includes(c.std);
+        const builtIn = CERT_URLS[c.std];
+        const expired = c.expiry && c.expiry < today;
+        const expiring = !expired && c.expiry && c.expiry <= soon;
+        return (
+          <div class={'cert' + (on ? '' : ' off')}>
+            <div class="certhead">
+              <strong>{c.std}</strong>
+              <span class={'pill' + (on ? ' on' : '')}>{on ? 'Ticked: printed in Annexure 8.2' : 'Not ticked: not printed'}</span>
+            </div>
+            <div class="certgrid">
+              <label>Certificate No.<input type="text" value={c.no} onInput={(e) => set(i, { ...c, no: (e.target as HTMLInputElement).value })} /></label>
+              <label>Certifying body<input type="text" value={c.body} onInput={(e) => set(i, { ...c, body: (e.target as HTMLInputElement).value })} /></label>
+              <label>Valid until<input type="date" value={c.expiry} onInput={(e) => set(i, { ...c, expiry: (e.target as HTMLInputElement).value })} /></label>
+            </div>
+            {expired && <div class="err">Expired on {dmy(c.expiry)}. Attach the renewed certificate and update the details.</div>}
+            {expiring && <div class="warnline">Expires on {dmy(c.expiry)}.</div>}
+            <ImagePick id={`${props.id}-${i}`} value={c.image} maxMB={5} onChange={(img) => set(i, { ...c, image: img })} onError={props.onError}
+              fallback={builtIn} fallbackLabel={builtIn ? 'Built-in Oxypro certificate' : 'No scan yet: Annexure 8.2 will say it is to be attached'} />
+          </div>
+        );
+      })}
+    </div>
   );
 }
 

@@ -184,6 +184,7 @@ export function pdfDefinition(m: DocModel, pages: Record<string, number>): any {
       case 'p': {
         if (b.tabs || /\t/.test(plain(b.r))) { content.push(tabbedNode(b, b.sz)); break; }
         const node: any = { text: inls(b.r, b.sz), alignment: b.jc === 'center' ? 'center' : b.jc === 'left' ? 'left' : 'justify', margin: [pt(b.l || 0), pt(b.before || 0), 0, pt(b.after ?? 120)] };
+        if (b.pbBefore) node.pageBreak = 'before';
         if (b.keep || beforeSmallTable) node.headlineLevel = 1;
         content.push(node);
         break;

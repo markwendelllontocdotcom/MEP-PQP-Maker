@@ -19,3 +19,8 @@ let threw = false; try { parseProjectFile('{"a":1}'); } catch { threw = true; }
 ok(threw, 'Non-project file rejected');
 ok(missingMandatory(newProject(s)).length > 0, 'New project starts with required fields empty');
 ok(outputBaseName(p) === 'OPEM-E-26-101-PL-QM-001 Rev 00 - PQP - Sample Residential Tower (G+20)', 'Export file name');
+import { migrate } from '../src/model/defaults';
+const old: any = { ...p, P06: 'Residential', Q02: 'QMS-0000' }; delete old.CERTS;
+const mg = migrate(old);
+ok(Array.isArray(mg.P06) && mg.P06[0] === 'Residential', 'Older project: single Project Type becomes a list');
+ok(mg.CERTS.length === 4 && mg.CERTS[0].no === 'CN011157', 'Older project: ISO certificate details added');

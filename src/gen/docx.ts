@@ -206,7 +206,7 @@ export async function makeDocx(m: DocModel): Promise<Uint8Array> {
         break;
       case 'p': {
         const tabs = b.tabs ? b.tabs.map((t) => `<w:tab w:val="${t.v}"${t.ld ? ` w:leader="${t.ld}"` : ''} w:pos="${t.p}"/>`).join('') : undefined;
-        out.push(para({ keepNext: b.keep || beforeSmallTable, tabs, before: b.before, after: b.after ?? 120, ind: { l: b.l, h: b.h, f: b.f }, jc: b.jc || 'both' }, runs(b.r, b.sz)));
+        out.push(para({ keepNext: b.keep || beforeSmallTable, pbBefore: b.pbBefore, tabs, before: b.before, after: b.after ?? 120, ind: { l: b.l, h: b.h, f: b.f }, jc: b.jc || 'both' }, runs(b.r, b.sz)));
         break;
       }
       case 'li':

@@ -8,7 +8,7 @@ export interface Row { c: Cell[]; header?: boolean; minH?: number }
 export type Block =
   | { t: 'h'; lvl: 1 | 2; num: string; x: string; id: string }
   | { t: 'n'; d: number; num: string; r: Run[]; title?: boolean; jc?: string; sz: number }
-  | { t: 'p'; r: Run[]; l: number; h?: number; f?: number; jc?: string; tabs?: Tab[]; sz: number; keep?: boolean; before?: number; after?: number }
+  | { t: 'p'; r: Run[]; l: number; h?: number; f?: number; jc?: string; tabs?: Tab[]; sz: number; keep?: boolean; before?: number; after?: number; pbBefore?: boolean }
   | { t: 'li'; k: string; label: string; num: string; il: string; l: number; h: number; r: Run[]; sz: number; jc?: string }
   | { t: 'tbl'; grid: number[]; rows: Row[]; jc?: string; ind?: number; sz?: number }
   | { t: 'img'; key: string; w: number; h: number; jc?: string }
@@ -48,6 +48,7 @@ export interface Platform {
   svgToPng(svg: string, w: number, h: number): Promise<ImgAsset>;
   dataUrlToAsset(dataUrl: string): Promise<ImgAsset>;
   fontCss(): Promise<string>; // @font-face rules (Carlito regular + bold) for SVG text
+  cert(std: string): Promise<ImgAsset | null>; // built-in ISO certificate scan, if any
 }
 
 export const PAGE = { w: 11906, h: 16838, top: 1728, bottom: 1134, left: 1440, right: 994, header: 0, footer: 425 };

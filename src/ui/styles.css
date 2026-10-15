@@ -126,6 +126,19 @@ input:hover, select:hover, textarea:hover { border-color: #9fb0c8; }
 .rhead > div { font-size: 13px; color: var(--muted); font-weight: 700; }
 .rrow > div:last-child, .rhead > div:last-child { width: 1%; white-space: nowrap; }
 
+/* ---------- ISO certificates */
+.certs { display: grid; gap: 12px; }
+.cert { border: 1px solid var(--rule); border-radius: var(--radius); padding: 12px; display: grid; gap: 10px; background: #fff; }
+.cert.off { background: #f6f8fb; }
+.cert.off .imgpick { opacity: .7; }
+.certhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pill { font-size: 12.5px; border: 1px solid var(--rule); border-radius: 12px; padding: 1px 10px; color: var(--muted); }
+.pill.on { border-color: var(--navy); color: var(--navy); font-weight: 700; }
+.certgrid { display: grid; grid-template-columns: 1fr 1.6fr 1fr; gap: 10px; }
+.certgrid label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); font-weight: 700; }
+.warnline { font-size: 13.5px; color: var(--warn); font-weight: 700; }
+.cert .thumb { height: 140px; width: 100px; }
+
 /* ---------- sections tree */
 .tree { list-style: none; margin: 10px 0 0; padding: 0; border-top: 1px solid var(--rule-soft); }
 .tree li { border-bottom: 1px solid var(--rule-soft); }
@@ -191,7 +204,7 @@ input:hover, select:hover, textarea:hover { border-color: #9fb0c8; }
   .exports { flex-direction: column; }
   .sheet { padding: 16px; }
   .fields { grid-template-columns: minmax(0, 1fr); }
-  .grid3 { grid-template-columns: 1fr; }
+  .grid3, .certgrid { grid-template-columns: 1fr; }
   .imgpick { flex-direction: column; align-items: flex-start; }
   .rtable, .rhead, .rrow, .rhead > div, .rrow > div { display: block; }
   .rhead { display: none; }

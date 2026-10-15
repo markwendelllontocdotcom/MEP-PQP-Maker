@@ -1,4 +1,4 @@
-import type { Project, Settings, Person } from './types';
+import type { Project, Settings, Person, CertRow } from './types';
 import { APP_VERSION } from '../version';
 import { todayISO } from './format';
 
@@ -41,6 +41,29 @@ export const AUTHORITY_SCOPE: Record<string, string> = {
   'Sharjah Civil Defence': 'Fire and life safety design approval, inspections and completion certificate',
 };
 export const STANDARDS = ['ISO 9001:2015', 'ISO/IEC 27001:2022', 'ISO 14001:2015', 'ISO 45001:2018'];
+
+/** Company ISO certificates (scans built into the app for 9001, 14001 and 45001). */
+export const CERT_ORDER = ['ISO 9001:2015', 'ISO 14001:2015', 'ISO 45001:2018', 'ISO/IEC 27001:2022'];
+export const BUNDLED_CERTS = ['ISO 9001:2015', 'ISO 14001:2015', 'ISO 45001:2018'];
+export function defaultCerts(): CertRow[] {
+  const apex = 'TUV Apex Standardization Certifications';
+  return [
+    { std: 'ISO 9001:2015', no: 'CN011157', body: apex, expiry: '2026-12-24', image: null },
+    { std: 'ISO 14001:2015', no: 'CN021157', body: apex, expiry: '2026-12-24', image: null },
+    { std: 'ISO 45001:2018', no: 'CN031157', body: apex, expiry: '2026-12-24', image: null },
+    { std: 'ISO/IEC 27001:2022', no: '', body: '', expiry: '', image: null },
+  ];
+}
+
+/** Brings projects saved by earlier versions up to date. */
+export function migrate(p: any): Project {
+  const out = { ...p };
+  if (!Array.isArray(out.P06)) out.P06 = out.P06 ? [out.P06] : [];
+  const certs: CertRow[] = defaultCerts();
+  if (Array.isArray(out.CERTS)) for (const c of out.CERTS) { const i = certs.findIndex((d) => d.std === c.std); if (i >= 0) certs[i] = { ...certs[i], ...c }; }
+  out.CERTS = certs;
+  return out as Project;
+}
 export const CODES = ['UAE Fire & Life Safety Code', 'DEWA Regulations', 'DM Building Code', "Al Sa'fat (Dubai Green Building System)", 'Estidama (Abu Dhabi)', 'ASHRAE', 'NFPA', 'BS 7671', 'CIBSE', 'SMACNA', 'Project Specifications', 'Other'];
 export const STATUSES = ['Draft', 'For Approval', 'Approved', 'Approved as Noted', 'Revise & Resubmit'];
 
@@ -86,14 +109,14 @@ export function newProject(s: Settings): Project {
   const today = todayISO();
   return {
     id: uid(), created: now, modified: now, appVersion: APP_VERSION,
-    P01: '', P02: '', P03: today.slice(2, 4), P04: 'Dubai', P05: '', P06: '', P07: '', P08: [], P09: 'Lump Sum', P10: '', P11: '', P13: '',
+    P01: '', P02: '', P03: today.slice(2, 4), P04: 'Dubai', P05: '', P06: [], P07: '', P08: [], P09: 'Lump Sum', P10: '', P11: '', P13: '',
     R01: '', R02: '', R03: '', R04: s.companyName, R05: 'MEP Subcontractor', R06: [], R06other: '',
     R07: null, R08: null, R10: null,
     R09: s.logo, R11: s.tagline, R12on: true, R12: s.watermark, D01: s.docRefPrefix,
     D03: '00', D04: today, D05: 'Draft',
     D06: '', D07: 'QA/QC Engineer', D08: '', D09: 'QA/QC Manager', D10: '', D11: 'Project Manager',
     K01: person(), K02: person(), K03: person(), K04: person(), K05: person(), K06: [],
-    Q01: ['ISO 9001:2015', 'ISO/IEC 27001:2022'], Q02: '', Q03: '', Q04: '24', Q05: '14', Q06: '7',
+    Q01: ['ISO 9001:2015', 'ISO/IEC 27001:2022'], CERTS: defaultCerts(), Q04: '24', Q05: '14', Q06: '7',
     Q07: ['Project Specifications'], Q07other: '', Q08off: [],
     H01: [{ rev: '00', date: today, desc: 'Initial Issue' }],
     A01: [], A02: R1_FORMS.map((f) => ({ ...f })), A03: [], A03text: '',
@@ -106,7 +129,7 @@ export function testProject(s: Settings): Project {
   return {
     ...p,
     P01: 'Sample Residential Tower (G+20)', P02: '101', P03: '26', P04: 'Dubai', P05: 'Plot 000-000, Sample Area',
-    P06: 'Residential', P07: 'Supply, installation, testing and commissioning of MEP works.',
+    P06: ['Residential'], P07: 'Supply, installation, testing and commissioning of MEP works.',
     P08: ['HVAC', 'Plumbing & Drainage', 'Electrical', 'Fire Fighting'], P09: 'Lump Sum',
     P10: '2026-11-01', P11: '2027-12-31', P13: '',
     R01: 'Sample Developer LLC', R02: 'Sample Engineering Consultants', R03: 'Sample Main Contractor LLC',
@@ -115,7 +138,7 @@ export function testProject(s: Settings): Project {
     D06: 'A. Sample', D07: 'QA/QC Engineer', D08: 'B. Sample', D09: 'QA/QC Manager', D10: 'C. Sample', D11: 'Project Manager',
     K01: person('C. Sample'), K02: person('B. Sample'), K03: person('A. Sample'), K04: person('D. Sample'), K05: person('E. Sample'),
     K06: [{ role: 'Site Engineer', name: 'F. Sample', email: '', phone: '' }],
-    Q01: ['ISO 9001:2015', 'ISO/IEC 27001:2022'], Q02: 'QMS-0000', Q03: 'Sample Certification Body',
+    Q01: ['ISO 9001:2015', 'ISO/IEC 27001:2022'],
     Q04: '24', Q05: '14', Q06: '7',
     Q07: ['UAE Fire & Life Safety Code', 'DEWA Regulations', 'ASHRAE', 'Project Specifications'],
     H01: [{ rev: '00', date: '2026-10-15', desc: 'First issue for approval' }],

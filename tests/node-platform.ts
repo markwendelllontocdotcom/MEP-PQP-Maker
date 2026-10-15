@@ -23,6 +23,10 @@ export const nodePlatform: Platform = {
     const bytes = new Uint8Array(png);
     return { bytes, ...imageInfo(bytes) };
   },
+  async cert(std) {
+    const f: Record<string, string> = { 'ISO 9001:2015': 'certs/iso-9001.jpg', 'ISO 14001:2015': 'certs/iso-14001.jpg', 'ISO 45001:2018': 'certs/iso-45001.jpg' };
+    return f[std] ? file(f[std]) : null;
+  },
   async dataUrlToAsset(dataUrl) {
     const bytes = base64ToBytes(dataUrl.split(',')[1]);
     return { bytes, ...imageInfo(bytes) };

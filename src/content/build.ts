@@ -1,7 +1,7 @@
 import r1json from './r1.json';
 import msTitles from './ms-titles.json';
 import type { Project, Settings } from '../model/types';
-import { AUTHORITY_NAMES, AUTHORITY_SCOPE } from '../model/defaults';
+import { AUTHORITY_NAMES, AUTHORITY_SCOPE, CERT_ORDER } from '../model/defaults';
 import { docRef, revLabel, dmy, durationDays, joinAnd } from '../model/format';
 import type { Block, DocModel, Run, Platform, Row, Cell, CellPara, ImgAsset } from '../gen/model';
 import { CONTENT_W, NAVY } from '../gen/model';
@@ -208,9 +208,9 @@ export async function buildDoc(p: Project, s: Settings, plat: Platform): Promise
         const loc = [p.P05.trim(), p.P04, 'UAE'].filter(Boolean).join(', ');
         const info: [string, string][] = [
           ['Project', p.P01 || '[Project Name]'],
-          ['Project Number', p.P02 || '[XXX]'],
+          ['Project Number', /^\d+$/.test(p.P02) ? 'P' + p.P02 : p.P02 || '[XXX]'],
           ['Location', loc],
-          ['Project Type', p.P06],
+          ['Project Type', (p.P06 || []).join(', ')],
           ['Contract Type', p.P09],
           ['Our Role', p.R05],
           ['Commencement Date', dmy(p.P10)],
@@ -305,9 +305,31 @@ export async function buildDoc(p: Project, s: Settings, plat: Platform): Promise
         if (ppl.length) out.push({ t: 'tbl', grid: withContacts ? [2400, 2300, 2800, 1900] : [4000, 4400], rows, jc: 'center' });
       }
       if (u.id === 'annex:iso-certificates') {
-        if (p.Q02 || p.Q03) P([txt(`Certificate No.: ${p.Q02 || '-'}${p.Q03 ? `, issued by ${p.Q03}` : ''}.`)], 851);
-        if (p.A01.length) for (const im of p.A01) await pageImage(im.dataUrl);
-        else P([txt('ISO certificates to be attached.', { i: 1 })], 851);
+        // the certificate of every standard ticked under QMS / ISMS Standards
+        const ticked = CERT_ORDER.filter((std) => p.Q01.includes(std)).map((std) => (p.CERTS || []).find((c) => c.std === std) || { std, no: '', body: '', expiry: '', image: null });
+        if (ticked.length) {
+          const rows: Row[] = [
+            { header: true, c: [hdrCell('Sl.No.'), hdrCell('Standard'), hdrCell('Certificate No.'), hdrCell('Certifying Body'), hdrCell('Valid until')] },
+            ...ticked.map((c, i) => ({ c: [cell(String(i + 1), {}, 'center'), cell(c.std), cell(c.no || '\u2014', {}, 'center'), cell(c.body || '\u2014'), cell(dmy(c.expiry) || '\u2014', {}, 'center')] })),
+          ];
+          out.push({ t: 'tbl', grid: [700, 2000, 1500, 2900, 1500], rows, ind: 851 });
+        }
+        const scans: { c: typeof ticked[number]; a: ImgAsset }[] = [];
+        const missing: string[] = [];
+        for (const c of ticked) {
+          const a = c.image ? await plat.dataUrlToAsset(c.image.dataUrl) : await plat.cert(c.std);
+          if (a) scans.push({ c, a }); else missing.push(c.std);
+        }
+        if (missing.length) P([txt(`Certificate${missing.length > 1 ? 's' : ''} for ${joinAnd(missing)} to be attached.`, { i: 1 })], 851);
+        for (const { c, a } of scans) {
+          P([txt(`${c.std} Certificate${c.no ? ` (${c.no})` : ''}`, { b: 1 })], 0, { jc: 'center', keep: true, pbBefore: true, after: 120 });
+          certImage(a);
+        }
+        for (const im of p.A01) {
+          P([txt(im.name.replace(/\.[a-z0-9]+$/i, ''), { b: 1 })], 0, { jc: 'center', keep: true, pbBefore: true, after: 120 });
+          certImage(await plat.dataUrlToAsset(im.dataUrl));
+        }
+        if (!ticked.length && !p.A01.length) P([txt('ISO certificates to be attached.', { i: 1 })], 851);
       }
       if (u.id === 'annex:forms') {
         const rows: Row[] = [
@@ -332,6 +354,14 @@ export async function buildDoc(p: Project, s: Settings, plat: Platform): Promise
         out.push({ t: 'tbl', grid: [700, 1700, 4900, 1300], rows, ind: 851 });
       }
     }
+  }
+
+  /** a certificate scan sized to fill one page under its caption */
+  function certImage(a: ImgAsset) {
+    const maxW = CONTENT_W - 300, maxH = 12100;
+    let w = maxW, h = Math.round((maxW * a.h) / a.w);
+    if (h > maxH) { h = maxH; w = Math.round((maxH * a.w) / a.h); }
+    out.push({ t: 'img', key: addImg(a), w, h, jc: 'center' });
   }
 
   async function pageImage(dataUrl: string) {

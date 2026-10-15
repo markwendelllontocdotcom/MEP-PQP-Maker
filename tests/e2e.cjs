@@ -8,7 +8,7 @@ const OUT = process.argv[2];
   const logs = [];
   page.on('console', (m) => { if (m.type() === 'error') logs.push(m.text()); });
   page.on('pageerror', (e) => logs.push('PAGEERROR ' + e.message));
-  await page.goto('http://localhost:4174/');
+  await page.goto('http://localhost:4175/');
   await page.waitForSelector('.sheet h1');
   await page.screenshot({ path: OUT + '/01-empty.png' });
   // sample data
@@ -62,7 +62,7 @@ const OUT = process.argv[2];
   // phone layout
   const m = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const mp = await m.newPage();
-  await mp.goto('http://localhost:4174/');
+  await mp.goto('http://localhost:4175/');
   await mp.waitForSelector('.sheet h1');
   await mp.click('text=Load sample data');
   await mp.waitForTimeout(300);

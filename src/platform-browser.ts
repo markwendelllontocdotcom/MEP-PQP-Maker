@@ -5,8 +5,13 @@ import vfs from './fonts/vfs.json';
 import bannerUrl from './assets/banner-default.jpg?inline';
 import logoUrl from './assets/logo-default.png?inline';
 import watermarkUrl from './assets/watermark-default.jpg?inline';
+import cert9001 from './assets/certs/iso-9001.jpg?inline';
+import cert14001 from './assets/certs/iso-14001.jpg?inline';
+import cert45001 from './assets/certs/iso-45001.jpg?inline';
 
 export const ASSET_URLS = { banner: bannerUrl, logo: logoUrl, watermark: watermarkUrl };
+/** Oxypro ISO certificate scans built into the app */
+export const CERT_URLS: Record<string, string> = { 'ISO 9001:2015': cert9001, 'ISO 14001:2015': cert14001, 'ISO 45001:2018': cert45001 };
 
 function fromDataUrl(dataUrl: string): ImgAsset {
   const bytes = base64ToBytes(dataUrl.slice(dataUrl.indexOf(',') + 1));
@@ -20,6 +25,9 @@ export const browserPlatform: Platform = {
   },
   async dataUrlToAsset(dataUrl) {
     return fromDataUrl(dataUrl);
+  },
+  async cert(std) {
+    return CERT_URLS[std] ? fromDataUrl(CERT_URLS[std]) : null;
   },
   async fontCss() {
     if (!css) {

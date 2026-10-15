@@ -2,14 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import type { Project, Settings } from './model/types';
 import { FIELDS, GROUPS, fieldError, allErrors, missingMandatory, type FieldSpec } from './model/fields';
-import { defaultSettings, newProject, testProject } from './model/defaults';
+import { defaultSettings, newProject, testProject, migrate } from './model/defaults';
 import { docRef, revLabel, dmy, durationDays } from './model/format';
 import { sectionUnits } from './content/build';
 import { store } from './storage';
 import { saveProjectFile, openProjectFile, type Handle } from './files';
 import { exportWord, exportPdf } from './exporter';
 import { ASSET_URLS } from './platform-browser';
-import { Row, TextInput, TextArea, Select, Multi, Toggle, ImagePick, Images, PersonInput, People, Revisions, Forms, Calc } from './ui/controls';
+import { Row, TextInput, TextArea, Select, Multi, Toggle, ImagePick, Images, PersonInput, People, Revisions, Forms, Calc, Certs } from './ui/controls';
 import { APP_NAME, APP_VERSION, CREDIT } from './version';
 import iconUrl from './assets/icon.svg?inline';
 
@@ -54,7 +54,7 @@ export function App() {
       setSettings(s);
       const id = await store.loadCurrentId();
       const saved = id ? await store.loadProject(id) : undefined;
-      setP(saved ? { ...newProject(s), ...saved } : newProject(s));
+      setP(saved ? migrate({ ...newProject(s), ...saved }) : newProject(s));
       store.persist();
     })();
   }, []);
@@ -124,7 +124,7 @@ export function App() {
     try {
       const r = await openProjectFile();
       if (!r) return;
-      const merged = { ...newProject(settings), ...r.project };
+      const merged = migrate({ ...newProject(settings), ...r.project });
       setP(merged); setHandle(r.handle); setFileName(r.name); setDirtyFile(false); store.saveProject(merged);
       setToast(`Opened ${r.name}`);
     } catch (e: any) {
@@ -199,6 +199,7 @@ export function App() {
       case 'people': ctl = <People id={id} value={v} onChange={(x) => set(f.id, x)} />; wide = true; break;
       case 'revisions': ctl = <Revisions id={id} value={v} onChange={(x) => set(f.id, x)} />; wide = true; break;
       case 'forms': ctl = <Forms id={id} value={v} onChange={(x) => set(f.id, x)} />; wide = true; break;
+      case 'certs': ctl = <Certs id={id} value={v || []} ticked={p.Q01} onChange={(x) => set(f.id, x)} onError={showError} />; wide = true; break;
       case 'calc': {
         if (f.id === 'P12') { const d = durationDays(p); ctl = <Calc value={d != null ? `${d} days` : ''} note="Completion Date minus Commencement Date" />; }
         if (f.id === 'D02') ctl = <Calc value={docRef(p)} note="[Prefix]-[YY]-[XXX]-PL-QM-001" />;

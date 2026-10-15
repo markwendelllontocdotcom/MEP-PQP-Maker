@@ -1,0 +1,20 @@
+const { chromium } = require('/opt/npm-tools/node_modules/playwright');
+const OUT = process.argv[2];
+(async () => {
+  const browser = await chromium.launch();
+  const ctx = await browser.newContext({ acceptDownloads: true, viewport: { width: 1360, height: 1000 } });
+  const page = await ctx.newPage();
+  const logs = []; page.on('pageerror', (e) => logs.push(e.message));
+  await page.goto('http://localhost:4175/');
+  await page.waitForSelector('.sheet h1');
+  await page.click('text=Load sample data');
+  await page.click('#row-P06 .chip:has-text("Commercial")');
+  await page.click('text=5. Quality System');
+  await page.click('#row-Q01 .chip:has-text("ISO 45001:2018")');
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: OUT + '/quality.png', fullPage: true });
+  const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 120000 }), page.click('.titleblock >> text=Export PDF')]);
+  await dl.saveAs(OUT + '/ui.pdf');
+  console.log('ok', JSON.stringify(logs));
+  await browser.close();
+})().catch((e) => { console.error('FAILED', e); process.exit(1); });

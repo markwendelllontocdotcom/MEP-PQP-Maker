@@ -4,7 +4,7 @@ import { parseISO } from './format';
 
 export type FieldType =
   | 'text' | 'longtext' | 'number' | 'date' | 'dropdown' | 'multi' | 'image' | 'images'
-  | 'person' | 'people' | 'revisions' | 'forms' | 'calc' | 'toggle' | 'sections';
+  | 'person' | 'people' | 'revisions' | 'forms' | 'calc' | 'toggle' | 'sections' | 'certs';
 
 export interface FieldSpec {
   id: keyof Project | string;
@@ -41,7 +41,7 @@ export const FIELDS: FieldSpec[] = [
   { id: 'P03', group: 'project', label: 'Project Year (YY)', type: 'text', mandatory: true, digits: 2, help: '2 digits, e.g. 26', usedIn: 'Doc Ref' },
   { id: 'P04', group: 'project', label: 'Location / Emirate', type: 'dropdown', mandatory: true, options: EMIRATES, usedIn: 'Cover' },
   { id: 'P05', group: 'project', label: 'Plot No. / Address', type: 'text', mandatory: false, help: 'Plot number and community / area', usedIn: 'Cover' },
-  { id: 'P06', group: 'project', label: 'Project Type', type: 'dropdown', mandatory: true, options: PROJECT_TYPES, usedIn: 'Project Information table' },
+  { id: 'P06', group: 'project', label: 'Project Type', type: 'multi', mandatory: true, options: PROJECT_TYPES, help: 'Select one or more, in the order they should appear', usedIn: 'Project Information table' },
   { id: 'P07', group: 'project', label: 'Scope of Work (summary)', type: 'longtext', mandatory: true, max: 2000, help: 'Summary of the works covered by this PQP. It follows R1’s standard scope paragraph in Section 2.', usedIn: '2 Scope of Works' },
   { id: 'P08', group: 'project', label: 'Disciplines', type: 'multi', mandatory: true, options: DISCIPLINES, help: 'Drives the discipline list, the org chart and Annexure 8.5', usedIn: '2 Scope, Annexures 8.1 and 8.5' },
   { id: 'P09', group: 'project', label: 'Contract Type', type: 'dropdown', mandatory: false, options: CONTRACT_TYPES, usedIn: 'Project Information table' },
@@ -84,9 +84,8 @@ export const FIELDS: FieldSpec[] = [
   { id: 'K05', group: 'people', label: 'Document Controller', type: 'person', mandatory: false, usedIn: 'Annexure 8.1' },
   { id: 'K06', group: 'people', label: 'Additional Personnel', type: 'people', mandatory: false, help: 'One row per person. Discipline engineers appear as boxes in the org chart', usedIn: 'Annexure 8.1' },
 
-  { id: 'Q01', group: 'quality', label: 'QMS / ISMS Standards', type: 'multi', mandatory: true, options: STANDARDS, usedIn: '1.1 Introduction, 5.18 table' },
-  { id: 'Q02', group: 'quality', label: 'ISO Certificate No.', type: 'text', mandatory: false, usedIn: 'Annexure 8.2' },
-  { id: 'Q03', group: 'quality', label: 'Certifying Body', type: 'text', mandatory: false, usedIn: 'Annexure 8.2' },
+  { id: 'Q01', group: 'quality', label: 'QMS / ISMS Standards', type: 'multi', mandatory: true, options: STANDARDS, usedIn: '1.1 Introduction, 5.18 table, Annexure 8.2 certificates' },
+  { id: 'CERTS', group: 'quality', label: 'ISO Certificates', type: 'certs', mandatory: false, help: 'The certificate of each standard ticked above is printed in Annexure 8.2. The Oxypro 9001, 14001 and 45001 scans are built in.', usedIn: 'Annexure 8.2' },
   { id: 'Q04', group: 'quality', label: 'Inspection Notice Period (hours)', type: 'number', mandatory: true, min: 1, maxN: 72, usedIn: '5.10 Work Inspections' },
   { id: 'Q05', group: 'quality', label: 'Submittal Review Period (days)', type: 'number', mandatory: true, min: 1, maxN: 60, usedIn: '5.5 Procurement' },
   { id: 'Q06', group: 'quality', label: 'NCR Close-out Target (working days)', type: 'number', mandatory: false, min: 1, maxN: 60, usedIn: '5.11 NCR' },
@@ -94,7 +93,7 @@ export const FIELDS: FieldSpec[] = [
 
   { id: 'H01', group: 'revisions', label: 'Amendment Record', type: 'revisions', mandatory: true, usedIn: '7 Amendment Record' },
 
-  { id: 'A01', group: 'annex', label: 'ISO Certificates (scans)', type: 'images', mandatory: false, maxMB: 5, help: 'JPG / PNG or PDF (each PDF page becomes an image)', usedIn: 'Annexure 8.2' },
+  { id: 'A01', group: 'annex', label: 'Other certificates (scans)', type: 'images', mandatory: false, maxMB: 5, help: 'JPG or PNG. The ISO certificates are set under 5. Quality System', usedIn: 'Annexure 8.2, after the ISO certificates' },
   { id: 'A02', group: 'annex', label: 'Applicable Forms and Templates', type: 'forms', mandatory: false, usedIn: 'Annexure 8.3' },
   { id: 'A03', group: 'annex', label: 'Quality Policy & Quality Objectives (scans)', type: 'images', mandatory: false, maxMB: 5, usedIn: 'Annexure 8.4' },
   { id: 'A03text', group: 'annex', label: 'Quality Policy & Quality Objectives (text, used when no scan)', type: 'longtext', mandatory: false, max: 4000, usedIn: 'Annexure 8.4' },
@@ -131,6 +130,10 @@ export function fieldError(f: FieldSpec, p: Project): string | null {
   if (f.type === 'people') {
     const bad = (v || []).findIndex((r: any) => r.email && !EMAIL.test(r.email.trim()));
     if (bad >= 0) return `Row ${bad + 1}: check the email address.`;
+  }
+  if (f.type === 'certs') {
+    const bad = (v || []).find((c: any) => c.expiry && !parseISO(c.expiry));
+    if (bad) return `${bad.std}: enter a valid expiry date.`;
   }
   if (f.type === 'revisions') {
     const bad = (v || []).findIndex((r: any) => !/^\d{2}$/.test(r.rev) || (r.date && !parseISO(r.date)));
