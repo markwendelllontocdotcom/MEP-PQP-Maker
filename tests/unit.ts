@@ -24,3 +24,19 @@ const old: any = { ...p, P06: 'Residential', Q02: 'QMS-0000' }; delete old.CERTS
 const mg = migrate(old);
 ok(Array.isArray(mg.P06) && mg.P06[0] === 'Residential', 'Older project: single Project Type becomes a list');
 ok(mg.CERTS.length === 4 && mg.CERTS[0].no === 'CN011157', 'Older project: ISO certificate details added');
+// Key Personnel follows the QA/QC Department Organization Chart (15 Oct 2026)
+{
+  const { people } = await import('../src/content/build');
+  const { orgChart } = await import('../src/content/orgchart');
+  const o: any = { ...p, K03: { name: 'Q. Eng', email: '', phone: '' }, K04: { name: 'H. Safe', email: '', phone: '' }, K06: [] };
+  delete o.K07; delete o.K08; delete o.K09;
+  const m = migrate(o);
+  ok(Array.isArray(m.K03) && m.K03.length === 2 && m.K03[0].name === 'Q. Eng', 'Older project: QA/QC Engineer becomes a list of two chart boxes');
+  ok(!('K04' in m) && m.K06[0].role === 'HSE Manager / Officer' && m.K06[0].name === 'H. Safe', 'Older project: HSE Manager moved to Other Personnel');
+  ok(m.K07.name === '' && Array.isArray(m.K08) && Array.isArray(m.K09), 'Older project: Projects Director, Construction Managers and Project Engineers added');
+  const roles = people(p).map((x) => x.role);
+  ok(roles.join('|') === 'QA/QC Manager|QA/QC Engineer|QA/QC Engineer|Document Controller|Projects Director|Project Manager|Construction Manager|Project Engineer – Electrical|Project Engineer – Mechanical|HSE Manager / Officer|Site Engineer', 'Contact table follows the chart order');
+  const boxes = (k: number) => (orgChart({ ...p, K03: Array.from({ length: k }, () => ({ name: '', email: '', phone: '' })) }, null).svg.match(/>QA\/QC ENGINEER</g) || []).length;
+  ok(boxes(1) === 1 && boxes(2) === 2 && boxes(3) === 3 && boxes(5) === 3, 'Chart draws one QA/QC Engineer box per row (1 to 3)');
+  ok(allErrors({ ...p, K03: [{ name: 'X', email: 'bad', phone: '' }] }).some((e) => e.f.id === 'K03'), 'QA/QC Engineer email checked');
+}

@@ -1,0 +1,41 @@
+// Key Personnel laid out as the QA/QC Department Organization Chart: preview, box count, linked names, Word export.
+const { chromium } = require('/opt/npm-tools/node_modules/playwright');
+const OUT = process.argv[2];
+(async () => {
+  const browser = await chromium.launch();
+  const ctx = await browser.newContext({ acceptDownloads: true, viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  const logs = [];
+  page.on('pageerror', (e) => logs.push('PAGEERROR ' + e.message));
+  page.on('console', (m) => { if (m.type() === 'error') logs.push(m.text()); });
+  await page.goto('http://localhost:4176/');
+  await page.waitForSelector('.sheet h1');
+  await page.click('text=Load sample data');
+  await page.waitForTimeout(200);
+  await page.click('.nav >> text=4. Key Personnel');
+  await page.waitForSelector('.orgprev svg');
+  const heads = await page.$$eval('.subhead', (els) => els.map((e) => e.textContent));
+  const labels = await page.$$eval('.fields .label', (els) => els.map((e) => e.childNodes[0].textContent.trim()));
+  const boxes = async () => page.$$eval('.orgprev text', (els) => els.filter((e) => e.textContent === 'QA/QC ENGINEER').length);
+  console.log('Sub-headings:', JSON.stringify(heads));
+  console.log('Inputs:', JSON.stringify(labels));
+  console.log('QA/QC Engineer boxes (sample):', await boxes());
+  await page.screenshot({ path: OUT + '/people.png', fullPage: true });
+  await page.click('text=Add QA/QC Engineer');
+  console.log('After adding a row:', await boxes(), '| Add disabled at 3:', await page.isDisabled('text=Add QA/QC Engineer'));
+  await page.click('#f-K03 .rrow:nth-child(4) >> text=Remove');
+  await page.click('#f-K03 .rrow:nth-child(3) >> text=Remove');
+  console.log('After removing two rows:', await boxes(), '| Remove disabled on the last row:', await page.isDisabled('#f-K03 .rrow >> text=Remove'));
+  await page.screenshot({ path: OUT + '/people-one.png', clip: { x: 0, y: 0, width: 1440, height: 900 } });
+  // the first QA/QC Engineer follows Prepared By
+  await page.fill('#f-K03 .rrow input >> nth=0', 'A. Sample QE');
+  await page.click('.nav >> text=3. Document Control');
+  console.log('Prepared By follows:', await page.inputValue('#f-D06'));
+  await page.click('.nav >> text=4. Key Personnel');
+  await page.click('text=Add QA/QC Engineer');
+  const [dw] = await Promise.all([page.waitForEvent('download', { timeout: 120000 }), page.click('.titleblock >> text=Export Word (.docx)')]);
+  await dw.saveAs(OUT + '/ui-people.docx');
+  console.log('Word saved');
+  console.log('Errors:', JSON.stringify(logs));
+  await browser.close();
+})();

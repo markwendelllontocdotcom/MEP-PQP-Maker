@@ -56,9 +56,16 @@ export interface Project {
   // 3. Document Control
   D03: string; D04: string; D05: string;
   D06: string; D07: string; D08: string; D09: string; D10: string; D11: string;
-  // 4. Key Personnel
-  K01: Person; K02: Person; K03: Person; K04: Person; K05: Person;
-  K06: ExtraPerson[];
+  // 4. Key Personnel, laid out as the QA/QC Department Organization Chart (Annexure 8.1)
+  K02: Person;          // QA/QC Manager
+  K03: Person[];        // QA/QC Engineers: one chart box per row (1–3)
+  K05: Person;          // Document Controller
+  K07: Person;          // Projects Director
+  K01: Person;          // Project Manager
+  K08: ExtraPerson[];   // Construction Managers & Senior Engineers
+  K09: ExtraPerson[];   // Project Engineers
+  K06: ExtraPerson[];   // Other personnel: contact table only, not drawn
+  K04?: Person;         // HSE Manager (before 15 Oct 2026); moved into K06 when a file is opened
   // 5. Quality System
   Q01: string[];
   CERTS: CertRow[];

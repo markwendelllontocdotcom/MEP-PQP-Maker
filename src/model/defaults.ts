@@ -59,6 +59,18 @@ export function defaultCerts(): CertRow[] {
 export function migrate(p: any): Project {
   const out = { ...p };
   if (!Array.isArray(out.P06)) out.P06 = out.P06 ? [out.P06] : [];
+  // Key Personnel follows the QA/QC Department Organization Chart (15 Oct 2026)
+  const pers = (x: any): Person => ({ name: x?.name || '', email: x?.email || '', phone: x?.phone || '' });
+  if (!Array.isArray(out.K03)) out.K03 = [pers(out.K03), pers(null)];
+  if (!out.K03.length) out.K03 = [pers(null)];
+  if (out.K03.length > 3) out.K03 = out.K03.slice(0, 3);
+  if (!Array.isArray(out.K06)) out.K06 = [];
+  if (out.K04) {
+    if ((out.K04.name || '').trim()) out.K06 = [{ role: 'HSE Manager / Officer', ...pers(out.K04) }, ...out.K06];
+    delete out.K04;
+  }
+  for (const k of ['K01', 'K02', 'K05', 'K07']) out[k] = pers(out[k]);
+  for (const k of ['K08', 'K09']) if (!Array.isArray(out[k])) out[k] = [];
   const certs: CertRow[] = defaultCerts();
   if (Array.isArray(out.CERTS)) for (const c of out.CERTS) { const i = certs.findIndex((d) => d.std === c.std); if (i >= 0) certs[i] = { ...certs[i], ...c }; }
   out.CERTS = certs;
@@ -115,7 +127,7 @@ export function newProject(s: Settings): Project {
     R09: s.logo, R11: s.tagline, R12on: true, R12: s.watermark, D01: s.docRefPrefix,
     D03: '00', D04: today, D05: 'Draft',
     D06: '', D07: 'QA/QC Engineer', D08: '', D09: 'QA/QC Manager', D10: '', D11: 'Project Manager',
-    K01: person(), K02: person(), K03: person(), K04: person(), K05: person(), K06: [],
+    K02: person(), K03: [person(), person()], K05: person(), K07: person(), K01: person(), K08: [], K09: [], K06: [],
     Q01: ['ISO 9001:2015', 'ISO/IEC 27001:2022'], CERTS: defaultCerts(), Q04: '24', Q05: '14', Q06: '7',
     Q07: ['Project Specifications'], Q07other: '', Q08off: [],
     H01: [{ rev: '00', date: today, desc: 'Initial Issue' }],
@@ -136,8 +148,11 @@ export function testProject(s: Settings): Project {
     R04: s.companyName, R05: 'MEP Subcontractor', R06: ['DM', 'DEWA', 'DCD'],
     R11: s.tagline, D01: s.docRefPrefix, D03: '00', D04: '2026-10-15', D05: 'For Approval',
     D06: 'A. Sample', D07: 'QA/QC Engineer', D08: 'B. Sample', D09: 'QA/QC Manager', D10: 'C. Sample', D11: 'Project Manager',
-    K01: person('C. Sample'), K02: person('B. Sample'), K03: person('A. Sample'), K04: person('D. Sample'), K05: person('E. Sample'),
-    K06: [{ role: 'Site Engineer', name: 'F. Sample', email: '', phone: '' }],
+    K02: person('B. Sample'), K03: [person('A. Sample'), person('G. Sample')], K05: person('E. Sample'),
+    K07: person('H. Sample'), K01: person('C. Sample'),
+    K08: [{ role: 'Construction Manager', name: 'I. Sample', email: '', phone: '' }],
+    K09: [{ role: 'Project Engineer – Electrical', name: 'J. Sample', email: '', phone: '' }, { role: 'Project Engineer – Mechanical', name: 'K. Sample', email: '', phone: '' }],
+    K06: [{ role: 'HSE Manager / Officer', name: 'D. Sample', email: '', phone: '' }, { role: 'Site Engineer', name: 'F. Sample', email: '', phone: '' }],
     Q01: ['ISO 9001:2015', 'ISO/IEC 27001:2022'],
     Q04: '24', Q05: '14', Q06: '7',
     Q07: ['UAE Fire & Life Safety Code', 'DEWA Regulations', 'ASHRAE', 'Project Specifications'],

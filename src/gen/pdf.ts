@@ -6,7 +6,7 @@ import { assetDataUrl } from '../content/svgs';
 import { APP_NAME } from '../version';
 
 const pdfMake: any = (pdfMakeLib as any).default || pdfMakeLib;
-const FONTS = {
+export const FONTS = {
   Carlito: { normal: 'Carlito-Regular.ttf', bold: 'Carlito-Bold.ttf', italics: 'Carlito-Italic.ttf', bolditalics: 'Carlito-BoldItalic.ttf' },
   Symbols: { normal: 'Symbols.ttf', bold: 'Symbols.ttf', italics: 'Symbols.ttf', bolditalics: 'Symbols.ttf' },
 };
@@ -58,7 +58,7 @@ function tableNode(t: { grid: number[]; rows: Row[]; jc?: string; ind?: number; 
   const headerRows = t.rows.findIndex((r) => !r.header);
   const tbl: any = {
     headlineLevel: small ? 3 : undefined,
-    table: { widths: t.grid.map((g) => pt(g) - 8.5), body, headerRows: headerRows > 0 ? headerRows : 0, dontBreakRows: true, heights: t.rows.map((r) => (r.minH ? pt(r.minH) : 'auto')) },
+    table: { widths: t.grid.map((g) => pt(g) - 8.5), body, headerRows: headerRows > 0 ? headerRows : 0, dontBreakRows: !small, heights: t.rows.map((r) => (r.minH ? pt(r.minH) : 'auto')) },
     layout: borders
       ? { hLineWidth: () => 0.5, vLineWidth: () => 0.5, hLineColor: () => '#000000', vLineColor: () => '#000000', paddingLeft: () => 4.25, paddingRight: () => 4.25, paddingTop: () => 1.5, paddingBottom: () => 1.5 }
       : 'noBorders',

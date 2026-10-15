@@ -149,7 +149,7 @@ export function PersonInput(props: { id: string; value: Person; onChange: (v: Pe
   );
 }
 
-function RowsTable<T>(props: { id: string; head: string[]; rows: T[]; render: (r: T, set: (r: T) => void) => ComponentChildren[]; onChange: (v: T[]) => void; blank: () => T; addLabel: string; extra?: ComponentChildren; minRows?: number }) {
+function RowsTable<T>(props: { id: string; head: string[]; rows: T[]; render: (r: T, set: (r: T) => void, i: number) => ComponentChildren[]; onChange: (v: T[]) => void; blank: () => T; addLabel: string; extra?: ComponentChildren; minRows?: number; maxRows?: number }) {
   const set = (i: number) => (r: T) => props.onChange(props.rows.map((x, j) => (j === i ? r : x)));
   return (
     <div class="rows" id={props.id}>
@@ -157,7 +157,7 @@ function RowsTable<T>(props: { id: string; head: string[]; rows: T[]; render: (r
         <div class="rhead" role="row">{props.head.map((h) => <div role="columnheader">{h}</div>)}<div /></div>
         {props.rows.map((r, i) => (
           <div class="rrow" role="row">
-            {props.render(r, set(i)).map((c) => <div role="cell">{c}</div>)}
+            {props.render(r, set(i), i).map((c) => <div role="cell">{c}</div>)}
             <div role="cell">
               <button type="button" class="btn small ghost" disabled={props.rows.length <= (props.minRows || 0)} onClick={() => props.onChange(props.rows.filter((_, j) => j !== i))} aria-label="Remove row">Remove</button>
             </div>
@@ -165,7 +165,7 @@ function RowsTable<T>(props: { id: string; head: string[]; rows: T[]; render: (r
         ))}
       </div>
       <div class="btnrow">
-        <button type="button" class="btn small" onClick={() => props.onChange([...props.rows, props.blank()])}>{props.addLabel}</button>
+        <button type="button" class="btn small" disabled={props.maxRows != null && props.rows.length >= props.maxRows} onClick={() => props.onChange([...props.rows, props.blank()])}>{props.addLabel}</button>
         {props.extra}
       </div>
     </div>
@@ -176,11 +176,20 @@ const inp = (val: string, on: (v: string) => void, ph = '', type = 'text') => (
   <input type={type} value={val} placeholder={ph} onInput={(e) => on((e.target as HTMLInputElement).value)} />
 );
 
-export function People(props: { id: string; value: ExtraPerson[]; onChange: (v: ExtraPerson[]) => void }) {
+export function People(props: { id: string; value: ExtraPerson[]; onChange: (v: ExtraPerson[]) => void; rolePlaceholder?: string; defaultRole?: string }) {
   return (
     <RowsTable id={props.id} head={['Role', 'Name', 'Email', 'Phone']} rows={props.value} onChange={props.onChange} addLabel="Add person"
-      blank={() => ({ role: '', name: '', email: '', phone: '' })}
-      render={(r, set) => [inp(r.role, (v) => set({ ...r, role: v }), 'e.g. Site Engineer'), inp(r.name, (v) => set({ ...r, name: v })), inp(r.email, (v) => set({ ...r, email: v }), '', 'email'), inp(r.phone, (v) => set({ ...r, phone: v }), '', 'tel')]} />
+      blank={() => ({ role: props.defaultRole || '', name: '', email: '', phone: '' })}
+      render={(r, set) => [inp(r.role, (v) => set({ ...r, role: v }), props.rolePlaceholder || 'e.g. Site Engineer'), inp(r.name, (v) => set({ ...r, name: v })), inp(r.email, (v) => set({ ...r, email: v }), '', 'email'), inp(r.phone, (v) => set({ ...r, phone: v }), '', 'tel')]} />
+  );
+}
+
+/** Same role on every row (QA/QC Engineers): one chart box per row. */
+export function Persons(props: { id: string; value: Person[]; onChange: (v: Person[]) => void; min: number; max: number; addLabel: string }) {
+  return (
+    <RowsTable id={props.id} head={['#', 'Name', 'Email', 'Phone']} rows={props.value} onChange={props.onChange} addLabel={props.addLabel} minRows={props.min} maxRows={props.max}
+      blank={() => ({ name: '', email: '', phone: '' })}
+      render={(r, set, i) => [<span class="rownum">{i + 1}</span>, inp(r.name, (v) => set({ ...r, name: v }), 'Name'), inp(r.email, (v) => set({ ...r, email: v }), 'Email (optional)', 'email'), inp(r.phone, (v) => set({ ...r, phone: v }), 'Phone (optional)', 'tel')]} />
   );
 }
 

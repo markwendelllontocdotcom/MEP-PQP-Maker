@@ -9,13 +9,22 @@ import { store } from './storage';
 import { saveProjectFile, openProjectFile, type Handle } from './files';
 import { exportWord, exportPdf } from './exporter';
 import { ASSET_URLS } from './platform-browser';
-import { Row, TextInput, TextArea, Select, Multi, Toggle, ImagePick, Images, PersonInput, People, Revisions, Forms, Calc, Certs } from './ui/controls';
+import { Row, TextInput, TextArea, Select, Multi, Toggle, ImagePick, Images, PersonInput, People, Persons, Revisions, Forms, Calc, Certs } from './ui/controls';
+import { OrgPreview } from './ui/orgpreview';
+import { QE_MAX } from './content/orgchart';
 import { APP_NAME, APP_VERSION, CREDIT } from './version';
 import iconUrl from './assets/icon.svg?inline';
 
 type Dialog = { title: string; body: ComponentChildren; actions: { label: string; primary?: boolean; run: () => void }[] } | null;
 
 const UNITS = sectionUnits();
+
+/** Role prompts for the people lists in Key Personnel. */
+const PEOPLE_HINTS: Record<string, { rolePlaceholder: string; defaultRole?: string }> = {
+  K08: { rolePlaceholder: 'e.g. Construction Manager', defaultRole: 'Construction Manager' },
+  K09: { rolePlaceholder: 'e.g. Project Engineer – Electrical', defaultRole: 'Project Engineer' },
+  K06: { rolePlaceholder: 'e.g. HSE Manager' },
+};
 
 function numberedUnits(off: Set<string>, short: string) {
   const c = [0, 0, 0, 0];
@@ -88,9 +97,10 @@ export function App() {
     setP((old) => {
       if (!old) return old;
       const n: any = { ...old, [id]: v, modified: new Date().toISOString() };
-      const prevName = (k: string) => (old as any)[k]?.name || '';
+      // K03 is a list: the first QA/QC Engineer follows Prepared By
+      const nameOf = (src: any, k: string) => { const x = src[k]; return ((Array.isArray(x) ? x[0]?.name : x?.name) || '') as string; };
       const follow = (dKey: string, kKey: string) => {
-        if (!old[dKey as keyof Project] || old[dKey as keyof Project] === prevName(kKey)) n[dKey] = v.name;
+        if (!old[dKey as keyof Project] || old[dKey as keyof Project] === nameOf(old, kKey)) n[dKey] = nameOf(n, kKey);
       };
       if (id === 'K01') follow('D10', 'K01');
       if (id === 'K02') follow('D08', 'K02');
@@ -196,7 +206,8 @@ export function App() {
         fallbackLabel={f.id === 'R09' ? 'Default: Oxypro logo' : f.id === 'R12' ? 'Default: faint Oxypro mark' : undefined} />; wide = true; break;
       case 'images': ctl = <Images id={id} value={v || []} maxMB={f.maxMB || 5} onChange={(x) => set(f.id, x)} onError={showError} />; wide = true; break;
       case 'person': ctl = <PersonInput id={id} value={v} onChange={(x) => set(f.id, x)} />; wide = true; break;
-      case 'people': ctl = <People id={id} value={v} onChange={(x) => set(f.id, x)} />; wide = true; break;
+      case 'persons': ctl = <Persons id={id} value={v || []} min={1} max={QE_MAX} addLabel="Add QA/QC Engineer" onChange={(x) => set(f.id, x)} />; wide = true; break;
+      case 'people': ctl = <People id={id} value={v || []} onChange={(x) => set(f.id, x)} {...PEOPLE_HINTS[f.id]} />; wide = true; break;
       case 'revisions': ctl = <Revisions id={id} value={v} onChange={(x) => set(f.id, x)} />; wide = true; break;
       case 'forms': ctl = <Forms id={id} value={v} onChange={(x) => set(f.id, x)} />; wide = true; break;
       case 'certs': ctl = <Certs id={id} value={v || []} ticked={p.Q01} onChange={(x) => set(f.id, x)} onError={showError} />; wide = true; break;
@@ -258,7 +269,8 @@ export function App() {
           {group === 'branding' && <p class="lead">These come from Settings for each new project. Change them here for this project only.</p>}
           {group === 'revisions' && <p class="lead">The last row sets the revision shown on the cover and in the footer.</p>}
           {group === 'annex' && <p class="lead">Annexure 8.1 (organisation chart) is drawn from Key Personnel. Annexure 8.5 lists the Method Statements for the selected disciplines.</p>}
-          <div class="fields">{groupFields.map(render)}</div>
+          {group === 'people' && <OrgPreview p={p} />}
+          <div class="fields">{groupFields.map((f) => <>{f.section && <h2 class="subhead">{f.section}</h2>}{render(f)}</>)}</div>
         </main>
 
         <aside class="titleblock" aria-label="Document summary">

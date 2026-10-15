@@ -1,6 +1,6 @@
 import r1json from './r1.json';
 import msTitles from './ms-titles.json';
-import type { Project, Settings } from '../model/types';
+import type { Project, Settings, ExtraPerson } from '../model/types';
 import { AUTHORITY_NAMES, AUTHORITY_SCOPE, CERT_ORDER } from '../model/defaults';
 import { docRef, revLabel, dmy, durationDays, joinAnd } from '../model/format';
 import type { Block, DocModel, Run, Platform, Row, Cell, CellPara, ImgAsset } from '../gen/model';
@@ -422,13 +422,17 @@ export async function buildDoc(p: Project, s: Settings, plat: Platform): Promise
 }
 
 export function people(p: Project): { role: string; name: string; email: string; phone: string }[] {
+  // same order as the chart: QA/QC Department, then the Construction Team, then other personnel
+  const team = (rows: ExtraPerson[] | undefined, role: string) => (rows || []).map((x) => ({ ...x, role: (x.role || '').trim() || role }));
   const list = [
-    { role: 'Project Manager', ...p.K01 },
     { role: 'QA/QC Manager', ...p.K02 },
-    { role: 'QA/QC Engineer', ...p.K03 },
-    { role: 'HSE Manager / Officer', ...p.K04 },
+    ...(p.K03 || []).map((x) => ({ role: 'QA/QC Engineer', ...x })),
     { role: 'Document Controller', ...p.K05 },
-    ...p.K06,
+    { role: 'Projects Director', ...p.K07 },
+    { role: 'Project Manager', ...p.K01 },
+    ...team(p.K08, 'Construction Manager / Senior Engineer'),
+    ...team(p.K09, 'Project Engineer'),
+    ...team(p.K06, 'Staff'),
   ];
   return list.filter((x) => x.name && x.name.trim()).map((x) => ({ role: x.role, name: x.name.trim(), email: (x.email || '').trim(), phone: (x.phone || '').trim() }));
 }

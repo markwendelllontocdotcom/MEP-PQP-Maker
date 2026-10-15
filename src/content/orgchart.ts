@@ -2,66 +2,109 @@ import type { Project } from '../model/types';
 import type { Platform } from '../gen/model';
 import { esc } from './svgs';
 
-interface Box { role: string; name: string; x: number; y: number; w: number; h: number }
+/**
+ * Annexure 8.1 organisation chart, drawn to the Oxypro "QA/QC Department Organization Chart":
+ * QA/QC Manager (functional line to the Projects Director), QA/QC Engineers, Document Controller
+ * and the Construction Team (Projects Director, Project Manager, Construction Managers & Senior
+ * Engineers, Project Engineers). Boxes carry the role titles; names go in the table under the chart.
+ * Units are px at 96 dpi.
+ */
+export const QE_MAX = 3;
 
-function wrap(text: string, maxChars: number): string[] {
-  const words = text.split(/\s+/).filter(Boolean);
-  const lines: string[] = [];
-  let cur = '';
-  for (const w of words) {
-    if ((cur + ' ' + w).trim().length > maxChars && cur) { lines.push(cur); cur = w; }
-    else cur = (cur + ' ' + w).trim();
-  }
-  if (cur) lines.push(cur);
-  return lines.slice(0, 3);
+const NAVY = '#002060';
+const INK = '#1a1a1a';
+const FONT = "Carlito, Calibri, 'Segoe UI', Arial, sans-serif";
+
+interface Box { x: number; y: number; w: number; h: number; lines: string[]; fill: boolean; tag: string }
+
+export function qaqcEngineerCount(p: Project): number {
+  const n = Array.isArray(p.K03) ? p.K03.length : 1;
+  return Math.min(QE_MAX, Math.max(1, n));
 }
 
-/** Project organisation chart (Annexure 8.1) drawn from Key Personnel. Units are px at 96 dpi. */
-export async function orgChartSvg(p: Project, plat: Platform): Promise<{ svg: string; w: number; h: number }> {
-  const fontCss = await plat.fontCss();
-  const W = 820, BH = 84, GY = 46, TOP = 14;
-  const nm = (x?: string) => (x || '').trim() || 'To be nominated';
-  const level1: { role: string; name: string }[] = [
-    { role: 'QA/QC Manager', name: nm(p.K02.name) },
-    { role: 'HSE Manager / Officer', name: nm(p.K04.name) },
-    { role: 'Document Controller', name: nm(p.K05.name) },
-    ...p.K06.filter((x) => (x.role || x.name).trim()).map((x) => ({ role: x.role.trim() || 'Staff', name: nm(x.name) })),
-  ];
-  const n = level1.length;
-  const gap = n > 5 ? 12 : 22;
-  const bw = Math.min(200, Math.floor((W - 24 - (n - 1) * gap) / n));
-  const rowW = n * bw + (n - 1) * gap;
-  const x0 = Math.round((W - rowW) / 2);
-  const pm: Box = { role: 'Project Manager', name: nm(p.K01.name), x: Math.round((W - 220) / 2), y: TOP, w: 220, h: BH };
-  const y1 = TOP + BH + GY;
-  const boxes1: Box[] = level1.map((b, i) => ({ ...b, x: x0 + i * (bw + gap), y: y1, w: bw, h: BH }));
-  const qaqc = boxes1[0];
-  const eng: Box = { role: 'QA/QC Engineer', name: nm(p.K03.name), x: qaqc.x, y: y1 + BH + GY, w: bw, h: BH };
-  const H = eng.y + BH + TOP;
+/** Builds the chart. fontCss embeds Carlito (exports); tags adds the input ids beside each box (app preview). */
+export function orgChart(p: Project, fontCss: string | null, tags = false): { svg: string; w: number; h: number } {
+  const M = 10;
+  const n = qaqcEngineerCount(p);
+  const BH = 54;
+  const EW = n === 3 ? 176 : 196;            // QA/QC Engineer boxes
+  const EG = n === 3 ? 34 : 64;
+  const MW = 214;                            // QA/QC Manager
+  const DW = 250;                            // Document Controller
+  const CW = 220;                            // Construction Team boxes
+  const GP = 16;                             // padding inside the Construction Team frame
+  const leftW = Math.max(n * EW + (n - 1) * EG, 300);
+  const cx = M + leftW / 2;
+  const gx = M + leftW + 70;                 // Construction Team frame
+  const colX = gx + GP;
+  const colCx = colX + CW / 2;
+  const W = gx + CW + 2 * GP + M;
 
-  const navy = '#002060', light = '#EEF2F8';
-  const lines: string[] = [];
-  const busY = pm.y + BH + GY / 2;
-  lines.push(`M${pm.x + pm.w / 2},${pm.y + BH}V${busY}`);
-  if (n > 1) lines.push(`M${boxes1[0].x + bw / 2},${busY}H${boxes1[n - 1].x + bw / 2}`);
-  for (const b of boxes1) lines.push(`M${b.x + bw / 2},${busY}V${b.y}`);
-  lines.push(`M${qaqc.x + bw / 2},${qaqc.y + BH}V${eng.y}`);
+  const yTop = 112;
+  const pd: Box = { x: colX, y: yTop, w: CW, h: BH, lines: ['PROJECTS DIRECTOR'], fill: true, tag: 'K07' };
+  const pm: Box = { x: colX, y: pd.y + BH + 20, w: CW, h: BH, lines: ['PROJECT MANAGER'], fill: true, tag: 'K01' };
+  const linkY = pm.y + BH + 28;
+  const cm: Box = { x: colX, y: pm.y + BH + 56, w: CW, h: BH, lines: ['CONSTRUCTION MANAGERS', '& SENIOR ENGINEERS'], fill: true, tag: 'K08' };
+  const pe: Box = { x: colX, y: cm.y + BH + 20, w: CW, h: BH, lines: ['PROJECT ENGINEERS'], fill: false, tag: 'K09' };
+  const gTop = yTop - 24, gBot = pe.y + BH + 28;
+
+  const qm: Box = { x: cx - MW / 2, y: yTop, w: MW, h: BH, lines: ['QA/QC MANAGER'], fill: true, tag: 'K02' };
+  const busY = linkY + 34;
+  const eTop = busY + 62;
+  const rowW = n * EW + (n - 1) * EG;
+  const engs: Box[] = Array.from({ length: n }, (_, i) => ({ x: cx - rowW / 2 + i * (EW + EG), y: eTop, w: EW, h: BH, lines: ['QA/QC ENGINEER'], fill: false, tag: 'K03' }));
+  const barY = eTop + BH + 46;
+  const dc: Box = { x: cx - DW / 2, y: barY + 46, w: DW, h: 50, lines: ['DOCUMENT CONTROLLER'], fill: false, tag: 'K05' };
+  const H = dc.y + dc.h + M + 4;
+
+  // connectors (solid = direct reporting, dashed = functional reporting)
+  const solid: string[] = [];
+  const mid = (b: Box) => b.x + b.w / 2;
+  solid.push(`M${colCx},${pd.y + BH}V${pm.y}`, `M${colCx},${pm.y + BH}V${cm.y}`, `M${colCx},${cm.y + BH}V${pe.y}`);
+  solid.push(`M${cx},${qm.y + BH}V${busY}`, `M${cx},${linkY}H${colCx}`);
+  if (n > 1) solid.push(`M${mid(engs[0])},${busY}H${mid(engs[n - 1])}`);
+  for (const e of engs) solid.push(`M${mid(e)},${busY}V${e.y}`, `M${mid(e)},${e.y + BH}V${barY}`);
+  if (n > 1) solid.push(`M${mid(engs[0])},${barY}H${mid(engs[n - 1])}`);
+  solid.push(`M${cx},${barY}V${dc.y}`);
+  const dashed = `M${qm.x + MW},${yTop + BH / 2}H${colX}`;
 
   const box = (b: Box) => {
-    const chars = Math.max(10, Math.floor(b.w / 9.6));
-    const role = wrap(b.role, chars), name = wrap(b.name, chars + 2);
-    const bandH = role.length > 1 ? 44 : 28;
-    const roleT = role.map((l, i) => `<text x="${b.x + b.w / 2}" y="${b.y + 20 + i * 17}" text-anchor="middle" font-family="Carlito" font-weight="700" font-size="17" fill="#ffffff">${esc(l)}</text>`).join('');
-    const nameT = name.map((l, i) => `<text x="${b.x + b.w / 2}" y="${b.y + bandH + 24 + i * 18}" text-anchor="middle" font-family="Carlito" font-size="18" fill="#1a1a1a">${esc(l)}</text>`).join('');
-    return `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6" fill="${light}" stroke="${navy}" stroke-width="1.5"/>
-<path d="M${b.x},${b.y + 6}a6,6 0 0 1 6,-6h${b.w - 12}a6,6 0 0 1 6,6v${bandH - 6}h${-b.w}z" fill="${navy}"/>${roleT}${nameT}`;
+    const size = b.fill ? 15.5 : 17;
+    const lh = size * 1.25;
+    const y0 = b.y + b.h / 2 - ((b.lines.length - 1) * lh) / 2 + size * 0.35;
+    const text = b.lines
+      .map((l, i) => `<text x="${b.x + b.w / 2}" y="${(y0 + i * lh).toFixed(1)}" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="${size}" fill="${b.fill ? '#ffffff' : INK}">${esc(l)}</text>`)
+      .join('');
+    const rect = `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="${b.fill ? NAVY : '#ffffff'}" stroke="${NAVY}" stroke-width="1.3"/>`;
+    const tag = tags
+      ? `<rect x="${b.x + b.w - 34}" y="${b.y - 9}" width="38" height="18" rx="9" fill="#D72025"/><text x="${b.x + b.w - 15}" y="${b.y + 4.5}" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="12" fill="#ffffff">${b.tag}</text>`
+      : '';
+    return rect + text + tag;
   };
 
+  // legend (top right) and title
+  const lx = W - M - 196;
+  const legend = `<path d="M${lx},58H${lx + 62}" stroke="${INK}" stroke-width="1.1" stroke-dasharray="3 2.5"/><text x="${lx + 76}" y="62" font-family="${FONT}" font-size="12.5" fill="${INK}">Functional Reporting</text>
+<path d="M${lx},80H${lx + 62}" stroke="${INK}" stroke-width="1.1"/><text x="${lx + 76}" y="84" font-family="${FONT}" font-size="12.5" fill="${INK}">Direct Reporting</text>`;
+  const title = `<text x="${W / 2}" y="30" text-anchor="middle" font-family="${FONT}" font-weight="700" font-size="20" fill="${NAVY}">QA/QC DEPARTMENT ORGANIZATION CHART</text>`;
+  const label = 'Construction Team';
+  const lw = 112;
+  const frame = `<rect x="${gx}" y="${gTop}" width="${CW + 2 * GP}" height="${gBot - gTop}" rx="28" fill="none" stroke="#A6A6A6" stroke-width="1.2"/>
+<rect x="${colCx - lw / 2}" y="${gBot - 8}" width="${lw}" height="16" fill="#ffffff"/><text x="${colCx}" y="${gBot + 4.5}" text-anchor="middle" font-family="${FONT}" font-size="13" fill="${INK}">${label}</text>`;
+
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-<style>${fontCss}</style>
+${fontCss ? `<style>${fontCss}</style>` : ''}
 <rect width="${W}" height="${H}" fill="#ffffff"/>
-<path d="${lines.join('')}" stroke="${navy}" stroke-width="1.6" fill="none"/>
-${[pm, ...boxes1, eng].map(box).join('\n')}
+${title}
+${legend}
+${frame}
+<path d="${solid.join('')}" stroke="${INK}" stroke-width="1.2" fill="none"/>
+<path d="${dashed}" stroke="${INK}" stroke-width="1.2" stroke-dasharray="4 3" fill="none"/>
+${[qm, pd, pm, cm, pe, ...engs, dc].map(box).join('\n')}
 </svg>`;
   return { svg, w: W, h: H };
+}
+
+export async function orgChartSvg(p: Project, plat: Platform): Promise<{ svg: string; w: number; h: number }> {
+  return orgChart(p, await plat.fontCss());
 }

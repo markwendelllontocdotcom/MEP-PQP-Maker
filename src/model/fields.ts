@@ -4,7 +4,7 @@ import { parseISO } from './format';
 
 export type FieldType =
   | 'text' | 'longtext' | 'number' | 'date' | 'dropdown' | 'multi' | 'image' | 'images'
-  | 'person' | 'people' | 'revisions' | 'forms' | 'calc' | 'toggle' | 'sections' | 'certs';
+  | 'person' | 'persons' | 'people' | 'revisions' | 'forms' | 'calc' | 'toggle' | 'sections' | 'certs';
 
 export interface FieldSpec {
   id: keyof Project | string;
@@ -21,6 +21,7 @@ export interface FieldSpec {
   help?: string;
   usedIn?: string;
   otherKey?: keyof Project;
+  section?: string; // sub-heading shown above this field
 }
 
 export const GROUPS = [
@@ -43,7 +44,7 @@ export const FIELDS: FieldSpec[] = [
   { id: 'P05', group: 'project', label: 'Plot No. / Address', type: 'text', mandatory: false, help: 'Plot number and community / area', usedIn: 'Cover' },
   { id: 'P06', group: 'project', label: 'Project Type', type: 'multi', mandatory: true, options: PROJECT_TYPES, help: 'Select one or more, in the order they should appear', usedIn: 'Project Information table' },
   { id: 'P07', group: 'project', label: 'Scope of Work (summary)', type: 'longtext', mandatory: true, max: 2000, help: 'Summary of the works covered by this PQP. It follows R1’s standard scope paragraph in Section 2.', usedIn: '2 Scope of Works' },
-  { id: 'P08', group: 'project', label: 'Disciplines', type: 'multi', mandatory: true, options: DISCIPLINES, help: 'Drives the discipline list, the org chart and Annexure 8.5', usedIn: '2 Scope, Annexures 8.1 and 8.5' },
+  { id: 'P08', group: 'project', label: 'Disciplines', type: 'multi', mandatory: true, options: DISCIPLINES, help: 'Drives the discipline list and Annexure 8.5', usedIn: '2 Scope, Annexure 8.5' },
   { id: 'P09', group: 'project', label: 'Contract Type', type: 'dropdown', mandatory: false, options: CONTRACT_TYPES, usedIn: 'Project Information table' },
   { id: 'P10', group: 'project', label: 'Commencement Date', type: 'date', mandatory: false, usedIn: 'Not printed (kept with the project for reference)' },
   { id: 'P11', group: 'project', label: 'Completion Date', type: 'date', mandatory: false, help: 'Must be after the Commencement Date', usedIn: 'Not printed (kept with the project for reference)' },
@@ -77,12 +78,15 @@ export const FIELDS: FieldSpec[] = [
   { id: 'D10', group: 'doc', label: 'Approved By – Name', type: 'text', mandatory: true },
   { id: 'D11', group: 'doc', label: 'Approved By – Designation', type: 'text', mandatory: true },
 
-  { id: 'K01', group: 'people', label: 'Project Manager', type: 'person', mandatory: true, usedIn: 'Annexure 8.1' },
-  { id: 'K02', group: 'people', label: 'QA/QC Manager', type: 'person', mandatory: true, usedIn: 'Annexure 8.1' },
-  { id: 'K03', group: 'people', label: 'QA/QC Engineer', type: 'person', mandatory: false, usedIn: 'Annexure 8.1' },
-  { id: 'K04', group: 'people', label: 'HSE Manager / Officer', type: 'person', mandatory: false, usedIn: 'Annexure 8.1' },
+  // Order and wording follow the QA/QC Department Organization Chart (Annexure 8.1)
+  { id: 'K02', group: 'people', section: 'QA/QC Department', label: 'QA/QC Manager', type: 'person', mandatory: true, help: 'Follows Reviewed By on the cover', usedIn: 'Annexure 8.1' },
+  { id: 'K03', group: 'people', label: 'QA/QC Engineers', type: 'persons', mandatory: false, help: 'One chart box per row (1 to 3). The first name follows Prepared By on the cover', usedIn: 'Annexure 8.1' },
   { id: 'K05', group: 'people', label: 'Document Controller', type: 'person', mandatory: false, usedIn: 'Annexure 8.1' },
-  { id: 'K06', group: 'people', label: 'Additional Personnel', type: 'people', mandatory: false, help: 'One row per person. Discipline engineers appear as boxes in the org chart', usedIn: 'Annexure 8.1' },
+  { id: 'K07', group: 'people', section: 'Construction Team', label: 'Projects Director', type: 'person', mandatory: false, usedIn: 'Annexure 8.1' },
+  { id: 'K01', group: 'people', label: 'Project Manager', type: 'person', mandatory: true, help: 'Follows Approved By on the cover', usedIn: 'Annexure 8.1' },
+  { id: 'K08', group: 'people', label: 'Construction Managers & Senior Engineers', type: 'people', mandatory: false, help: 'One row per person; the chart shows one box for the group', usedIn: 'Annexure 8.1' },
+  { id: 'K09', group: 'people', label: 'Project Engineers', type: 'people', mandatory: false, help: 'One row per person; the chart shows one box for the group', usedIn: 'Annexure 8.1' },
+  { id: 'K06', group: 'people', section: 'Not in the chart', label: 'Other Personnel', type: 'people', mandatory: false, help: 'e.g. HSE Manager, Site Engineer. Listed in the table under the chart, not drawn in it', usedIn: 'Annexure 8.1 table' },
 
   { id: 'Q01', group: 'quality', label: 'QMS / ISMS Standards', type: 'multi', mandatory: true, options: STANDARDS, usedIn: '1.1 Introduction, 5.18 table, Annexure 8.2 certificates' },
   { id: 'CERTS', group: 'quality', label: 'ISO Certificates', type: 'certs', mandatory: false, help: 'The certificate of each standard ticked above is printed in Annexure 8.2. The Oxypro 9001, 14001 and 45001 scans are built in.', usedIn: 'Annexure 8.2' },
@@ -127,7 +131,7 @@ export function fieldError(f: FieldSpec, p: Project): string | null {
     const e = (v?.email || '').trim();
     if (e && !EMAIL.test(e)) return 'Check the email address.';
   }
-  if (f.type === 'people') {
+  if (f.type === 'people' || f.type === 'persons') {
     const bad = (v || []).findIndex((r: any) => r.email && !EMAIL.test(r.email.trim()));
     if (bad >= 0) return `Row ${bad + 1}: check the email address.`;
   }

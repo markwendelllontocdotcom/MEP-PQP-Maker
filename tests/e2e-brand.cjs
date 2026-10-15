@@ -6,7 +6,7 @@ const OUT = process.argv[2];
   const page = await ctx.newPage();
   const logs = [];
   page.on('pageerror', (e) => logs.push('PAGEERROR ' + e.message));
-  await page.goto('http://localhost:4174/');
+  await page.goto('http://localhost:4176/');
   await page.waitForSelector('.sheet h1');
   await page.click('text=Load sample data');
   await page.click('text=Branding');
