@@ -1,7 +1,7 @@
 PQP MAKER - READ ME
 ===================
 
-Version 1.2.0 (16 Oct 2026)
+Version 1.2.1 (16 Oct 2026)
 Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.
 
 PQP Maker writes the Project Quality Plan (PQP) for an MEP project. You enter the project
@@ -16,6 +16,7 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   Samples\                  Sample PQPs (Word and PDF) printed from the test data, updated
                             whenever the layout changes. You can also send test exports here.
   Source\                   The program source (zip). Only needed to change or rebuild the app.
+  Icon\                     The app icon: PQP Maker.ico (for a desktop shortcut) and a large PNG.
   P### Project Name\        One folder per project (for example P101 ...), holding the project
                             file (.pqp) and its exported PQPs.
   Project Quality Plan - Template R1.docx
@@ -33,6 +34,9 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   - Double-click PQP Maker.html. It opens in your web browser (Edge or Chrome recommended).
   - No installation, login or internet connection is needed.
   - Tip: pin the browser tab or add it to your favourites to open it quickly.
+  - Desktop shortcut with the app icon (Windows): right-click PQP Maker.html, choose
+    Show more options > Send to > Desktop (create shortcut). Right-click the new shortcut,
+    choose Properties > Change Icon > Browse, pick Icon\PQP Maker.ico and click OK.
 
   From the web (any device):
   - Open https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/
@@ -117,6 +121,10 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
 8. VERSION HISTORY
 ------------------
+
+  1.2.1  (16 Oct 2026)
+    - New app icon: the QA/QC engineer with the PQP clipboard. It shows in the browser tab,
+      the installed app and the About page.
 
   1.2.0  (16 Oct 2026)
     - Published on the web at https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/

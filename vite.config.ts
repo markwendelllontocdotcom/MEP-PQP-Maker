@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
         ? viteSingleFile({ removeViteModuleLoader: true })
         : VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['icon-32.png', 'icon-180.png', 'icon.svg'],
+            includeAssets: ['icon-32.png', 'icon-180.png'],
             manifest: {
               name: 'PQP Maker',
               short_name: 'PQP Maker',

@@ -15,7 +15,7 @@ import { OrgPreview } from './ui/orgpreview';
 import { About } from './ui/about';
 import { QE_MAX } from './content/orgchart';
 import { APP_NAME, APP_VERSION, CREDIT } from './version';
-import iconUrl from './assets/icon.svg?inline';
+import iconUrl from './assets/icon-app.png?inline';
 
 type Dialog = { title: string; body: ComponentChildren; actions: { label: string; primary?: boolean; run: () => void }[] } | null;
 

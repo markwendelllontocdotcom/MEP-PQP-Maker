@@ -1,5 +1,5 @@
 import { APP_NAME, APP_VERSION, APP_DATE, CREDIT, CHANGES, WEB_URL } from '../version';
-import iconUrl from '../assets/icon.svg?inline';
+import iconUrl from '../assets/icon-app.png?inline';
 
 /** About page: what the app is, how to use it, where the data lives and what changed. */
 export function About(props: { exportFolder: string | null; canPickFolder: boolean; onGo: (group: string) => void }) {

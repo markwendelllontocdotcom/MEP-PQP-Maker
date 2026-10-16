@@ -1,7 +1,7 @@
 {
   "name": "pqp-maker",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "type": "module",
   "description": "PQP Maker - Project Quality Plan generator (PWA). Developed by Mark Lontoc | Dubai, United Arab Emirates | (c) 2026 MLWorks. All rights reserved.",
   "scripts": {
