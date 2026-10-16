@@ -6,7 +6,8 @@ import { serialise, parseProjectFile } from '../src/files';
 const s = defaultSettings();
 const p = testProject(s);
 const ok = (c: boolean, m: string) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) process.exitCode = 1; };
-ok(docRef(p) === 'OPEM-E-26-101-PL-QM-001', 'Doc Ref from test data');
+ok(docRef(p) === 'OPEM-P101-QM-PQP-001', 'Doc Ref from test data');
+ok(docRef({ ...p, P02: '' }) === 'OPEM-[PXXX]-QM-PQP-001', 'Doc Ref placeholder without a project number');
 ok(durationDays(p) === 425, 'Duration 425 days');
 ok(allErrors(p).length === 0, 'Test data has no invalid entries');
 ok(missingMandatory(p).length === 0, 'Test data fills every required field');
@@ -18,7 +19,8 @@ ok(JSON.stringify(parseProjectFile(serialise(p))) === JSON.stringify(p), '.pqp s
 let threw = false; try { parseProjectFile('{"a":1}'); } catch { threw = true; }
 ok(threw, 'Non-project file rejected');
 ok(missingMandatory(newProject(s)).length > 0, 'New project starts with required fields empty');
-ok(outputBaseName(p) === 'OPEM-E-26-101-PL-QM-001 Rev 00 - PQP - Sample Residential Tower (G+20)', 'Export file name');
+ok(outputBaseName(p) === 'OPEM-P101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20)', 'Export file name');
+ok(migrate({ ...p, D01: 'OPEM-E' }).D01 === 'OPEM', 'Older project: prefix OPEM-E becomes OPEM');
 import { migrate } from '../src/model/defaults';
 const old: any = { ...p, P06: 'Residential', Q02: 'QMS-0000' }; delete old.CERTS;
 const mg = migrate(old);

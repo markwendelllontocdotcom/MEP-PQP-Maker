@@ -1,7 +1,7 @@
 PQP MAKER - READ ME
 ===================
 
-Version 1.2.1 (16 Oct 2026)
+Version 1.3.0 (16 Oct 2026)
 Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.
 
 PQP Maker writes the Project Quality Plan (PQP) for an MEP project. You enter the project
@@ -64,7 +64,7 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   5. Click Save to keep the project as a .pqp file in the project's folder.
 
   Exported files are named:  <Doc Ref> Rev <NN> - PQP - <Project name>.docx / .pdf
-  For example:  OPEM-E-26-101-PL-QM-001 Rev 00 - PQP - Sample Residential Tower (G+20).pdf
+  For example:  OPEM-P101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20).pdf
 
   Want to see a finished PQP first? Click "Load sample data" to fill every field with
   made-up test data. (Save your own project first: this replaces what is on screen.)
@@ -122,6 +122,12 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
 8. VERSION HISTORY
 ------------------
+
+  1.3.0  (16 Oct 2026)
+    - New document reference format OPEM-[PXXX]-QM-PQP-001, for example OPEM-P122-QM-PQP-001
+      (was OPEM-E-26-[XXX]-PL-QM-001). It shows on the cover, in the footer, in the Amendment
+      Record and in the file names. The project year is no longer needed. Projects saved
+      earlier switch to the new reference when they are opened.
 
   1.2.1  (16 Oct 2026)
     - New app icon: the QA/QC engineer with the PQP clipboard. It shows in the browser tab,

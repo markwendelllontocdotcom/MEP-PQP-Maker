@@ -38,8 +38,7 @@ export const GROUPS = [
 
 export const FIELDS: FieldSpec[] = [
   { id: 'P01', group: 'project', label: 'Project Name', type: 'text', mandatory: true, max: 150, help: 'Full official project name', usedIn: 'Cover, 2 Scope of Works' },
-  { id: 'P02', group: 'project', label: 'Project Number (XXX)', type: 'text', mandatory: true, digits: 3, help: '3 digits, company job number (e.g. 060)', usedIn: 'Doc Ref' },
-  { id: 'P03', group: 'project', label: 'Project Year (YY)', type: 'text', mandatory: true, digits: 2, help: '2 digits, e.g. 26', usedIn: 'Doc Ref' },
+  { id: 'P02', group: 'project', label: 'Project Number (XXX)', type: 'text', mandatory: true, digits: 3, help: '3 digits, company job number (e.g. 122). Printed as P122', usedIn: 'Doc Ref, Project Information table' },
   { id: 'P04', group: 'project', label: 'Location / Emirate', type: 'dropdown', mandatory: true, options: EMIRATES, usedIn: 'Cover' },
   { id: 'P05', group: 'project', label: 'Plot No. / Address', type: 'text', mandatory: false, help: 'Plot number and community / area', usedIn: 'Cover' },
   { id: 'P06', group: 'project', label: 'Project Type', type: 'multi', mandatory: false, options: PROJECT_TYPES, help: 'Select one or more', usedIn: 'Not printed (kept with the project for reference)' },
@@ -65,7 +64,7 @@ export const FIELDS: FieldSpec[] = [
   { id: 'R11', group: 'branding', label: 'Header Tagline', type: 'text', mandatory: false, max: 60, usedIn: 'Header' },
   { id: 'R12on', group: 'branding', label: 'Show page watermark', type: 'toggle', mandatory: false, usedIn: 'Every page' },
   { id: 'R12', group: 'branding', label: 'Page Watermark', type: 'image', mandatory: false, maxMB: 2, help: 'Empty uses the faint Oxypro mark. An uploaded image is faded automatically', usedIn: 'Every page' },
-  { id: 'D01', group: 'branding', label: 'Doc Ref Prefix', type: 'text', mandatory: true, max: 20, usedIn: 'Doc Ref' },
+  { id: 'D01', group: 'branding', label: 'Doc Ref Prefix', type: 'text', mandatory: true, max: 20, help: 'Default OPEM', usedIn: 'Doc Ref' },
 
   { id: 'D02', group: 'doc', label: 'Document Reference', type: 'calc', mandatory: false, usedIn: 'Cover, footer, 7 Amendment Record' },
   { id: 'D03', group: 'doc', label: 'Revision', type: 'text', mandatory: true, digits: 2, help: '2 digits, shown as Rev.00', usedIn: 'Cover, footer' },

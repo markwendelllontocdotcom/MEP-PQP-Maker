@@ -59,6 +59,8 @@ export function defaultCerts(): CertRow[] {
 export function migrate(p: any): Project {
   const out = { ...p };
   if (!Array.isArray(out.P06)) out.P06 = out.P06 ? [out.P06] : [];
+  // Doc Ref format OPEM-[PXXX]-QM-PQP-001 (16 Oct 2026): the old default prefix OPEM-E becomes OPEM
+  if (out.D01 === 'OPEM-E') out.D01 = 'OPEM';
   // Key Personnel follows the QA/QC Department Organization Chart (15 Oct 2026)
   const pers = (x: any): Person => ({ name: x?.name || '', email: x?.email || '', phone: x?.phone || '' });
   if (!Array.isArray(out.K03)) out.K03 = [pers(out.K03), pers(null)];
@@ -104,7 +106,7 @@ export function defaultSettings(): Settings {
     tagline: DEFAULT_TAGLINE,
     watermark: null,
     watermarkOpacity: 0.08,
-    docRefPrefix: 'OPEM-E',
+    docRefPrefix: 'OPEM',
     brandColor: '#D72025',
     font: 'Calibri',
   };

@@ -26,11 +26,11 @@ export function durationDays(p: Project): number | null {
   return Math.round((b.getTime() - a.getTime()) / 86400000);
 }
 
-/** [Prefix]-[YY]-[XXX]-PL-QM-001 (serial 001 as instructed 15 Oct 2026). */
+/** [Prefix]-P[XXX]-QM-PQP-001, e.g. OPEM-P122-QM-PQP-001 (format set 16 Oct 2026; was [Prefix]-[YY]-[XXX]-PL-QM-001). */
+export const DOC_REF_FORMAT = '[Prefix]-P[XXX]-QM-PQP-001';
 export function docRef(p: Project): string {
-  const yy = /^\d{2}$/.test(p.P03) ? p.P03 : '[YY]';
-  const xxx = /^\d{3}$/.test(p.P02) ? p.P02 : '[XXX]';
-  return `${(p.D01 || '[PREFIX]').trim()}-${yy}-${xxx}-PL-QM-001`;
+  const pxxx = /^\d{3}$/.test(p.P02) ? 'P' + p.P02 : '[PXXX]';
+  return `${(p.D01 || '[PREFIX]').trim()}-${pxxx}-QM-PQP-001`;
 }
 
 export function revLabel(p: Project): string {
@@ -47,7 +47,7 @@ export function safeFileName(s: string): string {
   return s.replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim().slice(0, 150);
 }
 
-/** e.g. "OPEM-E-26-101-PL-QM-001 Rev 00 - PQP - Sample Residential Tower (G+20)" */
+/** e.g. "OPEM-P101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20)" */
 export function outputBaseName(p: Project): string {
   const rev = /^\d{2}$/.test(p.D03) ? p.D03 : '00';
   return safeFileName(`${docRef(p)} Rev ${rev} - PQP - ${p.P01 || 'Untitled'}`);

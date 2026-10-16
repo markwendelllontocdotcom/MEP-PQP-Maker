@@ -34,7 +34,7 @@ export function About(props: { exportFolder: string | null; canPickFolder: boole
       <section>
         <h2>Files and folders</h2>
         <ul>
-          <li><b>Exported PQPs</b> are named <code>Doc Ref Rev NN - PQP - Project name</code>, for example <code>OPEM-E-26-101-PL-QM-001 Rev 00 - PQP - Sample Residential Tower (G+20).pdf</code>.</li>
+          <li><b>Exported PQPs</b> are named <code>Doc Ref Rev NN - PQP - Project name</code>, for example <code>OPEM-P101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20).pdf</code>.</li>
           <li><b>Export folder:</b> {props.canPickFolder
             ? <>exports are saved to <b>{props.exportFolder || 'your Downloads folder'}</b>. Change it with <b>Choose folder</b> under the export buttons, for example to the project's own folder or the Samples folder. A new export with the same Doc Ref and Rev replaces the older file.</>
             : <>on this browser exports go to your Downloads folder. In Edge or Chrome on a laptop you can choose a folder instead.</>}</li>

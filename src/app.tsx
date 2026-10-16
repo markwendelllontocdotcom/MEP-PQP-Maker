@@ -3,7 +3,7 @@ import type { ComponentChildren } from 'preact';
 import type { Project, Settings } from './model/types';
 import { FIELDS, GROUPS, fieldError, allErrors, missingMandatory, type FieldSpec } from './model/fields';
 import { defaultSettings, newProject, testProject, migrate } from './model/defaults';
-import { docRef, revLabel, dmy, durationDays } from './model/format';
+import { docRef, revLabel, dmy, durationDays, DOC_REF_FORMAT } from './model/format';
 import { sectionUnits } from './content/build';
 import { store } from './storage';
 import { saveProjectFile, openProjectFile, type Handle } from './files';
@@ -64,6 +64,7 @@ export function App() {
   useEffect(() => {
     (async () => {
       const s = { ...defaultSettings(), ...((await store.loadSettings()) || {}) };
+      if (s.docRefPrefix === 'OPEM-E') s.docRefPrefix = 'OPEM'; // Doc Ref format of 16 Oct 2026
       setSettings(s);
       const id = await store.loadCurrentId();
       const saved = id ? await store.loadProject(id) : undefined;
@@ -246,7 +247,7 @@ export function App() {
       case 'certs': ctl = <Certs id={id} value={v || []} ticked={p.Q01} onChange={(x) => set(f.id, x)} onError={showError} />; wide = true; break;
       case 'calc': {
         if (f.id === 'P12') { const d = durationDays(p); ctl = <Calc value={d != null ? `${d} days` : ''} note="Completion Date minus Commencement Date" />; }
-        if (f.id === 'D02') ctl = <Calc value={docRef(p)} note="[Prefix]-[YY]-[XXX]-PL-QM-001" />;
+        if (f.id === 'D02') ctl = <Calc value={docRef(p)} note={DOC_REF_FORMAT} />;
         break;
       }
       case 'sections': return <SectionsPanel p={p} short={settings.companyShort} onChange={(x) => set('Q08off', x)} />;
