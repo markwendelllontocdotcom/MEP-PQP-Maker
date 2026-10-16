@@ -4,6 +4,8 @@ const OUT = process.argv[2];
 (async () => {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ acceptDownloads: true, viewport: { width: 1440, height: 900 } });
+  // no folder access here: exports download, as on iPhone / Firefox (the folder path is in e2e-folder.cjs)
+  await ctx.addInitScript(() => { try { delete window.showDirectoryPicker; delete Window.prototype.showDirectoryPicker; } catch (e) {} });
   const page = await ctx.newPage();
   const logs = [];
   page.on('pageerror', (e) => logs.push('PAGEERROR ' + e.message));

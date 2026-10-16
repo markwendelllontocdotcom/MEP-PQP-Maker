@@ -18,6 +18,7 @@ Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All ri
 2. Fill in the groups on the left. A red number shows how many fields in a group still need attention. Required fields are marked `*`.
 3. **PQP Sections** lets you leave out any section. The sections after it are renumbered, and the "Refer Annexure" references follow.
 4. **Export Word** and **Export PDF** create `<Doc Ref> Rev <NN> - PQP - <Project>.docx / .pdf`. Entries that are not allowed (for example a 4-digit project number) block the export and are listed so you can fix them.
+5. **Export folder** (Edge or Chrome on Windows and macOS): on the first export the app asks for a folder, for example the `Samples` folder in the PQP Maker project folder. Every Word and PDF export is then saved straight into it (a re-export of the same Doc Ref and Rev replaces the older file) and Save starts there too. Change it under the export buttons, or choose **Use Downloads**. On iPhone, Safari and Firefox exports go to the Downloads folder.
 5. When Word opens the file it asks to update fields. Choose **Yes** so the table of contents shows Word's page numbers.
 
 Work is saved automatically on the device about a second after each change, and the last 20 versions are kept. **Save / Save as** writes a `.pqp` project file you can keep in OneDrive or send to another device. **Open** reads it back.

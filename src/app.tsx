@@ -8,6 +8,7 @@ import { sectionUnits } from './content/build';
 import { store } from './storage';
 import { saveProjectFile, openProjectFile, type Handle } from './files';
 import { exportWord, exportPdf } from './exporter';
+import { canPickFolder, loadExportDir, chooseExportDir, forgetExportDir, ensureWritable, wasAsked, markAsked } from './exportdir';
 import { ASSET_URLS } from './platform-browser';
 import { Row, TextInput, TextArea, Select, Multi, Toggle, ImagePick, Images, PersonInput, People, Persons, Revisions, Forms, Calc, Certs } from './ui/controls';
 import { OrgPreview } from './ui/orgpreview';
@@ -53,6 +54,8 @@ export function App() {
   const [busy, setBusy] = useState<string>('');
   const [toast, setToast] = useState<string>('');
   const [dialog, setDialog] = useState<Dialog>(null);
+  const [exportDir, setExportDir] = useState<any>(null); // folder every export is saved into (Edge / Chrome)
+  const [askedFolder, setAskedFolder] = useState(true);
   const lastSnap = useRef(0);
   const first = useRef(true);
 
@@ -65,6 +68,8 @@ export function App() {
       const saved = id ? await store.loadProject(id) : undefined;
       setP(saved ? migrate({ ...newProject(s), ...saved }) : newProject(s));
       store.persist();
+      setExportDir(await loadExportDir());
+      setAskedFolder(await wasAsked());
     })();
   }, []);
 
@@ -142,7 +147,7 @@ export function App() {
     }
   });
   const doSave = async (saveAs: boolean) => {
-    const r = await saveProjectFile(p, handle, saveAs);
+    const r = await saveProjectFile(p, handle, saveAs, exportDir);
     if (!r) return;
     setHandle(r.handle); setFileName(r.name); setDirtyFile(false);
     setToast(r.handle ? `Saved to ${r.name}` : `Downloaded ${r.name}`);
@@ -157,25 +162,52 @@ export function App() {
       });
       return;
     }
-    const run = async () => {
+    const run = async (picked?: any) => {
       setDialog(null);
+      let dir = picked !== undefined ? picked : exportDir;
+      if (dir && !(await ensureWritable(dir))) dir = null; // permission refused: download instead
       setBusy(kind === 'word' ? 'Building the Word file…' : 'Building the PDF…');
       try {
-        if (kind === 'word') { const n = await exportWord(p, settings); setToast(`Exported ${n}`); }
-        else { const r = await exportPdf(p, settings); setToast(`Exported ${r.name} (${r.pages} pages)`); }
+        const r = kind === 'word' ? await exportWord(p, settings, dir) : await exportPdf(p, settings, dir);
+        setToast((r.folder ? `Saved to ${r.folder}: ${r.name}` : `Downloaded ${r.name}`) + (r.pages ? ` (${r.pages} pages)` : ''));
+        if (r.note) setDialog({ title: 'Saved to Downloads instead', body: <p>{r.note} Close the file and export again to save it in {exportDir?.name || 'the export folder'}.</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] });
       } catch (e: any) {
         console.error(e);
         setDialog({ title: 'Export failed', body: <p>{e?.message || String(e)}</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] });
       } finally { setBusy(''); }
     };
+    // first export on Edge / Chrome: ask once which folder the exports go to
+    const start = () => {
+      if (!canPickFolder || exportDir || askedFolder) return run();
+      setDialog({
+        title: 'Where should exports be saved?',
+        body: <><p>Choose a folder once, for example the <b>Samples</b> folder in your PQP Maker project folder. Every Word and PDF export is then saved straight into it, replacing an older export of the same name.</p><p>You can change it later under the export buttons.</p></>,
+        actions: [
+          { label: 'Use Downloads', run: () => { markAsked(); setAskedFolder(true); run(null); } },
+          { label: 'Choose folder…', primary: true, run: async () => { const h = await pickFolder(); if (!h) return; markAsked(); setAskedFolder(true); run(h); } },
+        ],
+      });
+    };
     if (missing.length) {
       setDialog({
         title: `${missing.length} required ${missing.length === 1 ? 'field is' : 'fields are'} empty`,
         body: <><p>They will show as placeholders such as [PROJECT NAME] in the document.</p><ul class="issues">{missing.slice(0, 12).map((f) => <li><button class="linkbtn" onClick={() => { setDialog(null); goTo(f); }}>{f.label}</button></li>)}{missing.length > 12 && <li>and {missing.length - 12} more</li>}</ul></>,
-        actions: [{ label: 'Go back', run: () => setDialog(null) }, { label: 'Export anyway', primary: true, run }],
+        actions: [{ label: 'Go back', run: () => setDialog(null) }, { label: 'Export anyway', primary: true, run: start }],
       });
-    } else run();
+    } else start();
   };
+
+  const pickFolder = async (): Promise<any> => {
+    try {
+      const h = await chooseExportDir(exportDir);
+      if (h) { setExportDir(h); setToast(`Exports will be saved to ${h.name}`); }
+      return h;
+    } catch (e: any) {
+      setDialog({ title: 'Folder not set', body: <p>{e?.message || String(e)}</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] });
+      return null;
+    }
+  };
+  const useDownloads = async () => { await forgetExportDir(); setExportDir(null); setToast('Exports will go to the Downloads folder'); };
 
   const goTo = (f: FieldSpec) => {
     setGroup(f.group);
@@ -295,6 +327,16 @@ export function App() {
           <div class="exports">
             <button class="btn primary block" onClick={() => exportDoc('word')}>Export Word (.docx)</button>
             <button class="btn block" onClick={() => exportDoc('pdf')}>Export PDF</button>
+            {canPickFolder ? (
+              <div class="expdir">
+                <span class="k">Exports are saved to</span>
+                <span class="v" title={exportDir ? 'Folder chosen in this browser' : 'Browser Downloads folder'}>{exportDir ? exportDir.name : 'Downloads'}</span>
+                <span class="acts">
+                  <button class="linkbtn" onClick={pickFolder}>{exportDir ? 'Change folder' : 'Choose folder'}</button>
+                  {exportDir && <button class="linkbtn" onClick={useDownloads}>Use Downloads</button>}
+                </span>
+              </div>
+            ) : <p class="expdir-note">Exports go to your Downloads folder.</p>}
           </div>
         </aside>
       </div>

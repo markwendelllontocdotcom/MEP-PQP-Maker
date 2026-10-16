@@ -32,14 +32,16 @@ export function download(bytes: Uint8Array | string, name: string, mime: string)
 export type Handle = any; // FileSystemFileHandle where supported
 
 /** Save to the same file when we have a handle; otherwise ask (Save As) or download. */
-export async function saveProjectFile(p: Project, handle: Handle | null, saveAs: boolean): Promise<{ handle: Handle | null; name: string } | null> {
+export async function saveProjectFile(p: Project, handle: Handle | null, saveAs: boolean, startIn: any = null): Promise<{ handle: Handle | null; name: string } | null> {
   const text = serialise(p);
   const suggested = safeFileName(p.P01 || 'Untitled project') + '.pqp';
   if (hasPicker) {
     try {
       let h = handle;
       if (!h || saveAs) {
-        h = await (window as any).showSaveFilePicker({ suggestedName: suggested, types: [{ description: 'PQP Maker project', accept: { 'application/json': ['.pqp'] } }] });
+        const opts: any = { suggestedName: suggested, types: [{ description: 'PQP Maker project', accept: { 'application/json': ['.pqp'] } }] };
+        if (startIn) opts.startIn = startIn; // starts in the export folder when one is set
+        h = await (window as any).showSaveFilePicker(opts);
       }
       const w = await h.createWritable();
       await w.write(text);
