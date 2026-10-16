@@ -13,19 +13,20 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 -------------------------
 
   PQP Maker.html            The application. Double-click to open it in Edge or Chrome.
+  README.txt                This guide.
   Samples\                  Sample PQPs (Word and PDF) printed from the test data, updated
                             whenever the layout changes. You can also send test exports here.
   Source\                   The program source (zip). Only needed to change or rebuild the app.
-  Icon\                     The app icon: PQP Maker.ico (for a desktop shortcut) and a large PNG.
+  Icon\                     The app icon: PQP Maker.ico (for a desktop shortcut), a large PNG
+                            and the sizes the app uses (browser tab, installed app, iPhone).
   P### Project Name\        One folder per project (for example P101 ...), holding the project
                             file (.pqp) and its exported PQPs.
-  Project Quality Plan - Template R1.docx
-                            The company template the PQP text comes from.
+  Templates\                The reference material the app is built on:
+    Project Quality Plan - Template R1.docx   the company template the PQP text comes from
+    2026 ISO CERTIFICATES\                    the ISO 9001, 14001 and 45001 certificates
+    Org Chart\                                the QA/QC Department Organization Chart template
+    UAE Cover Page.png                        cover page reference
   PQP Maker.csv / .xlsx     The list of input fields.
-  2026 ISO CERTIFICATES\    The company ISO 9001, 14001 and 45001 certificates.
-  Org Chart\                The QA/QC Department Organization Chart template.
-  UAE Cover Page.png        Cover page reference.
-
 
 2. OPENING THE APP
 ------------------
