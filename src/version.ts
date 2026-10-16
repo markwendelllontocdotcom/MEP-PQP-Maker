@@ -1,11 +1,16 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.3.1';
+export const APP_VERSION = '1.3.2';
 export const APP_DATE = '16 Oct 2026';
 export const WEB_URL = 'https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
 
 /** Version history shown on the About page (newest first). Keep README.txt in step. */
 export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.3.2',
+    date: '16 Oct 2026',
+    items: ['The app icon has a transparent background (no white tile) in the browser tab, the installed app on Windows and macOS, and the About page. iPhone and Android home screens keep a white background because they do not allow transparent icons.'],
+  },
   {
     v: '1.3.1',
     date: '16 Oct 2026',

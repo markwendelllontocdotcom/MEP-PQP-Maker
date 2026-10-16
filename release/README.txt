@@ -1,7 +1,7 @@
 PQP MAKER - READ ME
 ===================
 
-Version 1.3.1 (16 Oct 2026)
+Version 1.3.2 (16 Oct 2026)
 Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.
 
 PQP Maker writes the Project Quality Plan (PQP) for an MEP project. You enter the project
@@ -122,6 +122,10 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
 8. VERSION HISTORY
 ------------------
+
+  1.3.2  (16 Oct 2026)
+    - The app icon has a transparent background (no white tile). iPhone and Android home
+      screens keep a white background because they do not allow transparent icons.
 
   1.3.1  (16 Oct 2026)
     - The browser tab shows the app icon in the web version too.

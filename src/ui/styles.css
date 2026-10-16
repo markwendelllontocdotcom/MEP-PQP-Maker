@@ -35,7 +35,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   padding-top: max(10px, env(safe-area-inset-top));
 }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.brand img { border-radius: 7px; box-shadow: 0 0 0 1px rgba(255,255,255,.25); }
+.brand img { display: block; }
 .appname { font-weight: 700; font-size: 18px; line-height: 1.1; }
 .filestate { font-size: 12.5px; color: #c8d3e6; display: flex; gap: 10px; flex-wrap: wrap; }
 .filestate .autosave { color: #9fb3d4; }
@@ -193,7 +193,7 @@ input:hover, select:hover, textarea:hover { border-color: #9fb0c8; }
 /* ---------- About page */
 .about { max-width: 78ch; margin-top: 14px; }
 .about-card { display: flex; gap: 16px; align-items: flex-start; padding: 16px; border: 2px solid var(--navy); border-radius: var(--radius); background: #fbfcfe; }
-.about-card img { flex: none; border-radius: 12px; }
+.about-card img { flex: none; }
 .about-name { font-size: 22px; font-weight: 700; color: var(--navy); line-height: 1.1; }
 .about-ver { margin-top: 2px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .about-tag { margin: 8px 0 0; }
