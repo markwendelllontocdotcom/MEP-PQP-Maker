@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
         ? viteSingleFile({ removeViteModuleLoader: true })
         : VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['icon-32.png', 'icon-180.png'],
+            includeAssets: ['favicon.ico', 'favicon-16.png', 'favicon-32.png', 'icon-32.png', 'icon-180.png'],
             manifest: {
               name: 'PQP Maker',
               short_name: 'PQP Maker',
@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
                 { src: 'icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
               ],
             },
-            workbox: { maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, globPatterns: ['**/*.{js,css,html,png,svg,jpg,json}'] },
+            workbox: { maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, globPatterns: ['**/*.{js,css,html,png,ico,svg,jpg,json}'], ignoreURLParametersMatching: [/^v$/] },
           }),
     ],
     build: {
