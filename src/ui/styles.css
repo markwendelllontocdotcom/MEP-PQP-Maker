@@ -187,6 +187,28 @@ input:hover, select:hover, textarea:hover { border-color: #9fb0c8; }
 /* ---------- footer, overlays */
 .credit { text-align: center; padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); color: var(--muted); font-size: 13px; border-top: 1px solid var(--rule); }
 .credit .ver { margin-left: 6px; color: #8794a6; }
+.credit .about-link { margin-left: 10px; font-size: 13px; }
+.navabout { margin-top: 10px; border-top: 1px solid var(--rule); padding-top: 10px; }
+
+/* ---------- About page */
+.about { max-width: 78ch; margin-top: 14px; }
+.about-card { display: flex; gap: 16px; align-items: flex-start; padding: 16px; border: 2px solid var(--navy); border-radius: var(--radius); background: #fbfcfe; }
+.about-card img { flex: none; border-radius: 12px; }
+.about-name { font-size: 22px; font-weight: 700; color: var(--navy); line-height: 1.1; }
+.about-ver { margin-top: 2px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.about-tag { margin: 8px 0 0; }
+.about section { margin-top: 22px; }
+.about h2 { margin: 0 0 8px; padding-bottom: 5px; border-bottom: 2px solid var(--navy); font-size: 15px; letter-spacing: .04em; text-transform: uppercase; color: var(--navy); }
+.about p, .about li { line-height: 1.55; }
+.about ul, .about ol { margin: 0; padding-left: 22px; }
+.about li + li { margin-top: 5px; }
+.about-steps li::marker { font-weight: 700; color: var(--navy); }
+.about-note { margin: 10px 0 0; color: var(--muted); }
+.about code { font-size: 13px; background: var(--board); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.about-change + .about-change { margin-top: 12px; }
+.about-change h3 { margin: 0 0 4px; font-size: 15px; color: var(--navy-ink); }
+.about-change h3 span { margin-left: 8px; font-weight: 400; font-size: 13px; color: var(--muted); }
+.about-credit { margin: 26px 0 0; padding-top: 12px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted); }
 .overlay { position: fixed; inset: 0; background: rgba(18, 40, 76, .45); display: grid; place-items: center; z-index: 50; padding: 16px; }
 .busy { background: #fff; padding: 18px 26px; border-radius: var(--radius); font-weight: 700; color: var(--navy); border-left: 4px solid var(--navy); }
 .dialog { background: #fff; border-radius: 8px; max-width: 520px; width: 100%; padding: 20px 22px; max-height: 85vh; overflow: auto; }
@@ -212,6 +234,8 @@ input:hover, select:hover, textarea:hover { border-color: #9fb0c8; }
   .nav { position: static; flex-direction: row; overflow-x: auto; gap: 4px; padding-bottom: 4px; }
   .navitem { flex: none; border-left: 0; border-bottom: 3px solid transparent; border-radius: var(--radius) var(--radius) 0 0; white-space: nowrap; }
   .navitem.active { border-bottom-color: var(--navy); }
+  .navabout { margin-top: 0; border-top: 0; padding-top: 10px; }
+  .about-card { flex-direction: column; }
   .titleblock { order: -1; grid-template-columns: 1fr; }
   .exports { flex-direction: column; }
   .sheet { padding: 16px; }

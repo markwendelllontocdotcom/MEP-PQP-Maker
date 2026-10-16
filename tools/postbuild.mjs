@@ -8,4 +8,5 @@ s = s.replace('href="./icon-32.png"', `href="data:image/png;base64,${b64('icon-3
 writeFileSync(html, s);
 mkdirSync('dist/release', { recursive: true });
 copyFileSync(html, 'dist/release/PQP Maker.html');
+copyFileSync('release/README.txt', 'dist/release/README.txt'); // user guide for the app folder
 console.log('single file', (s.length / 1048576).toFixed(2), 'MB');

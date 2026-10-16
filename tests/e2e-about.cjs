@@ -1,0 +1,33 @@
+// About page: reachable from the side menu and the footer, shows version, export folder and links back to the input groups.
+const { chromium } = require('/opt/npm-tools/node_modules/playwright');
+const OUT = process.argv[2];
+(async () => {
+  const browser = await chromium.launch();
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  const logs = [];
+  page.on('pageerror', (e) => logs.push('PAGEERROR ' + e.message));
+  page.on('console', (m) => { if (m.type() === 'error') logs.push(m.text()); });
+  await page.goto('http://localhost:4176/');
+  await page.waitForSelector('.sheet h1');
+  await page.click('.nav >> text=About PQP Maker');
+  await page.waitForSelector('.about');
+  console.log('Title:', await page.textContent('.sheet h1'), '|', await page.textContent('.about-ver'));
+  console.log('Sections:', JSON.stringify(await page.$$eval('.about h2', (e) => e.map((x) => x.textContent))));
+  await page.screenshot({ path: OUT + '/about.png', fullPage: true });
+  await page.click('.about >> text=PQP Sections');
+  console.log('Link goes to:', await page.textContent('.sheet h1'));
+  await page.click('.credit >> text=About');
+  console.log('Footer link opens:', await page.textContent('.sheet h1'));
+  const m = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const mp = await m.newPage();
+  await mp.goto('http://localhost:4176/');
+  await mp.waitForSelector('.sheet h1');
+  await mp.click('.nav >> text=About PQP Maker');
+  await mp.waitForSelector('.about');
+  const over = await mp.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
+  console.log('Phone: horizontal scroll', over);
+  await mp.screenshot({ path: OUT + '/about-phone.png' });
+  console.log('Errors:', JSON.stringify(logs));
+  await browser.close();
+})();

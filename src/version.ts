@@ -1,4 +1,26 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.0.0';
-export const APP_DATE = '15 Oct 2026';
+export const APP_VERSION = '1.1.0';
+export const APP_DATE = '16 Oct 2026';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
+
+/** Version history shown on the About page (newest first). Keep README.txt in step. */
+export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.1.0',
+    date: '16 Oct 2026',
+    items: [
+      'Exports can be saved straight into a folder you choose, such as the project folder or Samples (Edge and Chrome).',
+      'Annexure 8.1 is drawn as the QA/QC Department Organization Chart. Key Personnel follows the chart, with a live preview.',
+      'Annexure 8.2 prints the ISO certificates of the standards ticked under 5. Quality System.',
+      'Cover photo box 16.5 × 11.6 cm, centred, with the photo stretched to 16 × 11 cm.',
+      'Project Information shows the project number as P### and one or more project types. Contract dates are no longer printed.',
+      'Short tables in the PDF move to the next page whole instead of splitting.',
+      'This About page.',
+    ],
+  },
+  {
+    v: '1.0.0',
+    date: '15 Oct 2026',
+    items: ['First release: project data entry, PQP generated from the R1 template, Word and PDF export, autosave and project files (.pqp).'],
+  },
+];

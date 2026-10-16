@@ -12,6 +12,7 @@ import { canPickFolder, loadExportDir, chooseExportDir, forgetExportDir, ensureW
 import { ASSET_URLS } from './platform-browser';
 import { Row, TextInput, TextArea, Select, Multi, Toggle, ImagePick, Images, PersonInput, People, Persons, Revisions, Forms, Calc, Certs } from './ui/controls';
 import { OrgPreview } from './ui/orgpreview';
+import { About } from './ui/about';
 import { QE_MAX } from './content/orgchart';
 import { APP_NAME, APP_VERSION, CREDIT } from './version';
 import iconUrl from './assets/icon.svg?inline';
@@ -255,7 +256,8 @@ export function App() {
 
   const groupFields = FIELDS.filter((f) => f.group === group);
   const groupIssues = (g: string) => FIELDS.filter((f) => f.group === g && (fieldError(f, p) || (f.mandatory && missing.includes(f)))).length;
-  const title = GROUPS.find((g) => g.id === group)!.title;
+  const isAbout = group === 'about';
+  const title = isAbout ? 'About PQP Maker' : GROUPS.find((g) => g.id === group)!.title;
   const ref = docRef(p);
 
   return (
@@ -294,15 +296,20 @@ export function App() {
               </button>
             );
           })}
+          <button class={'navitem navabout' + (isAbout ? ' active' : '')} onClick={() => setGroup('about')} aria-current={isAbout ? 'page' : undefined}>
+            <span>About PQP Maker</span>
+          </button>
         </aside>
 
         <main class="sheet" aria-labelledby="sheet-title">
           <h1 id="sheet-title">{title}</h1>
+          {isAbout ? <About exportFolder={exportDir?.name || null} canPickFolder={canPickFolder} onGo={setGroup} /> : <>
           {group === 'branding' && <p class="lead">These come from Settings for each new project. Change them here for this project only.</p>}
           {group === 'revisions' && <p class="lead">The last row sets the revision shown on the cover and in the footer.</p>}
           {group === 'annex' && <p class="lead">Annexure 8.1 (organisation chart) is drawn from Key Personnel. Annexure 8.5 lists the Method Statements for the selected disciplines.</p>}
           {group === 'people' && <OrgPreview p={p} />}
           <div class="fields">{groupFields.map((f) => <>{f.section && <h2 class="subhead">{f.section}</h2>}{render(f)}</>)}</div>
+          </>}
         </main>
 
         <aside class="titleblock" aria-label="Document summary">
@@ -341,7 +348,7 @@ export function App() {
         </aside>
       </div>
 
-      <footer class="credit">{CREDIT} <span class="ver">v{APP_VERSION}</span></footer>
+      <footer class="credit">{CREDIT} <span class="ver">v{APP_VERSION}</span> <button class="linkbtn about-link" onClick={() => { setGroup('about'); window.scrollTo({ top: 0 }); }}>About</button></footer>
 
       {busy && <div class="overlay" role="status"><div class="busy">{busy}</div></div>}
       {toast && <div class="toast" role="status">{toast}</div>}

@@ -37,3 +37,7 @@ python3 tools/extract_r1.py   # rebuild src/content/r1.json from tools/R1.docx a
 - `src/gen/docx.ts` writes the Word file. It uses R1's styles and numbering and adds one multilevel list for the section numbers.
 - `src/gen/pdf.ts` writes the PDF with pdfmake. It uses Carlito, which has the same metrics as Calibri.
 - `src/app.tsx` is the interface. `src/storage.ts` handles autosave (IndexedDB), and `src/files.ts` handles `.pqp` files.
+
+## User guide
+
+`release/README.txt` is the plain-text guide that goes in the app folder next to `PQP Maker.html` (the build copies it to `dist/release/`). The same information is on the app's About page. Keep its version history in step with `CHANGES` in `src/version.ts`.
