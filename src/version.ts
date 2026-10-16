@@ -1,10 +1,16 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.1.1';
+export const APP_VERSION = '1.2.0';
 export const APP_DATE = '16 Oct 2026';
+export const WEB_URL = 'https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
 
 /** Version history shown on the About page (newest first). Keep README.txt in step. */
 export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.2.0',
+    date: '16 Oct 2026',
+    items: ['Published on the web. The web version can be installed as an app on Windows, macOS, iPhone and iPad.'],
+  },
   {
     v: '1.1.1',
     date: '16 Oct 2026',

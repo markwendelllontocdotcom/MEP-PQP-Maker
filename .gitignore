@@ -4,3 +4,4 @@ samples/
 tools/R1.docx
 tests/dbg.ts
 *.log
+tests/fixtures/cover-sample.jpg

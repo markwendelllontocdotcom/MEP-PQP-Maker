@@ -1,4 +1,4 @@
-import { APP_NAME, APP_VERSION, APP_DATE, CREDIT, CHANGES } from '../version';
+import { APP_NAME, APP_VERSION, APP_DATE, CREDIT, CHANGES, WEB_URL } from '../version';
 import iconUrl from '../assets/icon.svg?inline';
 
 /** About page: what the app is, how to use it, where the data lives and what changed. */
@@ -48,7 +48,18 @@ export function About(props: { exportFolder: string | null; canPickFolder: boole
           <li>Everything stays on this device. There is no login and nothing is uploaded.</li>
           <li>The current project is autosaved in this browser about a second after each change, so it is still there when you reopen the app.</li>
           <li>Browser storage can be cleared (for example by clearing browsing data), so save important projects as .pqp files as well.</li>
-          <li>The app works offline. Open <b>PQP Maker.html</b> from the project folder in Edge or Chrome.</li>
+          <li>The app works offline: open <b>PQP Maker.html</b> from the project folder, or the installed web version.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Web version and installing</h2>
+        <ul>
+          <li>PQP Maker is also on the web at <a href={WEB_URL} target="_blank" rel="noopener">{WEB_URL.replace('https://', '').replace(/\/$/, '')}</a>. Only the app comes from the web; your projects still stay on your device.</li>
+          <li><b>Windows or macOS:</b> open the link in Edge or Chrome and click the <b>Install</b> icon at the right of the address bar (or the browser menu, then Apps, then Install PQP Maker). It then opens like any program and works offline.</li>
+          <li><b>iPhone or iPad:</b> open the link in Safari, tap <b>Share</b>, then <b>Add to Home Screen</b>.</li>
+          <li>The web version keeps its own autosave, separate from PQP Maker.html. To move a project between them, Save it as a .pqp file and Open it in the other one.</li>
+          <li>The web version updates itself: after an update, the new version loads the next time you open it.</li>
         </ul>
       </section>
 

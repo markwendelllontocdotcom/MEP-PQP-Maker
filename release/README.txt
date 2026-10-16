@@ -1,7 +1,7 @@
 PQP MAKER - READ ME
 ===================
 
-Version 1.1.1 (16 Oct 2026)
+Version 1.2.0 (16 Oct 2026)
 Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.
 
 PQP Maker writes the Project Quality Plan (PQP) for an MEP project. You enter the project
@@ -16,7 +16,7 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   Samples\                  Sample PQPs (Word and PDF) printed from the test data, updated
                             whenever the layout changes. You can also send test exports here.
   Source\                   The program source (zip). Only needed to change or rebuild the app.
-  P### Project Name\        One folder per project (for example P122 ...), holding the project
+  P### Project Name\        One folder per project (for example P101 ...), holding the project
                             file (.pqp) and its exported PQPs.
   Project Quality Plan - Template R1.docx
                             The company template the PQP text comes from.
@@ -29,9 +29,19 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 2. OPENING THE APP
 ------------------
 
+  From this folder:
   - Double-click PQP Maker.html. It opens in your web browser (Edge or Chrome recommended).
   - No installation, login or internet connection is needed.
   - Tip: pin the browser tab or add it to your favourites to open it quickly.
+
+  From the web (any device):
+  - Open https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/
+  - Windows or macOS (Edge or Chrome): click the Install icon at the right of the address
+    bar (or the browser menu > Apps > Install PQP Maker). It then opens like any program,
+    from the Start menu or the Dock, and works offline.
+  - iPhone or iPad: open the link in Safari, tap Share, then Add to Home Screen.
+  - The web version keeps its own autosave, separate from the copy in this folder. To move
+    a project between them, Save it as a .pqp file and Open it in the other one.
 
 
 3. MAKING A PQP
@@ -63,7 +73,7 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 --------------------------
 
   - Edge or Chrome on a laptop: on the first export the app asks for a folder. Choose the
-    project's own folder (for example P122 ...) or Samples. Every Word and PDF export is then
+    project's own folder (for example P101 ...) or Samples. Every Word and PDF export is then
     saved straight into it. Exporting the same Doc Ref and Rev again replaces the older file.
   - To change the folder, click "Choose folder" under the export buttons. "Use Downloads"
     sends exports to your Downloads folder instead.
@@ -88,7 +98,8 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 6. YOUR DATA
 ------------
 
-  - Everything stays on this computer. There is no login and nothing is uploaded.
+  - Everything stays on this computer. There is no login and nothing is uploaded, also
+    when you use the web version: only the app itself comes from the web.
   - Project data is kept only in your .pqp files and in this browser's storage.
 
 
@@ -99,11 +110,17 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   - Replace PQP Maker.html in this folder with the new copy.
   - Open it. Your .pqp files open in the new version. Projects saved by older versions are
     brought up to date automatically.
+  - The web version updates itself: the next time you open it after an update, the new
+    version loads.
   - The app's About page (bottom of the menu on the left) shows the version and what changed.
 
 
 8. VERSION HISTORY
 ------------------
+
+  1.2.0  (16 Oct 2026)
+    - Published on the web at https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/
+      It can be installed as an app on Windows, macOS, iPhone and iPad.
 
   1.1.1  (16 Oct 2026)
     - The Project Information table lists Project, Project Number, Location, Our Role and

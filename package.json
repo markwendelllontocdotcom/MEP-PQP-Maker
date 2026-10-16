@@ -1,7 +1,7 @@
 {
   "name": "pqp-maker",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.2.0",
   "type": "module",
   "description": "PQP Maker - Project Quality Plan generator (PWA). Developed by Mark Lontoc | Dubai, United Arab Emirates | (c) 2026 MLWorks. All rights reserved.",
   "scripts": {
@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "vite build && vite build --mode single && node tools/postbuild.mjs",
     "samples": "tsx tests/make_samples.ts",
-    "test": "tsx tests/unit.ts"
+    "test": "tsx tests/unit.ts",
+    "pages": "npm run build && node tools/pages.mjs"
   },
   "dependencies": {
     "idb-keyval": "6.2.1",
@@ -27,5 +28,6 @@
     "vite": "6.3.5",
     "vite-plugin-pwa": "1.0.0",
     "vite-plugin-singlefile": "2.2.0"
-  }
+  },
+  "homepage": "https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/"
 }

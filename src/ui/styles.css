@@ -248,3 +248,4 @@ input:hover, select:hover, textarea:hover { border-color: #9fb0c8; }
   .rrow > div { padding: 3px 0; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+.about a { color: var(--focus); font-weight: 700; overflow-wrap: anywhere; }
