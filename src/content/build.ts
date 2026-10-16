@@ -205,15 +205,13 @@ export async function buildDoc(p: Project, s: Settings, plat: Platform): Promise
         }
         P([txt('Project Information', { b: 1, u: 1 })], 567, { keep: true, jc: 'left' });
         const loc = [p.P05.trim(), p.P04, 'UAE'].filter(Boolean).join(', ');
+        // rows as agreed 16 Oct 2026: Project Type, Contract Type and Approving Authorities are not printed here
         const info: [string, string][] = [
           ['Project', p.P01 || '[Project Name]'],
           ['Project Number', /^\d+$/.test(p.P02) ? 'P' + p.P02 : p.P02 || '[XXX]'],
           ['Location', loc],
-          ['Project Type', (p.P06 || []).join(', ')],
-          ['Contract Type', p.P09],
           ['Our Role', p.R05],
           ['Building Configuration / Description', p.P13.trim()],
-          ['Approving Authorities', authorityList(true).join(', ')],
         ];
         const rows: Row[] = info.filter(([, v]) => v).map(([k, v]) => ({ c: [cell(k, { bold: true, fill: 'F2F2F2' }), cell(v)] }));
         out.push({ t: 'tbl', grid: [3000, CONTENT_W - 567 - 3000], rows, ind: 567 });

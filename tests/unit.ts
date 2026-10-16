@@ -40,3 +40,15 @@ ok(mg.CERTS.length === 4 && mg.CERTS[0].no === 'CN011157', 'Older project: ISO c
   ok(boxes(1) === 1 && boxes(2) === 2 && boxes(3) === 3 && boxes(5) === 3, 'Chart draws one QA/QC Engineer box per row (1 to 3)');
   ok(allErrors({ ...p, K03: [{ name: 'X', email: 'bad', phone: '' }] }).some((e) => e.f.id === 'K03'), 'QA/QC Engineer email checked');
 }
+// Project Information table rows (16 Oct 2026)
+{
+  const { buildDoc } = await import('../src/content/build');
+  const { nodePlatform } = await import('./node-platform');
+  const m = await buildDoc(p, s, nodePlatform);
+  const t: any = m.blocks.find((b: any) => b.t === 'tbl' && JSON.stringify(b).includes('"Project Number"'));
+  const labels = (t?.rows || []).map((r: any) => (JSON.stringify(r.c[0]).match(/"x":"([^"]*)"/) || [])[1]);
+  ok(labels.join('|') === 'Project|Project Number|Location|Our Role', 'Project Information rows: Project, Project Number, Location, Our Role (+ Building Configuration when filled)');
+  const m2 = await buildDoc({ ...p, P13: 'B+G+20+R' }, s, nodePlatform);
+  const t2: any = m2.blocks.find((b: any) => b.t === 'tbl' && JSON.stringify(b).includes('"Project Number"'));
+  ok(t2.rows.length === 5 && !JSON.stringify(t2).includes('Approving Authorities') && !JSON.stringify(t2).includes('Contract Type') && !JSON.stringify(t2).includes('Project Type'), 'No Project Type, Contract Type or Approving Authorities rows');
+}

@@ -1,10 +1,17 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.1.0';
+export const APP_VERSION = '1.1.1';
 export const APP_DATE = '16 Oct 2026';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
 
 /** Version history shown on the About page (newest first). Keep README.txt in step. */
 export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.1.1',
+    date: '16 Oct 2026',
+    items: [
+      'The Project Information table lists Project, Project Number, Location, Our Role and Building Configuration. Project Type, Contract Type and Approving Authorities are no longer printed there; the approving authorities still appear in 5.18 and 5.21.',
+    ],
+  },
   {
     v: '1.1.0',
     date: '16 Oct 2026',

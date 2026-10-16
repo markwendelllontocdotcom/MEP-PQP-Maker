@@ -1,7 +1,7 @@
 PQP MAKER - READ ME
 ===================
 
-Version 1.1.0 (16 Oct 2026)
+Version 1.1.1 (16 Oct 2026)
 Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.
 
 PQP Maker writes the Project Quality Plan (PQP) for an MEP project. You enter the project
@@ -104,6 +104,11 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
 8. VERSION HISTORY
 ------------------
+
+  1.1.1  (16 Oct 2026)
+    - The Project Information table lists Project, Project Number, Location, Our Role and
+      Building Configuration. Project Type, Contract Type and Approving Authorities are no
+      longer printed there; the approving authorities still appear in 5.18 and 5.21.
 
   1.1.0  (16 Oct 2026)
     - Exports can be saved straight into a folder you choose (Edge and Chrome).
