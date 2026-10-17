@@ -26,7 +26,9 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
     2026 ISO CERTIFICATES\                    the ISO 9001, 14001 and 45001 certificates
     Org Chart\                                the QA/QC Department Organization Chart template
     UAE Cover Page.png                        cover page reference
-  PQP Maker.csv / .xlsx     The list of input fields.
+    PQP Maker - Instruction.xlsx              the original brief and input fields list
+  PQP Maker.csv             The original input fields list (the app's current fields are
+                            described on its About page and in this guide).
 
 2. OPENING THE APP
 ------------------
