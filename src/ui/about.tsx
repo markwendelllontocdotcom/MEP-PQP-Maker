@@ -25,7 +25,8 @@ export function About(props: { exportFolder: string | null; canPickFolder: boole
         <ol class="about-steps">
           <li>Fill in the groups on the left, from {go('project', '1. Project Information')} to {go('annex', '7. Annexures')}. A red number shows how many entries are still empty or need fixing. Fields marked <span class="req">*</span> are required.</li>
           <li>Untick any section you do not need under {go('sections', 'PQP Sections')}. The sections after it are renumbered.</li>
-          <li>Check the summary box on the right (Doc Ref, Rev, date and status), then click <b>Export Word (.docx)</b> or <b>Export PDF</b>. Entries that are not allowed, such as a project code with a space in it, stop the export and are listed so you can fix them.</li>
+          <li>Open {go('review', 'Review')} to check the PQP before it goes out: what still needs fixing, the key details and a preview of every page.</li>
+          <li>Click <b>Export Word (.docx)</b> or <b>Export PDF</b>, or <b>Print</b>. Entries that are not allowed, such as a project code with a space in it, stop the export and the print and are listed so you can fix them.</li>
           <li>Click <b>Save</b> to keep the project as a <b>.pqp</b> file. <b>Open</b> brings it back later for the next revision.</li>
         </ol>
         <p class="about-note">Want to see a finished PQP first? <b>Load sample data</b> fills every field with made-up test data.</p>

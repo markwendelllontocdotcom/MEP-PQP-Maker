@@ -1,7 +1,7 @@
 PQP MAKER - READ ME
 ===================
 
-Version 1.4.0 (17 Oct 2026)
+Version 1.5.0 (17 Oct 2026)
 Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.
 
 PQP Maker writes the Project Quality Plan (PQP) for an MEP project. You enter the project
@@ -62,10 +62,15 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
      DXB-243 gives OPEM-DXB-243-QM-PQP-001 and P122 gives OPEM-P122-QM-PQP-001.
   2. Under PQP Sections, untick any section you do not need. The sections after it are
      renumbered automatically, including the "Refer Annexure" references.
-  3. Check the summary box on the right (Doc Ref, Rev, date and status).
-  4. Click Export Word (.docx) or Export PDF.
+  3. Click Review (left menu or toolbar) for a quick check before the PQP goes out:
+     - what still needs fixing, ISO certificate warnings, sections left out and whether
+       the project file is saved
+     - a preview of the whole PQP, page by page (the same PDF that Export PDF saves)
+     - the key details at a glance (cover, document control, scope, key personnel and
+       annexures), each with an Edit link
+  4. Click Export Word (.docx) or Export PDF, or Print.
      Entries that are not allowed (for example a project code with a space) stop the export
-     and are listed so you can fix them.
+     and the print and are listed so you can fix them.
   5. Click Save to keep the project as a .pqp file in the project's folder.
 
   Exported files are named:  <Doc Ref> Rev <NN> - PQP - <Project name>.docx / .pdf
@@ -73,6 +78,10 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
   Want to see a finished PQP first? Click "Load sample data" to fill every field with
   made-up test data. (Save your own project first: this replaces what is on screen.)
+
+  Print: in Edge and Chrome (web version and installed app) the print dialog opens straight
+  away. In the double-click copy of PQP Maker.html, Safari and iPhone the PDF opens in a new
+  tab: print it from there with Ctrl+P (Cmd+P on a Mac), the printer icon, or Share > Print.
 
   The Word file updates its table of contents when it opens. If Word asks "This document
   contains fields that may refer to other files. Do you want to update the fields in this
@@ -127,6 +136,13 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
 8. VERSION HISTORY
 ------------------
+
+  1.5.0  (17 Oct 2026)
+    - Review page (Review in the left menu and the toolbar): what still needs fixing, ISO
+      certificate warnings, sections left out and whether the project file is saved; a
+      preview of the whole PQP, page by page; and the key details with Edit links.
+    - Print button in the toolbar, under the export buttons and on the Review page.
+    - Export PDF right after a review or a print is instant: the same PDF is reused.
 
   1.4.0  (17 Oct 2026)
     - Project Number is now Project Code & Project Number. It takes letters, numbers and

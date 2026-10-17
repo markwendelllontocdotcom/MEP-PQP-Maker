@@ -21,9 +21,10 @@ Your projects never leave the device: there is no login, no server and no upload
 1. **New** starts a blank project with the Oxypro defaults. **Load sample data** fills fictitious test data.
 2. Fill in the groups on the left. A red number shows how many fields in a group still need attention. Required fields are marked `*`.
 3. **PQP Sections** lets you leave out any section. The sections after it are renumbered and the "Refer Annexure" references follow.
-4. **Export Word** and **Export PDF** create `<Doc Ref> Rev <NN> - PQP - <Project>.docx / .pdf`. The Doc Ref is `<Prefix>-<Project Code & Project Number>-QM-PQP-001`, with the code printed exactly as typed (for example `OPEM-DXB-243-QM-PQP-001`). Entries that are not allowed (for example a project code with a space) block the export and are listed so you can fix them.
-5. **Export folder** (Edge or Chrome on Windows and macOS): on the first export the app asks for a folder, for example the project's folder. Every Word and PDF export is then saved straight into it (a re-export of the same Doc Ref and Rev replaces the older file) and Save starts there too. Change it under the export buttons, or choose **Use Downloads**. On iPhone, Safari and Firefox exports go to the Downloads folder.
-6. When Word opens the file it asks to update fields. Choose **Yes** so the table of contents shows Word's page numbers.
+4. **Review** (left menu or toolbar) shows what still needs fixing, the key details and a preview of the whole PQP before it goes out. **Print** opens the print dialog in Edge and Chrome; in the double-click copy, Safari and iPhone the PDF opens in a new tab to print from.
+5. **Export Word** and **Export PDF** create `<Doc Ref> Rev <NN> - PQP - <Project>.docx / .pdf`. The Doc Ref is `<Prefix>-<Project Code & Project Number>-QM-PQP-001`, with the code printed exactly as typed (for example `OPEM-DXB-243-QM-PQP-001`). Entries that are not allowed (for example a project code with a space) block the export and are listed so you can fix them.
+6. **Export folder** (Edge or Chrome on Windows and macOS): on the first export the app asks for a folder, for example the project's folder. Every Word and PDF export is then saved straight into it (a re-export of the same Doc Ref and Rev replaces the older file) and Save starts there too. Change it under the export buttons, or choose **Use Downloads**. On iPhone, Safari and Firefox exports go to the Downloads folder.
+7. When Word opens the file it asks to update fields. Choose **Yes** so the table of contents shows Word's page numbers.
 
 Work is saved automatically on the device about a second after each change. **Save / Save as** writes a `.pqp` project file you can keep with the project records or move to another device. **Open** reads it back. The **About** page in the app (bottom of the left menu) has the full guide and the version history.
 
@@ -41,7 +42,7 @@ python3 tools/extract_r1.py   # rebuild src/content/r1.json from tools/R1.docx a
 - `src/content/build.ts` turns the project data and R1 content into one document model.
 - `src/gen/docx.ts` writes the Word file. It uses R1's styles and numbering and adds one multilevel list for the section numbers.
 - `src/gen/pdf.ts` writes the PDF with pdfmake. It uses Carlito, which has the same metrics as Calibri.
-- `src/app.tsx` is the interface. `src/storage.ts` handles autosave (IndexedDB), `src/files.ts` handles `.pqp` files and `src/exportdir.ts` the export folder.
+- `src/app.tsx` is the interface (toolbar, menu and summary panel). `src/ui/review.tsx` is the Review page and `src/print.ts` handles printing. `src/storage.ts` handles autosave (IndexedDB), `src/files.ts` handles `.pqp` files and `src/exportdir.ts` the export folder.
 - `src/version.ts` holds the version and the What's new list shown on the About page.
 
 ## Publishing

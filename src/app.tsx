@@ -7,12 +7,14 @@ import { docRef, revLabel, dmy, durationDays, DOC_REF_FORMAT } from './model/for
 import { sectionUnits } from './content/build';
 import { store } from './storage';
 import { saveProjectFile, openProjectFile, type Handle } from './files';
-import { exportWord, exportPdf } from './exporter';
+import { exportWord, exportPdf, pdfFor } from './exporter';
+import { printPdf, openPdfTab, isIOS } from './print';
 import { canPickFolder, loadExportDir, chooseExportDir, forgetExportDir, ensureWritable, wasAsked, markAsked } from './exportdir';
 import { ASSET_URLS } from './platform-browser';
 import { Row, TextInput, TextArea, Select, Multi, Toggle, ImagePick, Images, PersonInput, People, Persons, Revisions, Forms, Calc, Certs } from './ui/controls';
 import { OrgPreview } from './ui/orgpreview';
 import { About } from './ui/about';
+import { Review } from './ui/review';
 import { QE_MAX } from './content/orgchart';
 import { APP_NAME, APP_VERSION, CREDIT } from './version';
 import iconUrl from './assets/icon-app.png?inline';
@@ -155,15 +157,49 @@ export function App() {
     setToast(r.handle ? `Saved to ${r.name}` : `Downloaded ${r.name}`);
   };
 
-  const exportDoc = (kind: 'word' | 'pdf') => {
+  /** Entries that are not allowed stop exporting and printing; empty required fields ask first. */
+  const prechecked = (verb: 'exporting' | 'printing', go: () => void) => {
     if (errors.length) {
       setDialog({
-        title: `Fix ${errors.length} ${errors.length === 1 ? 'entry' : 'entries'} before exporting`,
+        title: `Fix ${errors.length} ${errors.length === 1 ? 'entry' : 'entries'} before ${verb}`,
         body: <ul class="issues">{errors.map((e) => <li><button class="linkbtn" onClick={() => { setDialog(null); goTo(e.f); }}>{e.f.label}</button>: {e.msg}</li>)}</ul>,
         actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }],
       });
       return;
     }
+    if (missing.length) {
+      setDialog({
+        title: `${missing.length} required ${missing.length === 1 ? 'field is' : 'fields are'} empty`,
+        body: <><p>They will show as placeholders such as [PROJECT NAME] in the document.</p><ul class="issues">{missing.slice(0, 12).map((f) => <li><button class="linkbtn" onClick={() => { setDialog(null); goTo(f); }}>{f.label}</button></li>)}{missing.length > 12 && <li>and {missing.length - 12} more</li>}</ul></>,
+        actions: [{ label: 'Go back', run: () => setDialog(null) }, { label: verb === 'printing' ? 'Print anyway' : 'Export anyway', primary: true, run: go }],
+      });
+    } else go();
+  };
+
+  const doPrint = () => prechecked('printing', async () => {
+    setDialog(null);
+    setBusy('Preparing the print…');
+    try {
+      const pdf = await pdfFor(p, settings);
+      setBusy('');
+      if (await printPdf(pdf.url)) return;
+      // the double-click copy, Safari and iPhone print from the PDF itself
+      setDialog({
+        title: 'Print from the PDF',
+        body: <p>The PQP ({pdf.pages} pages) opens as a PDF in a new tab. Print it from there: {isIOS ? 'tap Share, then Print' : 'press Ctrl+P (Cmd+P on a Mac) or click the printer icon'}.</p>,
+        actions: [
+          { label: 'Cancel', run: () => setDialog(null) },
+          { label: 'Open PDF', primary: true, run: () => { setDialog(null); if (!openPdfTab(pdf.url)) setToast('The browser blocked the new tab. Use Export PDF and print the file.'); } },
+        ],
+      });
+    } catch (e: any) {
+      console.error(e);
+      setBusy('');
+      setDialog({ title: 'Print failed', body: <p>{e?.message || String(e)}</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] });
+    }
+  });
+
+  const exportDoc = (kind: 'word' | 'pdf') => {
     const run = async (picked?: any) => {
       setDialog(null);
       let dir = picked !== undefined ? picked : exportDir;
@@ -190,13 +226,7 @@ export function App() {
         ],
       });
     };
-    if (missing.length) {
-      setDialog({
-        title: `${missing.length} required ${missing.length === 1 ? 'field is' : 'fields are'} empty`,
-        body: <><p>They will show as placeholders such as [PROJECT NAME] in the document.</p><ul class="issues">{missing.slice(0, 12).map((f) => <li><button class="linkbtn" onClick={() => { setDialog(null); goTo(f); }}>{f.label}</button></li>)}{missing.length > 12 && <li>and {missing.length - 12} more</li>}</ul></>,
-        actions: [{ label: 'Go back', run: () => setDialog(null) }, { label: 'Export anyway', primary: true, run: start }],
-      });
-    } else start();
+    prechecked('exporting', start);
   };
 
   const pickFolder = async (): Promise<any> => {
@@ -258,7 +288,10 @@ export function App() {
   const groupFields = FIELDS.filter((f) => f.group === group);
   const groupIssues = (g: string) => FIELDS.filter((f) => f.group === g && (fieldError(f, p) || (f.mandatory && missing.includes(f)))).length;
   const isAbout = group === 'about';
-  const title = isAbout ? 'About PQP Maker' : GROUPS.find((g) => g.id === group)!.title;
+  const isReview = group === 'review';
+  const title = isAbout ? 'About PQP Maker' : isReview ? 'Review' : GROUPS.find((g) => g.id === group)!.title;
+  const leftOut = numberedUnits(new Set(p.Q08off), settings.companyShort || 'OXYPRO').filter((u) => !u.on && !u.parentOff).map((u) => u.title.replace(' (added)', ''));
+  const openReview = () => { setGroup('review'); window.scrollTo({ top: 0 }); };
   const ref = docRef(p);
 
   return (
@@ -281,6 +314,9 @@ export function App() {
           <button class="btn bar" onClick={() => doSave(true)}>Save as</button>
           <button class="btn bar" onClick={doSample}>Load sample data</button>
           <span class="sep" />
+          <button class="btn bar" onClick={openReview}>Review</button>
+          <button class="btn bar" onClick={doPrint}>Print</button>
+          <span class="sep" />
           <button class="btn bar primary" onClick={() => exportDoc('word')}>Export Word</button>
           <button class="btn bar primary" onClick={() => exportDoc('pdf')}>Export PDF</button>
         </nav>
@@ -297,6 +333,10 @@ export function App() {
               </button>
             );
           })}
+          <button class={'navitem navreview' + (isReview ? ' active' : '')} onClick={() => setGroup('review')} aria-current={isReview ? 'page' : undefined}>
+            <span>Review</span>
+            <span class="navhint">before export</span>
+          </button>
           <button class={'navitem navabout' + (isAbout ? ' active' : '')} onClick={() => setGroup('about')} aria-current={isAbout ? 'page' : undefined}>
             <span>About PQP Maker</span>
           </button>
@@ -304,7 +344,10 @@ export function App() {
 
         <main class="sheet" aria-labelledby="sheet-title">
           <h1 id="sheet-title">{title}</h1>
-          {isAbout ? <About exportFolder={exportDir?.name || null} canPickFolder={canPickFolder} onGo={setGroup} /> : <>
+          {isAbout ? <About exportFolder={exportDir?.name || null} canPickFolder={canPickFolder} onGo={setGroup} /> : isReview ? (
+            <Review p={p} s={settings} errors={errors} missing={missing} leftOut={leftOut} fileName={fileName} dirtyFile={dirtyFile}
+              onGo={setGroup} goTo={goTo} onExport={exportDoc} onPrint={doPrint} onSave={() => doSave(false)} />
+          ) : <>
           {group === 'branding' && <p class="lead">These come from Settings for each new project. Change them here for this project only.</p>}
           {group === 'revisions' && <p class="lead">The last row sets the revision shown on the cover and in the footer.</p>}
           {group === 'annex' && <p class="lead">Annexure 8.1 (organisation chart) is drawn from Key Personnel. Annexure 8.5 lists the Method Statements for the selected disciplines.</p>}
@@ -331,10 +374,12 @@ export function App() {
                 <button class="linkbtn" onClick={() => goTo(errors[0]?.f || missing[0])}>Go to the first one</button>
               </>
             )}
+            {!isReview && <button class="linkbtn rv-link" onClick={openReview}>Review the PQP before exporting</button>}
           </div>
           <div class="exports">
             <button class="btn primary block" onClick={() => exportDoc('word')}>Export Word (.docx)</button>
             <button class="btn block" onClick={() => exportDoc('pdf')}>Export PDF</button>
+            <button class="btn block" onClick={doPrint}>Print</button>
             {canPickFolder ? (
               <div class="expdir">
                 <span class="k">Exports are saved to</span>

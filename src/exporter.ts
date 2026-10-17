@@ -34,8 +34,26 @@ export async function exportWord(p: Project, s: Settings, dir: any | null = null
 }
 
 export async function exportPdf(p: Project, s: Settings, dir: any | null = null): Promise<Saved> {
-  const model = await buildDoc(p, s, browserPlatform);
-  const pdf = await makePdf(model);
+  const pdf = await pdfFor(p, s); // the same PDF the Review page shows, built once per change
   const r = await deliver(pdf.bytes, outputBaseName(p) + '.pdf', 'application/pdf', dir);
-  return { ...r, pages: pdf.pageCount };
+  return { ...r, pages: pdf.pages };
+}
+
+/** The PDF of the current project, kept until the project changes (Review preview, Print, Export PDF). */
+export interface PdfEntry { key: string; bytes: Uint8Array; pages: number; url: string; built: Date }
+let last: PdfEntry | null = null;
+const keyOf = (p: Project) => `${p.id}|${p.modified}`;
+
+export function cachedPdf(p: Project): PdfEntry | null {
+  return last && last.key === keyOf(p) ? last : null;
+}
+
+export async function pdfFor(p: Project, s: Settings): Promise<PdfEntry> {
+  const hit = cachedPdf(p);
+  if (hit) return hit;
+  const key = keyOf(p);
+  const pdf = await makePdf(await buildDoc(p, s, browserPlatform));
+  if (last) { const old = last.url; setTimeout(() => URL.revokeObjectURL(old), 60000); } // an open preview or print may still use it
+  last = { key, bytes: pdf.bytes, pages: pdf.pageCount, url: URL.createObjectURL(new Blob([pdf.bytes], { type: 'application/pdf' })), built: new Date() };
+  return last;
 }

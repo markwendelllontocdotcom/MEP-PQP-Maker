@@ -1,11 +1,20 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.4.0';
+export const APP_VERSION = '1.5.0';
 export const APP_DATE = '17 Oct 2026';
 export const WEB_URL = 'https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
 
 /** Version history shown on the About page (newest first). Keep README.txt in step. */
 export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.5.0',
+    date: '17 Oct 2026',
+    items: [
+      'Review page (Review in the left menu and the toolbar): what still needs fixing, ISO certificate warnings, sections left out and whether the project file is saved; a preview of the whole PQP, page by page (the same PDF that Export PDF saves); and the key details at a glance with Edit links.',
+      'Print button in the toolbar, under the export buttons and on the Review page. In Edge and Chrome the print dialog opens straight away. In the double-click copy, Safari and iPhone the PDF opens in a new tab to print from.',
+      'Export PDF right after a review or a print is instant: the same PDF is reused.',
+    ],
+  },
   {
     v: '1.4.0',
     date: '17 Oct 2026',
