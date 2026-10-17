@@ -8,7 +8,7 @@ const out = process.argv[2];
 const s = defaultSettings();
 const p = testProject(s);
 p.Q01 = ['ISO 9001:2015', 'ISO/IEC 27001:2022', 'ISO 14001:2015', 'ISO 45001:2018'];
-p.P02 = '122'; p.P06 = ['Commercial', 'Residential'];
+p.P02 = 'P122'; p.P06 = ['Commercial', 'Residential'];
 const m = await buildDoc(p, s, nodePlatform);
 const pdf = await makePdf(m); m.tocPages = pdf.pages;
 writeFileSync(out + '/all-certs.pdf', pdf.bytes);

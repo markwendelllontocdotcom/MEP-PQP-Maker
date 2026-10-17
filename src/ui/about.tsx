@@ -25,7 +25,7 @@ export function About(props: { exportFolder: string | null; canPickFolder: boole
         <ol class="about-steps">
           <li>Fill in the groups on the left, from {go('project', '1. Project Information')} to {go('annex', '7. Annexures')}. A red number shows how many entries are still empty or need fixing. Fields marked <span class="req">*</span> are required.</li>
           <li>Untick any section you do not need under {go('sections', 'PQP Sections')}. The sections after it are renumbered.</li>
-          <li>Check the summary box on the right (Doc Ref, Rev, date and status), then click <b>Export Word (.docx)</b> or <b>Export PDF</b>. Entries that are not allowed, such as a 4-digit project number, stop the export and are listed so you can fix them.</li>
+          <li>Check the summary box on the right (Doc Ref, Rev, date and status), then click <b>Export Word (.docx)</b> or <b>Export PDF</b>. Entries that are not allowed, such as a project code with a space in it, stop the export and are listed so you can fix them.</li>
           <li>Click <b>Save</b> to keep the project as a <b>.pqp</b> file. <b>Open</b> brings it back later for the next revision.</li>
         </ol>
         <p class="about-note">Want to see a finished PQP first? <b>Load sample data</b> fills every field with made-up test data.</p>
@@ -34,7 +34,7 @@ export function About(props: { exportFolder: string | null; canPickFolder: boole
       <section>
         <h2>Files and folders</h2>
         <ul>
-          <li><b>Exported PQPs</b> are named <code>Doc Ref Rev NN - PQP - Project name</code>, for example <code>OPEM-P101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20).pdf</code>.</li>
+          <li><b>Exported PQPs</b> are named <code>Doc Ref Rev NN - PQP - Project name</code>, for example <code>OPEM-DXB-101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20).pdf</code>. The Doc Ref is the prefix, then the <b>Project Code &amp; Project Number</b> exactly as typed (no P is added), then QM-PQP-001.</li>
           <li><b>Export folder:</b> {props.canPickFolder
             ? <>exports are saved to <b>{props.exportFolder || 'your Downloads folder'}</b>. Change it with <b>Choose folder</b> under the export buttons, for example to the project's own folder or the Samples folder. A new export with the same Doc Ref and Rev replaces the older file.</>
             : <>on this browser exports go to your Downloads folder. In Edge or Chrome on a laptop you can choose a folder instead.</>}</li>

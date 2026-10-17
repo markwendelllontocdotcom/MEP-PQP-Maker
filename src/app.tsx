@@ -228,7 +228,7 @@ export function App() {
     let ctl: ComponentChildren = null;
     let wide = false;
     switch (f.type) {
-      case 'text': ctl = <TextInput id={id} value={v || ''} numeric={!!f.digits} onInput={(x) => set(f.id, x)} />; break;
+      case 'text': ctl = <TextInput id={id} value={v || ''} numeric={!!f.digits} upper={!!f.code} placeholder={f.code ? 'e.g. DXB-243' : undefined} onInput={(x) => set(f.id, x)} />; break;
       case 'number': ctl = <TextInput id={id} value={v || ''} numeric onInput={(x) => set(f.id, x.trim())} />; break;
       case 'longtext': ctl = <TextArea id={id} value={v || ''} max={f.max} onInput={(x) => set(f.id, x)} rows={f.id === 'A03text' ? 6 : 4} />; wide = true; break;
       case 'date': ctl = <TextInput id={id} type="date" value={v || ''} onInput={(x) => set(f.id, x)} />; break;

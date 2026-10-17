@@ -1,11 +1,21 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.3.2';
-export const APP_DATE = '16 Oct 2026';
+export const APP_VERSION = '1.4.0';
+export const APP_DATE = '17 Oct 2026';
 export const WEB_URL = 'https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
 
 /** Version history shown on the About page (newest first). Keep README.txt in step. */
 export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.4.0',
+    date: '17 Oct 2026',
+    items: [
+      'Project Number is now Project Code & Project Number. It takes letters, numbers and hyphens (for example DXB-243) and is typed in capitals.',
+      'The Doc Ref prints the code exactly as typed, with no P added: OPEM-DXB-243-QM-PQP-001. With no code yet it shows OPEM-[XXX]-QM-PQP-001. Type P122 if you want the P.',
+      'Projects saved earlier keep their Doc Ref: a 3-digit number such as 122 becomes P122 in the field when the project is opened.',
+      'The Project Information table row is renamed Project Code & Project Number.',
+    ],
+  },
   {
     v: '1.3.2',
     date: '16 Oct 2026',

@@ -55,12 +55,23 @@ export function defaultCerts(): CertRow[] {
   ];
 }
 
+/** True when version a (e.g. "1.3.2") is older than b; a missing version counts as older. */
+function older(a: unknown, b: string): boolean {
+  const x = String(a || '0').split('.').map((n) => parseInt(n, 10) || 0), y = b.split('.').map((n) => parseInt(n, 10) || 0);
+  for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) < (y[i] || 0);
+  return false;
+}
+
 /** Brings projects saved by earlier versions up to date. */
 export function migrate(p: any): Project {
   const out = { ...p };
   if (!Array.isArray(out.P06)) out.P06 = out.P06 ? [out.P06] : [];
   // Doc Ref format OPEM-[PXXX]-QM-PQP-001 (16 Oct 2026): the old default prefix OPEM-E becomes OPEM
   if (out.D01 === 'OPEM-E') out.D01 = 'OPEM';
+  // Project Code & Project Number (17 Oct 2026) is printed as typed. Before 1.4.0 the app added the P to a
+  // 3-digit number, so 122 becomes P122 and the Doc Ref of a project saved earlier stays OPEM-P122-QM-PQP-001.
+  if (older(out.appVersion, '1.4.0') && /^\d{3}$/.test(String(out.P02 || '').trim())) out.P02 = 'P' + String(out.P02).trim();
+  out.appVersion = APP_VERSION;
   // Key Personnel follows the QA/QC Department Organization Chart (15 Oct 2026)
   const pers = (x: any): Person => ({ name: x?.name || '', email: x?.email || '', phone: x?.phone || '' });
   if (!Array.isArray(out.K03)) out.K03 = [pers(out.K03), pers(null)];
@@ -142,7 +153,7 @@ export function testProject(s: Settings): Project {
   const p = newProject(s);
   return {
     ...p,
-    P01: 'Sample Residential Tower (G+20)', P02: '101', P03: '26', P04: 'Dubai', P05: 'Plot 000-000, Sample Area',
+    P01: 'Sample Residential Tower (G+20)', P02: 'DXB-101', P03: '26', P04: 'Dubai', P05: 'Plot 000-000, Sample Area',
     P06: ['Residential'], P07: 'Supply, installation, testing and commissioning of MEP works.',
     P08: ['HVAC', 'Plumbing & Drainage', 'Electrical', 'Fire Fighting'], P09: 'Lump Sum',
     P10: '2026-11-01', P11: '2027-12-31', P13: '',

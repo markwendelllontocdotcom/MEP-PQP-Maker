@@ -21,7 +21,7 @@ const OUT = process.argv[2];
   const dur = await page.textContent('#row-P12 .calc span');
   console.log('DocRef:', ref, '| Duration:', dur);
   // validation: bad project number, completion before commencement, Q04 out of range
-  await page.fill('#f-P02', '1234');
+  await page.fill('#f-P02', 'DXB 101');
   await page.fill('#f-P11', '2026-10-01');
   await page.click('text=5. Quality System');
   await page.fill('#f-Q04', '80');
@@ -34,7 +34,8 @@ const OUT = process.argv[2];
   await page.screenshot({ path: OUT + '/03-blocked.png' });
   await page.click('.dialog >> text=OK');
   // fix entries
-  await page.fill('#f-P02', '101');
+  await page.fill('#f-P02', 'dxb-101');
+  console.log('Code typed dxb-101 shows:', await page.inputValue('#f-P02'), '| Doc Ref:', await page.textContent('.tb .ref'));
   await page.fill('#f-P11', '2027-12-31');
   await page.click('text=5. Quality System');
   await page.fill('#f-Q04', '24');

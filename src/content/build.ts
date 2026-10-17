@@ -2,7 +2,7 @@ import r1json from './r1.json';
 import msTitles from './ms-titles.json';
 import type { Project, Settings, ExtraPerson } from '../model/types';
 import { AUTHORITY_NAMES, AUTHORITY_SCOPE, CERT_ORDER } from '../model/defaults';
-import { docRef, revLabel, dmy, durationDays, joinAnd } from '../model/format';
+import { docRef, revLabel, dmy, durationDays, joinAnd, projectCode } from '../model/format';
 import type { Block, DocModel, Run, Platform, Row, Cell, CellPara, ImgAsset } from '../gen/model';
 import { CONTENT_W, NAVY } from '../gen/model';
 import { orgChartSvg } from './orgchart';
@@ -208,7 +208,7 @@ export async function buildDoc(p: Project, s: Settings, plat: Platform): Promise
         // rows as agreed 16 Oct 2026: Project Type, Contract Type and Approving Authorities are not printed here
         const info: [string, string][] = [
           ['Project', p.P01 || '[Project Name]'],
-          ['Project Number', /^\d+$/.test(p.P02) ? 'P' + p.P02 : p.P02 || '[XXX]'],
+          ['Project Code & Project Number', projectCode(p) || '[XXX]'],
           ['Location', loc],
           ['Our Role', p.R05],
           ['Building Configuration / Description', p.P13.trim()],

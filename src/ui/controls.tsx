@@ -30,11 +30,24 @@ export function Row(props: { f: FieldSpec; error?: string | null; children: Comp
   );
 }
 
-export function TextInput(props: { id: string; value: string; onInput: (v: string) => void; numeric?: boolean; placeholder?: string; type?: string }) {
+export function TextInput(props: { id: string; value: string; onInput: (v: string) => void; numeric?: boolean; upper?: boolean; placeholder?: string; type?: string }) {
+  const onInput = (e: Event) => {
+    const el = e.target as HTMLInputElement;
+    if (props.upper) {
+      // capitals as you type, keeping the cursor where it was
+      const up = el.value.toUpperCase();
+      if (up !== el.value && up.length === el.value.length) {
+        const a = el.selectionStart, b = el.selectionEnd;
+        el.value = up;
+        if (a != null && b != null) el.setSelectionRange(a, b);
+      }
+    }
+    props.onInput(el.value);
+  };
   return (
     <input id={props.id} type={props.type || 'text'} value={props.value} placeholder={props.placeholder}
-      inputMode={props.numeric ? 'numeric' : undefined} autoComplete="off"
-      onInput={(e) => props.onInput((e.target as HTMLInputElement).value)} />
+      inputMode={props.numeric ? 'numeric' : undefined} autoComplete="off" spellcheck={props.upper ? false : undefined}
+      autoCapitalize={props.upper ? 'characters' : undefined} onInput={onInput} />
   );
 }
 

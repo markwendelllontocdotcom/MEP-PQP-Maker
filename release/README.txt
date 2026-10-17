@@ -1,7 +1,7 @@
 PQP MAKER - READ ME
 ===================
 
-Version 1.3.2 (16 Oct 2026)
+Version 1.4.0 (17 Oct 2026)
 Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.
 
 PQP Maker writes the Project Quality Plan (PQP) for an MEP project. You enter the project
@@ -19,8 +19,8 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   Source\                   The program source (zip). Only needed to change or rebuild the app.
   Icon\                     The app icon: PQP Maker.ico (for a desktop shortcut), a large PNG
                             and the sizes the app uses (browser tab, installed app, iPhone).
-  P### Project Name\        One folder per project (for example P101 ...), holding the project
-                            file (.pqp) and its exported PQPs.
+  <Code> Project Name\       One folder per project (for example P101 ... or DXB-101 ...),
+                            holding the project file (.pqp) and its exported PQPs.
   Templates\                The reference material the app is built on:
     Project Quality Plan - Template R1.docx   the company template the PQP text comes from
     2026 ISO CERTIFICATES\                    the ISO 9001, 14001 and 45001 certificates
@@ -55,16 +55,19 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   1. Fill in the groups on the left, from 1. Project Information to 7. Annexures.
      A red number on a group shows how many entries are still empty or need fixing.
      Fields marked * are required.
+     Project Code & Project Number: type it the way it should appear in the Doc Ref.
+     Letters, numbers and hyphens, no spaces; capitals are added as you type. For example
+     DXB-243 gives OPEM-DXB-243-QM-PQP-001 and P122 gives OPEM-P122-QM-PQP-001.
   2. Under PQP Sections, untick any section you do not need. The sections after it are
      renumbered automatically, including the "Refer Annexure" references.
   3. Check the summary box on the right (Doc Ref, Rev, date and status).
   4. Click Export Word (.docx) or Export PDF.
-     Entries that are not allowed (for example a 4-digit project number) stop the export
+     Entries that are not allowed (for example a project code with a space) stop the export
      and are listed so you can fix them.
   5. Click Save to keep the project as a .pqp file in the project's folder.
 
   Exported files are named:  <Doc Ref> Rev <NN> - PQP - <Project name>.docx / .pdf
-  For example:  OPEM-P101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20).pdf
+  For example:  OPEM-DXB-101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20).pdf
 
   Want to see a finished PQP first? Click "Load sample data" to fill every field with
   made-up test data. (Save your own project first: this replaces what is on screen.)
@@ -78,7 +81,7 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 --------------------------
 
   - Edge or Chrome on a laptop: on the first export the app asks for a folder. Choose the
-    project's own folder (for example P101 ...) or Samples. Every Word and PDF export is then
+    project's own folder (for example DXB-101 ...) or Samples. Every Word and PDF export is then
     saved straight into it. Exporting the same Doc Ref and Rev again replaces the older file.
   - To change the folder, click "Choose folder" under the export buttons. "Use Downloads"
     sends exports to your Downloads folder instead.
@@ -122,6 +125,16 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
 8. VERSION HISTORY
 ------------------
+
+  1.4.0  (17 Oct 2026)
+    - Project Number is now Project Code & Project Number. It takes letters, numbers and
+      hyphens (for example DXB-243) and is typed in capitals.
+    - The Doc Ref prints the code exactly as typed, with no P added:
+      OPEM-DXB-243-QM-PQP-001. With no code yet it shows OPEM-[XXX]-QM-PQP-001.
+      Type P122 if you want the P.
+    - Projects saved earlier keep their Doc Ref: a 3-digit number such as 122 becomes P122
+      in the field when the project is opened.
+    - The Project Information table row is renamed Project Code & Project Number.
 
   1.3.2  (16 Oct 2026)
     - The app icon has a transparent background (no white tile). iPhone and Android home

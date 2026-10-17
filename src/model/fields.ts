@@ -1,6 +1,6 @@
 import type { Project } from './types';
 import { EMIRATES, PROJECT_TYPES, DISCIPLINES, CONTRACT_TYPES, ROLES, AUTHORITIES, STANDARDS, CODES, STATUSES } from './defaults';
-import { parseISO } from './format';
+import { parseISO, PROJECT_CODE, PROJECT_CODE_MAX } from './format';
 
 export type FieldType =
   | 'text' | 'longtext' | 'number' | 'date' | 'dropdown' | 'multi' | 'image' | 'images'
@@ -17,6 +17,7 @@ export interface FieldSpec {
   min?: number; // numbers
   maxN?: number;
   digits?: number; // exact digit count
+  code?: boolean; // project code: letters, digits and single hyphens, typed in upper case
   maxMB?: number;
   help?: string;
   usedIn?: string;
@@ -38,7 +39,7 @@ export const GROUPS = [
 
 export const FIELDS: FieldSpec[] = [
   { id: 'P01', group: 'project', label: 'Project Name', type: 'text', mandatory: true, max: 150, help: 'Full official project name', usedIn: 'Cover, 2 Scope of Works' },
-  { id: 'P02', group: 'project', label: 'Project Number (XXX)', type: 'text', mandatory: true, digits: 3, help: '3 digits, company job number (e.g. 122). Printed as P122', usedIn: 'Doc Ref, Project Information table' },
+  { id: 'P02', group: 'project', label: 'Project Code & Project Number', type: 'text', mandatory: true, code: true, max: PROJECT_CODE_MAX, help: 'Letters, numbers and hyphens, printed exactly as typed (e.g. DXB-243, P122 or 122)', usedIn: 'Doc Ref, file names, Project Information table' },
   { id: 'P04', group: 'project', label: 'Location / Emirate', type: 'dropdown', mandatory: true, options: EMIRATES, usedIn: 'Cover' },
   { id: 'P05', group: 'project', label: 'Plot No. / Address', type: 'text', mandatory: false, help: 'Plot number and community / area', usedIn: 'Cover' },
   { id: 'P06', group: 'project', label: 'Project Type', type: 'multi', mandatory: false, options: PROJECT_TYPES, help: 'Select one or more', usedIn: 'Not printed (kept with the project for reference)' },
@@ -112,7 +113,8 @@ export function fieldError(f: FieldSpec, p: Project): string | null {
   if (f.type === 'text' || f.type === 'longtext') {
     const s = String(v ?? '');
     if (f.max && s.length > f.max) return `Maximum ${f.max} characters (now ${s.length}).`;
-    if (f.digits && s !== '' && !new RegExp(`^\\d{${f.digits}}$`).test(s)) return `Enter exactly ${f.digits} digits${f.id === 'P02' ? ', e.g. 060' : ''}.`;
+    if (f.digits && s !== '' && !new RegExp(`^\\d{${f.digits}}$`).test(s)) return `Enter exactly ${f.digits} digits.`;
+    if (f.code && s !== '' && !PROJECT_CODE.test(s)) return /\s/.test(s) ? 'No spaces: use a hyphen instead, e.g. DXB-243.' : 'Use letters, numbers and single hyphens only, e.g. DXB-243.';
   }
   if (f.type === 'number') {
     const s = String(v ?? '').trim();

@@ -6,12 +6,15 @@ import { serialise, parseProjectFile } from '../src/files';
 const s = defaultSettings();
 const p = testProject(s);
 const ok = (c: boolean, m: string) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) process.exitCode = 1; };
-ok(docRef(p) === 'OPEM-P101-QM-PQP-001', 'Doc Ref from test data');
-ok(docRef({ ...p, P02: '' }) === 'OPEM-[PXXX]-QM-PQP-001', 'Doc Ref placeholder without a project number');
+ok(docRef(p) === 'OPEM-DXB-101-QM-PQP-001', 'Doc Ref from test data');
+ok(docRef({ ...p, P02: '' }) === 'OPEM-[XXX]-QM-PQP-001', 'Doc Ref placeholder without a project code');
+ok(docRef({ ...p, P02: '122' }) === 'OPEM-122-QM-PQP-001' && docRef({ ...p, P02: 'P122' }) === 'OPEM-P122-QM-PQP-001', 'Doc Ref prints the code as typed, no P added');
+ok(docRef({ ...p, P02: 'dxb-243' }) === 'OPEM-DXB-243-QM-PQP-001', 'Doc Ref code in capitals');
 ok(durationDays(p) === 425, 'Duration 425 days');
 ok(allErrors(p).length === 0, 'Test data has no invalid entries');
 ok(missingMandatory(p).length === 0, 'Test data fills every required field');
-ok(allErrors({ ...p, P02: '1234' }).some((e) => e.f.id === 'P02'), '4-digit project number blocked');
+for (const ok2 of ['DXB-243', 'P122', '122', '1234', 'AB-12-C3']) ok(!allErrors({ ...p, P02: ok2 }).some((e) => e.f.id === 'P02'), `Project code ${ok2} allowed`);
+for (const bad of ['DXB 243', 'DXB/243', '-243', 'DXB--243', 'DXB-', 'DXB_243', 'A'.repeat(21)]) ok(allErrors({ ...p, P02: bad }).some((e) => e.f.id === 'P02'), `Project code "${bad}" blocked`);
 ok(allErrors({ ...p, P11: '2026-10-01' }).some((e) => e.f.id === 'P11'), 'Completion before commencement blocked');
 ok(allErrors({ ...p, Q04: '80' }).some((e) => e.f.id === 'Q04'), 'Q04 = 80 blocked');
 ok(allErrors({ ...p, D03: '1' }).some((e) => e.f.id === 'D03'), '1-digit revision blocked');
@@ -19,8 +22,11 @@ ok(JSON.stringify(parseProjectFile(serialise(p))) === JSON.stringify(p), '.pqp s
 let threw = false; try { parseProjectFile('{"a":1}'); } catch { threw = true; }
 ok(threw, 'Non-project file rejected');
 ok(missingMandatory(newProject(s)).length > 0, 'New project starts with required fields empty');
-ok(outputBaseName(p) === 'OPEM-P101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20)', 'Export file name');
+ok(outputBaseName(p) === 'OPEM-DXB-101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20)', 'Export file name');
 ok(migrate({ ...p, D01: 'OPEM-E' }).D01 === 'OPEM', 'Older project: prefix OPEM-E becomes OPEM');
+ok(migrate({ ...p, appVersion: '1.3.2', P02: '122' }).P02 === 'P122', 'Project saved before 1.4.0: 122 becomes P122 (same Doc Ref as before)');
+ok(migrate({ ...p, appVersion: '1.3.2', P02: 'DXB-243' }).P02 === 'DXB-243', 'Project saved before 1.4.0: a code with letters is kept');
+ok(migrate({ ...p, appVersion: '1.4.0', P02: '122' }).P02 === '122' && migrate(migrate({ ...p, appVersion: '1.0.0', P02: '122' })).P02 === 'P122', 'Project saved by 1.4.0: 122 stays 122; migration runs once');
 import { migrate } from '../src/model/defaults';
 const old: any = { ...p, P06: 'Residential', Q02: 'QMS-0000' }; delete old.CERTS;
 const mg = migrate(old);
@@ -47,10 +53,11 @@ ok(mg.CERTS.length === 4 && mg.CERTS[0].no === 'CN011157', 'Older project: ISO c
   const { buildDoc } = await import('../src/content/build');
   const { nodePlatform } = await import('./node-platform');
   const m = await buildDoc(p, s, nodePlatform);
-  const t: any = m.blocks.find((b: any) => b.t === 'tbl' && JSON.stringify(b).includes('"Project Number"'));
+  const t: any = m.blocks.find((b: any) => b.t === 'tbl' && JSON.stringify(b).includes('"Project Code & Project Number"'));
   const labels = (t?.rows || []).map((r: any) => (JSON.stringify(r.c[0]).match(/"x":"([^"]*)"/) || [])[1]);
-  ok(labels.join('|') === 'Project|Project Number|Location|Our Role', 'Project Information rows: Project, Project Number, Location, Our Role (+ Building Configuration when filled)');
+  ok(labels.join('|') === 'Project|Project Code & Project Number|Location|Our Role', 'Project Information rows: Project, Project Code & Project Number, Location, Our Role (+ Building Configuration when filled)');
+  ok(JSON.stringify(t.rows[1]).includes('"DXB-101"'), 'Project Information shows the code as typed (DXB-101)');
   const m2 = await buildDoc({ ...p, P13: 'B+G+20+R' }, s, nodePlatform);
-  const t2: any = m2.blocks.find((b: any) => b.t === 'tbl' && JSON.stringify(b).includes('"Project Number"'));
+  const t2: any = m2.blocks.find((b: any) => b.t === 'tbl' && JSON.stringify(b).includes('"Project Code & Project Number"'));
   ok(t2.rows.length === 5 && !JSON.stringify(t2).includes('Approving Authorities') && !JSON.stringify(t2).includes('Contract Type') && !JSON.stringify(t2).includes('Project Type'), 'No Project Type, Contract Type or Approving Authorities rows');
 }

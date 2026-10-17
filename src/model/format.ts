@@ -26,11 +26,19 @@ export function durationDays(p: Project): number | null {
   return Math.round((b.getTime() - a.getTime()) / 86400000);
 }
 
-/** [Prefix]-P[XXX]-QM-PQP-001, e.g. OPEM-P122-QM-PQP-001 (format set 16 Oct 2026; was [Prefix]-[YY]-[XXX]-PL-QM-001). */
-export const DOC_REF_FORMAT = '[Prefix]-P[XXX]-QM-PQP-001';
+/** Project Code & Project Number (P02): letters, digits and single hyphens, e.g. DXB-243 or P122 (17 Oct 2026; was 3 digits printed as P###). */
+export const PROJECT_CODE = /^[A-Z0-9]+(-[A-Z0-9]+)*$/i;
+export const PROJECT_CODE_MAX = 20;
+/** The project code as printed (upper case), or '' when it is empty or not allowed. */
+export function projectCode(p: Project): string {
+  const s = String(p.P02 || '').trim();
+  return s.length <= PROJECT_CODE_MAX && PROJECT_CODE.test(s) ? s.toUpperCase() : '';
+}
+
+/** [Prefix]-[Project Code & Number]-QM-PQP-001, e.g. OPEM-DXB-243-QM-PQP-001 (17 Oct 2026; before: OPEM-P122-QM-PQP-001, OPEM-E-26-122-PL-QM-001). */
+export const DOC_REF_FORMAT = '[Prefix]-[Project Code & Number]-QM-PQP-001';
 export function docRef(p: Project): string {
-  const pxxx = /^\d{3}$/.test(p.P02) ? 'P' + p.P02 : '[PXXX]';
-  return `${(p.D01 || '[PREFIX]').trim()}-${pxxx}-QM-PQP-001`;
+  return `${(p.D01 || '[PREFIX]').trim()}-${projectCode(p) || '[XXX]'}-QM-PQP-001`;
 }
 
 export function revLabel(p: Project): string {
@@ -47,7 +55,7 @@ export function safeFileName(s: string): string {
   return s.replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim().slice(0, 150);
 }
 
-/** e.g. "OPEM-P101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20)" */
+/** e.g. "OPEM-DXB-101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20)" */
 export function outputBaseName(p: Project): string {
   const rev = /^\d{2}$/.test(p.D03) ? p.D03 : '00';
   return safeFileName(`${docRef(p)} Rev ${rev} - PQP - ${p.P01 || 'Untitled'}`);
