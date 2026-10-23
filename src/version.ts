@@ -1,11 +1,16 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.5.0';
-export const APP_DATE = '17 Oct 2026';
+export const APP_VERSION = '1.5.1';
+export const APP_DATE = '23 Oct 2026';
 export const WEB_URL = 'https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
 
-/** Version history shown on the About page (newest first). Keep README.txt in step. */
+/** Version history shown in the About PQP Maker panel (newest first). Keep README.txt in step. */
 export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.5.1',
+    date: '23 Oct 2026',
+    items: ['About PQP Maker is now a panel that slides in from the right over the form, so you keep your place. Open it from the left menu or the About link at the bottom of the app; close it with ✕, Esc or a click outside it.'],
+  },
   {
     v: '1.5.0',
     date: '17 Oct 2026',

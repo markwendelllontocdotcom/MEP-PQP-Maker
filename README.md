@@ -26,7 +26,7 @@ Your projects never leave the device: there is no login, no server and no upload
 6. **Export folder** (Edge or Chrome on Windows and macOS): on the first export the app asks for a folder, for example the project's folder. Every Word and PDF export is then saved straight into it (a re-export of the same Doc Ref and Rev replaces the older file) and Save starts there too. Change it under the export buttons, or choose **Use Downloads**. On iPhone, Safari and Firefox exports go to the Downloads folder.
 7. When Word opens the file it asks to update fields. Choose **Yes** so the table of contents shows Word's page numbers.
 
-Work is saved automatically on the device about a second after each change. **Save / Save as** writes a `.pqp` project file you can keep with the project records or move to another device. **Open** reads it back. The **About** page in the app (bottom of the left menu) has the full guide and the version history.
+Work is saved automatically on the device about a second after each change. **Save / Save as** writes a `.pqp` project file you can keep with the project records or move to another device. **Open** reads it back. The **About PQP Maker** panel (bottom of the left menu, or About at the bottom of the app) has the full guide and the version history. It slides in over the form and closes with ✕, Esc or a click outside it.
 
 ## For developers
 
@@ -43,7 +43,7 @@ python3 tools/extract_r1.py   # rebuild src/content/r1.json from tools/R1.docx a
 - `src/gen/docx.ts` writes the Word file. It uses R1's styles and numbering and adds one multilevel list for the section numbers.
 - `src/gen/pdf.ts` writes the PDF with pdfmake. It uses Carlito, which has the same metrics as Calibri.
 - `src/app.tsx` is the interface (toolbar, menu and summary panel). `src/ui/review.tsx` is the Review page and `src/print.ts` handles printing. `src/storage.ts` handles autosave (IndexedDB), `src/files.ts` handles `.pqp` files and `src/exportdir.ts` the export folder.
-- `src/version.ts` holds the version and the What's new list shown on the About page.
+- `src/version.ts` holds the version and the What's new list shown in the About PQP Maker panel (`src/ui/about.tsx`).
 
 ## Publishing
 
@@ -51,7 +51,7 @@ GitHub Pages serves the `docs/` folder of the `main` branch. To publish a new ve
 
 ## User guide
 
-`release/README.txt` is the plain-text guide that goes in the app folder next to `PQP Maker.html` (the build copies it to `dist/release/`). The same information is on the app's About page.
+`release/README.txt` is the plain-text guide that goes in the app folder next to `PQP Maker.html` (the build copies it to `dist/release/`). The same information is in the app's About PQP Maker panel.
 
 ## Copyright
 

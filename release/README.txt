@@ -1,7 +1,7 @@
 PQP MAKER - READ ME
 ===================
 
-Version 1.5.0 (17 Oct 2026)
+Version 1.5.1 (23 Oct 2026)
 Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.
 
 PQP Maker writes the Project Quality Plan (PQP) for an MEP project. You enter the project
@@ -28,7 +28,7 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
     UAE Cover Page.png                        cover page reference
     PQP Maker - Instruction.xlsx              the original brief and input fields list
   PQP Maker.csv             The original input fields list (the app's current fields are
-                            described on its About page and in this guide).
+                            described in its About PQP Maker panel and in this guide).
 
 2. OPENING THE APP
 ------------------
@@ -131,11 +131,17 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
     brought up to date automatically.
   - The web version updates itself: the next time you open it after an update, the new
     version loads.
-  - The app's About page (bottom of the menu on the left) shows the version and what changed.
+  - The About PQP Maker panel (bottom of the menu on the left, or About at the bottom of the
+    app) shows the version and what changed. It slides in over the form; close it with the
+    X button, Esc or a click outside it.
 
 
 8. VERSION HISTORY
 ------------------
+
+  1.5.1  (23 Oct 2026)
+    - About PQP Maker is now a panel that slides in from the right over the form, so you
+      keep your place. Close it with the X button, Esc or a click outside it.
 
   1.5.0  (17 Oct 2026)
     - Review page (Review in the left menu and the toolbar): what still needs fixing, ISO

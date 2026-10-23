@@ -13,7 +13,7 @@ import { canPickFolder, loadExportDir, chooseExportDir, forgetExportDir, ensureW
 import { ASSET_URLS } from './platform-browser';
 import { Row, TextInput, TextArea, Select, Multi, Toggle, ImagePick, Images, PersonInput, People, Persons, Revisions, Forms, Calc, Certs } from './ui/controls';
 import { OrgPreview } from './ui/orgpreview';
-import { About } from './ui/about';
+import { AboutPanel } from './ui/about';
 import { Review } from './ui/review';
 import { QE_MAX } from './content/orgchart';
 import { APP_NAME, APP_VERSION, CREDIT } from './version';
@@ -57,6 +57,7 @@ export function App() {
   const [busy, setBusy] = useState<string>('');
   const [toast, setToast] = useState<string>('');
   const [dialog, setDialog] = useState<Dialog>(null);
+  const [aboutOpen, setAboutOpen] = useState(false); // About PQP Maker panel
   const [exportDir, setExportDir] = useState<any>(null); // folder every export is saved into (Edge / Chrome)
   const [askedFolder, setAskedFolder] = useState(true);
   const lastSnap = useRef(0);
@@ -287,9 +288,8 @@ export function App() {
 
   const groupFields = FIELDS.filter((f) => f.group === group);
   const groupIssues = (g: string) => FIELDS.filter((f) => f.group === g && (fieldError(f, p) || (f.mandatory && missing.includes(f)))).length;
-  const isAbout = group === 'about';
   const isReview = group === 'review';
-  const title = isAbout ? 'About PQP Maker' : isReview ? 'Review' : GROUPS.find((g) => g.id === group)!.title;
+  const title = isReview ? 'Review' : GROUPS.find((g) => g.id === group)!.title;
   const leftOut = numberedUnits(new Set(p.Q08off), settings.companyShort || 'OXYPRO').filter((u) => !u.on && !u.parentOff).map((u) => u.title.replace(' (added)', ''));
   const openReview = () => { setGroup('review'); window.scrollTo({ top: 0 }); };
   const ref = docRef(p);
@@ -337,14 +337,14 @@ export function App() {
             <span>Review</span>
             <span class="navhint">before export</span>
           </button>
-          <button class={'navitem navabout' + (isAbout ? ' active' : '')} onClick={() => setGroup('about')} aria-current={isAbout ? 'page' : undefined}>
+          <button class={'navitem navabout' + (aboutOpen ? ' active' : '')} onClick={() => setAboutOpen(true)} aria-haspopup="dialog" aria-expanded={aboutOpen}>
             <span>About PQP Maker</span>
           </button>
         </aside>
 
         <main class="sheet" aria-labelledby="sheet-title">
           <h1 id="sheet-title">{title}</h1>
-          {isAbout ? <About exportFolder={exportDir?.name || null} canPickFolder={canPickFolder} onGo={setGroup} /> : isReview ? (
+          {isReview ? (
             <Review p={p} s={settings} errors={errors} missing={missing} leftOut={leftOut} fileName={fileName} dirtyFile={dirtyFile}
               onGo={setGroup} goTo={goTo} onExport={exportDoc} onPrint={doPrint} onSave={() => doSave(false)} />
           ) : <>
@@ -394,7 +394,9 @@ export function App() {
         </aside>
       </div>
 
-      <footer class="credit">{CREDIT} <span class="ver">v{APP_VERSION}</span> <button class="linkbtn about-link" onClick={() => { setGroup('about'); window.scrollTo({ top: 0 }); }}>About</button></footer>
+      <footer class="credit">{CREDIT} <span class="ver">v{APP_VERSION}</span> <button class="linkbtn about-link" onClick={() => setAboutOpen(true)} aria-haspopup="dialog">About</button></footer>
+
+      {aboutOpen && <AboutPanel onClose={() => setAboutOpen(false)} exportFolder={exportDir?.name || null} canPickFolder={canPickFolder} onGo={(g) => { setGroup(g); window.scrollTo({ top: 0 }); }} />}
 
       {busy && <div class="overlay" role="status"><div class="busy">{busy}</div></div>}
       {toast && <div class="toast" role="status">{toast}</div>}

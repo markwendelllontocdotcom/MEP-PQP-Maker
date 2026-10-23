@@ -1,7 +1,36 @@
+import { useEffect, useRef } from 'preact/hooks';
 import { APP_NAME, APP_VERSION, APP_DATE, CREDIT, CHANGES, WEB_URL } from '../version';
 import iconUrl from '../assets/icon-app.png?inline';
 
-/** About page: what the app is, how to use it, where the data lives and what changed. */
+/** About PQP Maker panel: slides in from the right over the app, so the form underneath keeps its place.
+ *  Closes with the X button, Esc or a click outside; a link inside closes it and opens that input group. */
+export function AboutPanel(props: { onClose: () => void; exportFolder: string | null; canPickFolder: boolean; onGo: (group: string) => void }) {
+  const closeBtn = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const back = document.activeElement as HTMLElement | null;
+    closeBtn.current?.focus();
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') props.onClose(); };
+    document.addEventListener('keydown', onKey);
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden'; // the page behind does not scroll with the panel
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = overflow; back?.focus?.(); };
+  }, []);
+  return (
+    <div class="panel-wrap" onClick={props.onClose}>
+      <aside class="panel" role="dialog" aria-modal="true" aria-labelledby="about-title" onClick={(e) => e.stopPropagation()}>
+        <header class="panel-head">
+          <h2 id="about-title">About PQP Maker</h2>
+          <button ref={closeBtn} class="panel-close" aria-label="Close About PQP Maker" title="Close (Esc)" onClick={props.onClose}>✕</button>
+        </header>
+        <div class="panel-body">
+          <About exportFolder={props.exportFolder} canPickFolder={props.canPickFolder} onGo={(g) => { props.onClose(); props.onGo(g); }} />
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+/** About content: what the app is, how to use it, where the data lives and what changed. */
 export function About(props: { exportFolder: string | null; canPickFolder: boolean; onGo: (group: string) => void }) {
   const go = (g: string, label: string) => <button class="linkbtn" onClick={() => props.onGo(g)}>{label}</button>;
   return (
