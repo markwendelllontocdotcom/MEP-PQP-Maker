@@ -10,7 +10,7 @@ export const CHANGES: { v: string; date: string; items: string[] }[] = [
     v: '1.6.0',
     date: '27 Oct 2026',
     items: [
-      'Send to PQP Maker from the Oxypro Project Library: the web version opens with the PQP already created from the Library project (name, project code, location, building, scope, client, consultant, main contractor, approving authorities, codes and standards, and the main photo as cover photo) and shows it on the Review page.',
+      'Send to PQP Maker from the Oxypro Project Library: the web version opens with the PQP already created from the Library project (name, project code, location, building, scope, client, consultant, main contractor, approving authorities, and codes and standards) and shows it on the Review page. Add the cover photo here, or save the PQP file in the Library, which carries the photo too, and Open it.',
       'Our Role, Disciplines, document control, key personnel, ISO certificates and the amendment record stay yours to fill in, starting from your settings and defaults.',
       'If the PQP open now has the same project code, you can update it with the Library details and keep everything you entered. Otherwise you are asked before the project open now is replaced, with the option to save it first.',
     ],

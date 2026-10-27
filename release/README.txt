@@ -78,8 +78,9 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
   From the Oxypro Project Library: open the project in the Library and click "Send to PQP
   Maker". The web version of PQP Maker opens in a new tab with the PQP already created from
-  the Library details and shows it on the Review page. Then fill in Our Role, Disciplines,
-  document control, key personnel and the rest, and export. If the PQP open in PQP Maker has
+  the Library details and shows it on the Review page. Then add the cover photo, fill in Our
+  Role, Disciplines, document control, key personnel and the rest, and export. (In the Library,
+  "PQP details and file" saves a .pqp file that also carries the cover photo; Open it here.) If the PQP open in PQP Maker has
   the same project code, you can update it instead and keep everything you entered.
   (The double-click copy of PQP Maker.html cannot receive projects from the Library.)
 
