@@ -7,7 +7,7 @@ import { docRef, revLabel, dmy, durationDays, DOC_REF_FORMAT } from './model/for
 import { sectionUnits } from './content/build';
 import { store } from './storage';
 import { saveProjectFile, openProjectFile, type Handle } from './files';
-import { hasLibraryHash, readLibraryHash, applyLibrary, isBlankProject, LIBRARY_LABELS } from './library';
+import { hasLibraryHash, readLibraryHash, applyLibrary, isBlankProject, coverFromBlob, LIBRARY_LABELS } from './library';
 import { exportWord, exportPdf, pdfFor } from './exporter';
 import { printPdf, openPdfTab, isIOS } from './print';
 import { canPickFolder, loadExportDir, chooseExportDir, forgetExportDir, ensureWritable, wasAsked, markAsked } from './exportdir';
@@ -66,6 +66,7 @@ export function App() {
   // the latest project, settings and export folder, for a Library link that arrives while the app is open
   const live = useRef<{ p: Project | null; s: Settings; dir: any }>({ p: null, s: settings, dir: null });
   live.current = { p, s: settings, dir: exportDir };
+  const photoWait = useRef(false); // a cover photo from the Library is waiting to be pasted
 
   // ---------------- load
   useEffect(() => {
@@ -92,13 +93,42 @@ export function App() {
   }, []);
 
   /** Creates the PQP from a Library project, or updates the PQP open now when it has the same project code. */
-  function receiveLibrary(lib: { fields: Partial<Project>; source: string }, cur: Project, s: Settings, dir: any) {
+  /** The cover photo chosen in the Library arrives by paste (Ctrl+V or Paste photo). */
+  async function takeCoverPhoto(b: Blob) {
+    try {
+      const img = await coverFromBlob(b, live.current.p?.P01 || '');
+      photoWait.current = false;
+      setP((old) => (old ? { ...old, R10: img, modified: new Date().toISOString() } : old));
+      setDirtyFile(true); setDialog(null);
+      setToast('Cover photo added from the Project Library');
+    } catch (e: any) { setToast(e?.message || 'The photo could not be added.'); }
+  }
+  function askCoverPhoto(hadPhoto: boolean) {
+    photoWait.current = true;
+    const paste = async () => {
+      try {
+        const items = await (navigator.clipboard as any).read();
+        for (const it of items) { const t = (it.types as string[]).find((x) => x.startsWith('image/')); if (t) return takeCoverPhoto(await it.getType(t)); }
+        setToast('There is no photo on the clipboard. Choose the photo again in the Library, or add it under 2. Project Parties.');
+      } catch { setToast('The browser did not allow reading the clipboard. Press Ctrl+V (⌘V on a Mac) instead.'); }
+    };
+    setDialog({
+      title: 'Cover photo from the Project Library',
+      body: <><p>The cover photo you chose in the Library is copied. Press <b>Ctrl+V</b> (⌘V on a Mac) to add it, or click <b>Paste photo</b>.</p>{hadPhoto && <p class="muted">It replaces the cover photo this PQP has now.</p>}</>,
+      actions: [
+        { label: 'Skip', run: () => { photoWait.current = false; setDialog(null); } },
+        { label: 'Paste photo', primary: true, run: paste },
+      ],
+    });
+  }
+  function receiveLibrary(lib: { fields: Partial<Project>; source: string; photo: boolean }, cur: Project, s: Settings, dir: any) {
     const f = lib.fields, name = f.P01 || f.P02 || 'the project';
     const take = (n: Project, msg: string, fresh: boolean) => {
       setP(n); store.saveProject(n); store.touchRecent(n);
       if (fresh) { setHandle(null); setFileName(''); }
       setDirtyFile(true); setDialog(null); setGroup('review'); window.scrollTo({ top: 0 });
       setToast(msg);
+      if (lib.photo && !f.R10) askCoverPhoto(!!n.R10);
     };
     const create = () => take(migrate(applyLibrary(newProject(s), f, false)), `PQP created from the Project Library: ${name}. Fill in the fields marked on the left.`, true);
     const update = () => take(migrate(applyLibrary(cur, f, true)), `${name} updated with the Project Library details`, false);
@@ -138,7 +168,17 @@ export function App() {
       catch (e: any) { setDialog({ title: 'Project not received', body: <p>{e?.message || String(e)}</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] }); }
     };
     window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
+    // Ctrl+V while the Library's cover photo is waiting
+    const onPaste = (e: ClipboardEvent) => {
+      if (!photoWait.current) return;
+      const item = [...(e.clipboardData?.items || [])].find((i) => i.kind === 'file' && i.type.startsWith('image/'));
+      const file = item?.getAsFile();
+      if (!file) return;
+      e.preventDefault();
+      takeCoverPhoto(file);
+    };
+    document.addEventListener('paste', onPaste, true);
+    return () => { window.removeEventListener('hashchange', onHash); document.removeEventListener('paste', onPaste, true); };
   }, []);
 
   // ---------------- autosave (about 1 s after the last change)

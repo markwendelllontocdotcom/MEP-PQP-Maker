@@ -70,7 +70,9 @@ ok(mg.CERTS.length === 4 && mg.CERTS[0].no === 'CN011157', 'Older project: ISO c
     R01: 'MIRFA | ICONIC', R06: ['DM', 'DEWA', 'Nope'], Q07: ['Project Specifications'], R05: 'Main Contractor', P08: ['HVAC'], K01: { name: 'X' }, D06: 'Y', R10: { dataUrl: 'javascript:alert(1)' } };
   const file = JSON.stringify({ format: 'pqp-maker-project', version: 1, source: { library: 'P122' }, project: proj });
   const lib = await readLibraryHash('#library=' + b64u(deflateRawSync(Buffer.from(file))));
-  ok(lib.source === 'P122' && lib.fields.P01 === 'The Borough' && lib.fields.P02 === 'DXB-243', 'Library link read (compressed)');
+  ok(lib.source === 'P122' && lib.fields.P01 === 'The Borough' && lib.fields.P02 === 'DXB-243' && lib.photo === false, 'Library link read (compressed)');
+  const withPhoto = JSON.stringify({ format: 'pqp-maker-project', version: 1, source: { library: 'P122', photo: 'clipboard' }, project: proj });
+  ok((await readLibraryHash('#library=' + b64u(deflateRawSync(Buffer.from(withPhoto))))).photo === true, 'Library link says a cover photo is on the clipboard');
   ok((await readLibraryHash('#library-json=' + b64u(Buffer.from(file)))).fields.P13 === 'B+G+5P+17F+Roof', 'Library link read (plain JSON)');
   ok(!('R05' in lib.fields) && !('P08' in lib.fields) && !('K01' in lib.fields) && !('D06' in lib.fields) && !('R10' in lib.fields), 'Only Library fields are taken (Our Role, Disciplines, people, document control stay inputs; bad image dropped)');
   ok(JSON.stringify(lib.fields.R06) === '["DM","DEWA"]', 'Unknown authority left out');

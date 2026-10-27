@@ -1,11 +1,16 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.6.0';
+export const APP_VERSION = '1.6.1';
 export const APP_DATE = '27 Oct 2026';
 export const WEB_URL = 'https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
 
 /** Version history shown in the About PQP Maker panel (newest first). Keep README.txt in step. */
 export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.6.1',
+    date: '27 Oct 2026',
+    items: ['Cover photo from the Project Library: choose the photo in the Library (the main photo or another one). It is copied, and PQP Maker asks you to paste it: press Ctrl+V or click Paste photo.'],
+  },
   {
     v: '1.6.0',
     date: '27 Oct 2026',

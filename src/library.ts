@@ -9,8 +9,10 @@ import { PROJECT_CODE, PROJECT_CODE_MAX } from './model/format';
  * (#library-json= for plain JSON when the browser cannot compress). The part after # never
  * leaves the browser, so nothing is uploaded.
  * Only the Library's own fields are taken; everything else stays the user's input in PQP Maker.
+ * The cover photo cannot travel in the link: the Library copies the chosen photo to the clipboard and says so
+ * with source.photo = 'clipboard'; PQP Maker then asks the user to paste it (1.6.1).
  */
-export interface LibraryProject { fields: Partial<Project>; source: string; }
+export interface LibraryProject { fields: Partial<Project>; source: string; photo: boolean; }
 
 export const LIBRARY_KEYS = ['P01', 'P02', 'P04', 'P05', 'P06', 'P07', 'P10', 'P11', 'P13', 'R01', 'R02', 'R03', 'R06', 'R06other', 'Q07', 'Q07other', 'R10'] as const;
 
@@ -55,7 +57,7 @@ export async function readLibraryHash(hash: string): Promise<LibraryProject> {
   let j: any;
   try { j = JSON.parse(text); } catch { throw new Error('The link from the Library could not be read. Send the project again.'); }
   if (!j || j.format !== 'pqp-maker-project' || !j.project || typeof j.project !== 'object') throw new Error('This link does not hold a PQP Maker project.');
-  return { fields: cleanFields(j.project), source: String(j.source?.library || '').slice(0, 40) };
+  return { fields: cleanFields(j.project), source: String(j.source?.library || '').slice(0, 40), photo: j.source?.photo === 'clipboard' };
 }
 
 /** Keeps only the Library fields, with the types and limits the form allows. */
@@ -92,4 +94,17 @@ export function applyLibrary(base: Project, f: Partial<Project>, keepPhoto: bool
   if (f.Q07 && !f.Q07.includes('Other')) n.Q07other = '';
   if (keepPhoto && base.R10) n.R10 = base.R10;
   return n as Project;
+}
+
+/** A pasted or clipboard image as the cover photo: JPEG, at most 2000 px on the long side. */
+export async function coverFromBlob(b: Blob, projectName: string): Promise<ImageData> {
+  const url = URL.createObjectURL(b);
+  try {
+    const img = await new Promise<HTMLImageElement>((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('This is not a photo the app can read.')); i.src = url; });
+    const k = Math.min(1, 2000 / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+    const g = c.getContext('2d')!; g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, c.width, c.height); g.imageSmoothingQuality = 'high'; g.drawImage(img, 0, 0, c.width, c.height);
+    const base = (projectName || 'Project').replace(/[\\/:*?"<>|]+/g, '-').trim().slice(0, 80);
+    return { name: `${base} - Cover Photo.jpg`, type: 'image/jpeg', dataUrl: c.toDataURL('image/jpeg', 0.86), w: c.width, h: c.height };
+  } finally { URL.revokeObjectURL(url); }
 }
