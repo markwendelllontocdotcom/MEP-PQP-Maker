@@ -118,6 +118,10 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
   - Save writes a .pqp project file. It holds everything you entered, including photos and
     logos. Keep it in the project's folder.
+  - The file is named with the project number, name and revision, for example
+    DXB-101 - Sample Residential Tower (G+20) - Rev 00.pqp. Save writes to the file you
+    opened; Save as suggests the name with the current revision, so each revision can keep
+    its own file.
   - Open brings a .pqp file back, for example to prepare the next revision.
   - The app also autosaves the current project in the browser about a second after each
     change, so it is still there when you reopen the app.
@@ -151,6 +155,11 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
 8. VERSION HISTORY
 ------------------
+
+  1.6.2  (27 Oct 2026)
+    - Project files are named with the project number, name and revision, for example
+      DXB-243 - The Borough - Rev 00.pqp. Save as suggests the name with the current
+      revision, so each revision can keep its own file.
 
   1.6.1  (27 Oct 2026)
     - Cover photo from the Project Library: choose the photo in the Library (the main photo

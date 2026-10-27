@@ -23,6 +23,8 @@ let threw = false; try { parseProjectFile('{"a":1}'); } catch { threw = true; }
 ok(threw, 'Non-project file rejected');
 ok(missingMandatory(newProject(s)).length > 0, 'New project starts with required fields empty');
 ok(outputBaseName(p) === 'OPEM-DXB-101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20)', 'Export file name');
+{ const { projectFileName } = await import('../src/model/format');
+  ok(projectFileName(p) === 'DXB-101 - Sample Residential Tower (G+20) - Rev 00.pqp' && projectFileName({ ...p, D03: '02' }).endsWith(' - Rev 02.pqp') && projectFileName({ ...p, P02: '', P01: '' }) === 'Untitled project - Rev 00.pqp', 'Project file name: number, name, revision'); }
 ok(migrate({ ...p, D01: 'OPEM-E' }).D01 === 'OPEM', 'Older project: prefix OPEM-E becomes OPEM');
 ok(migrate({ ...p, appVersion: '1.3.2', P02: '122' }).P02 === 'P122', 'Project saved before 1.4.0: 122 becomes P122 (same Doc Ref as before)');
 ok(migrate({ ...p, appVersion: '1.3.2', P02: 'DXB-243' }).P02 === 'DXB-243', 'Project saved before 1.4.0: a code with letters is kept');

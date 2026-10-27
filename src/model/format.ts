@@ -55,6 +55,13 @@ export function safeFileName(s: string): string {
   return s.replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim().slice(0, 150);
 }
 
+/** Project file name, e.g. "DXB-101 - Sample Residential Tower (G+20) - Rev 00.pqp" (project number, name, revision). */
+export function projectFileName(p: Project): string {
+  const rev = /^\d{2}$/.test(p.D03) ? p.D03 : '00';
+  const no = projectCode(p) || String(p.P02 || '').trim();
+  return safeFileName([no, (p.P01 || '').trim() || 'Untitled project', `Rev ${rev}`].filter(Boolean).join(' - ')) + '.pqp';
+}
+
 /** e.g. "OPEM-DXB-101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20)" */
 export function outputBaseName(p: Project): string {
   const rev = /^\d{2}$/.test(p.D03) ? p.D03 : '00';

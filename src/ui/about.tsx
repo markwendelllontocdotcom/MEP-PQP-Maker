@@ -56,7 +56,7 @@ export function About(props: { exportFolder: string | null; canPickFolder: boole
           <li>Untick any section you do not need under {go('sections', 'PQP Sections')}. The sections after it are renumbered.</li>
           <li>Open {go('review', 'Review')} to check the PQP before it goes out: what still needs fixing, the key details and a preview of every page.</li>
           <li>Click <b>Export Word (.docx)</b> or <b>Export PDF</b>, or <b>Print</b>. Entries that are not allowed, such as a project code with a space in it, stop the export and the print and are listed so you can fix them.</li>
-          <li>Click <b>Save</b> to keep the project as a <b>.pqp</b> file. <b>Open</b> brings it back later for the next revision.</li>
+          <li>Click <b>Save</b> to keep the project as a <b>.pqp</b> file, named with the project number, name and revision, for example <i>DXB-101 - Sample Residential Tower (G+20) - Rev 00.pqp</i>. <b>Open</b> brings it back later for the next revision; use <b>Save as</b> to keep each revision in its own file.</li>
         </ol>
         <p class="about-note">Want to see a finished PQP first? <b>Load sample data</b> fills every field with made-up test data.</p>
       </section>

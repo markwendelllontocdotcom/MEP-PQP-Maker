@@ -1,11 +1,16 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.6.1';
+export const APP_VERSION = '1.6.2';
 export const APP_DATE = '27 Oct 2026';
 export const WEB_URL = 'https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
 
 /** Version history shown in the About PQP Maker panel (newest first). Keep README.txt in step. */
 export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.6.2',
+    date: '27 Oct 2026',
+    items: ['Project files are named with the project number, name and revision, for example DXB-243 - The Borough - Rev 00.pqp. Save writes to the file you opened; Save as suggests the name with the current revision, so each revision can keep its own file.'],
+  },
   {
     v: '1.6.1',
     date: '27 Oct 2026',

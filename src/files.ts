@@ -1,6 +1,6 @@
 import type { Project } from './model/types';
 import { APP_NAME, APP_VERSION } from './version';
-import { safeFileName } from './model/format';
+import { projectFileName } from './model/format';
 
 const FORMAT = 'pqp-maker-project';
 const hasPicker = typeof window !== 'undefined' && 'showSaveFilePicker' in window;
@@ -34,7 +34,7 @@ export type Handle = any; // FileSystemFileHandle where supported
 /** Save to the same file when we have a handle; otherwise ask (Save As) or download. */
 export async function saveProjectFile(p: Project, handle: Handle | null, saveAs: boolean, startIn: any = null): Promise<{ handle: Handle | null; name: string } | null> {
   const text = serialise(p);
-  const suggested = safeFileName(p.P01 || 'Untitled project') + '.pqp';
+  const suggested = projectFileName(p); // project number, name and revision
   if (hasPicker) {
     try {
       let h = handle;
