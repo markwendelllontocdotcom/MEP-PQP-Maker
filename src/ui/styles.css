@@ -156,6 +156,7 @@ input:hover, select:hover, textarea:hover { border-color: #9fb0c8; }
 .tree .lv3 label { padding-left: 52px; }
 .tree .lv3 .t { color: var(--muted); }
 .tree .muted { opacity: .45; }
+.dbody .muted { color: var(--muted); font-size: 13.5px; }
 .added { font-size: 12px; border: 1px solid var(--navy); color: var(--navy); border-radius: 10px; padding: 0 7px; }
 
 /* ---------- title block (the drawing-sheet summary) */

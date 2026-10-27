@@ -7,6 +7,7 @@ import { docRef, revLabel, dmy, durationDays, DOC_REF_FORMAT } from './model/for
 import { sectionUnits } from './content/build';
 import { store } from './storage';
 import { saveProjectFile, openProjectFile, type Handle } from './files';
+import { hasLibraryHash, readLibraryHash, applyLibrary, isBlankProject, LIBRARY_LABELS } from './library';
 import { exportWord, exportPdf, pdfFor } from './exporter';
 import { printPdf, openPdfTab, isIOS } from './print';
 import { canPickFolder, loadExportDir, chooseExportDir, forgetExportDir, ensureWritable, wasAsked, markAsked } from './exportdir';
@@ -62,6 +63,9 @@ export function App() {
   const [askedFolder, setAskedFolder] = useState(true);
   const lastSnap = useRef(0);
   const first = useRef(true);
+  // the latest project, settings and export folder, for a Library link that arrives while the app is open
+  const live = useRef<{ p: Project | null; s: Settings; dir: any }>({ p: null, s: settings, dir: null });
+  live.current = { p, s: settings, dir: exportDir };
 
   // ---------------- load
   useEffect(() => {
@@ -71,11 +75,70 @@ export function App() {
       setSettings(s);
       const id = await store.loadCurrentId();
       const saved = id ? await store.loadProject(id) : undefined;
-      setP(saved ? migrate({ ...newProject(s), ...saved }) : newProject(s));
+      const cur = saved ? migrate({ ...newProject(s), ...saved }) : newProject(s);
+      setP(cur);
       store.persist();
-      setExportDir(await loadExportDir());
+      const dir = await loadExportDir();
+      setExportDir(dir);
       setAskedFolder(await wasAsked());
+      // a project sent from the Oxypro Project Library (Send to PQP Maker)
+      if (hasLibraryHash(location.hash)) {
+        const hash = location.hash;
+        try { history.replaceState(null, '', location.pathname + location.search); } catch { /* keeps the address */ }
+        try { receiveLibrary(await readLibraryHash(hash), cur, s, dir); }
+        catch (e: any) { setDialog({ title: 'Project not received', body: <p>{e?.message || String(e)}</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] }); }
+      }
     })();
+  }, []);
+
+  /** Creates the PQP from a Library project, or updates the PQP open now when it has the same project code. */
+  function receiveLibrary(lib: { fields: Partial<Project>; source: string }, cur: Project, s: Settings, dir: any) {
+    const f = lib.fields, name = f.P01 || f.P02 || 'the project';
+    const take = (n: Project, msg: string, fresh: boolean) => {
+      setP(n); store.saveProject(n); store.touchRecent(n);
+      if (fresh) { setHandle(null); setFileName(''); }
+      setDirtyFile(true); setDialog(null); setGroup('review'); window.scrollTo({ top: 0 });
+      setToast(msg);
+    };
+    const create = () => take(migrate(applyLibrary(newProject(s), f, false)), `PQP created from the Project Library: ${name}. Fill in the fields marked on the left.`, true);
+    const update = () => take(migrate(applyLibrary(cur, f, true)), `${name} updated with the Project Library details`, false);
+    const list = Object.keys(LIBRARY_LABELS).filter((k) => k in f).map((k) => LIBRARY_LABELS[k]).join(', ');
+    if (isBlankProject(cur)) return create();
+    const same = !!f.P02 && cur.P02.trim().toUpperCase() === f.P02;
+    if (same) {
+      setDialog({
+        title: `${name} from the Project Library`,
+        body: <><p>The PQP open now has the same project code ({f.P02}). <b>Update</b> it to bring in the Library details and keep everything you entered: people, document control, cover photo and the rest. Or start a <b>new PQP</b>.</p><p class="muted">From the Library: {list}.</p></>,
+        actions: [
+          { label: 'Cancel', run: () => setDialog(null) },
+          { label: 'Start a new PQP', run: create },
+          { label: 'Update this PQP', primary: true, run: update },
+        ],
+      });
+      return;
+    }
+    setDialog({
+      title: `${name} from the Project Library`,
+      body: <><p>Creating this PQP replaces the project open now ({cur.P01.trim() || 'Untitled project'}) in this browser. If that project is not saved to a .pqp file yet, save it first.</p><p class="muted">From the Library: {list}.</p></>,
+      actions: [
+        { label: 'Cancel', run: () => setDialog(null) },
+        { label: 'Save current project first', run: async () => { const r = await saveProjectFile(cur, null, true, dir); if (r) create(); } },
+        { label: 'Create the PQP', primary: true, run: create },
+      ],
+    });
+  }
+
+  useEffect(() => {
+    const onHash = async () => {
+      const { p: cur, s, dir } = live.current;
+      if (!cur || !hasLibraryHash(location.hash)) return;
+      const hash = location.hash;
+      try { history.replaceState(null, '', location.pathname + location.search); } catch { /* keeps the address */ }
+      try { receiveLibrary(await readLibraryHash(hash), cur, s, dir); }
+      catch (e: any) { setDialog({ title: 'Project not received', body: <p>{e?.message || String(e)}</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] }); }
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
   // ---------------- autosave (about 1 s after the last change)

@@ -76,6 +76,13 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   Exported files are named:  <Doc Ref> Rev <NN> - PQP - <Project name>.docx / .pdf
   For example:  OPEM-DXB-101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20).pdf
 
+  From the Oxypro Project Library: open the project in the Library and click "Send to PQP
+  Maker". The web version of PQP Maker opens in a new tab with the PQP already created from
+  the Library details and shows it on the Review page. Then fill in Our Role, Disciplines,
+  document control, key personnel and the rest, and export. If the PQP open in PQP Maker has
+  the same project code, you can update it instead and keep everything you entered.
+  (The double-click copy of PQP Maker.html cannot receive projects from the Library.)
+
   Want to see a finished PQP first? Click "Load sample data" to fill every field with
   made-up test data. (Save your own project first: this replaces what is on screen.)
 
@@ -120,6 +127,8 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   - Everything stays on this computer. There is no login and nothing is uploaded, also
     when you use the web version: only the app itself comes from the web.
   - Project data is kept only in your .pqp files and in this browser's storage.
+  - A project sent from the Oxypro Project Library travels in the part of the link after #,
+    which the browser never sends to the web server.
 
 
 7. UPDATING THE APP
@@ -138,6 +147,14 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
 8. VERSION HISTORY
 ------------------
+
+  1.6.0  (27 Oct 2026)
+    - Send to PQP Maker from the Oxypro Project Library: the web version opens with the PQP
+      already created from the Library project and shows it on the Review page.
+    - Our Role, Disciplines, document control, key personnel, ISO certificates and the
+      amendment record stay yours to fill in.
+    - A PQP with the same project code can be updated with the Library details, keeping
+      everything you entered.
 
   1.5.1  (23 Oct 2026)
     - About PQP Maker is now a panel that slides in from the right over the form, so you

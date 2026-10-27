@@ -61,3 +61,26 @@ ok(mg.CERTS.length === 4 && mg.CERTS[0].no === 'CN011157', 'Older project: ISO c
   const t2: any = m2.blocks.find((b: any) => b.t === 'tbl' && JSON.stringify(b).includes('"Project Code & Project Number"'));
   ok(t2.rows.length === 5 && !JSON.stringify(t2).includes('Approving Authorities') && !JSON.stringify(t2).includes('Contract Type') && !JSON.stringify(t2).includes('Project Type'), 'No Project Type, Contract Type or Approving Authorities rows');
 }
+// Projects sent from the Oxypro Project Library (27 Oct 2026)
+{
+  const { readLibraryHash, cleanFields, applyLibrary, isBlankProject } = await import('../src/library');
+  const { deflateRawSync } = await import('node:zlib');
+  const b64u = (b: Buffer) => b.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const proj = { P01: 'The Borough', P02: 'dxb-243', P04: 'Dubai', P05: 'Plot No. JVC17TCP001B', P06: ['Residential', 'Commercial'], P13: 'B+G+5P+17F+Roof',
+    R01: 'MIRFA | ICONIC', R06: ['DM', 'DEWA', 'Nope'], Q07: ['Project Specifications'], R05: 'Main Contractor', P08: ['HVAC'], K01: { name: 'X' }, D06: 'Y', R10: { dataUrl: 'javascript:alert(1)' } };
+  const file = JSON.stringify({ format: 'pqp-maker-project', version: 1, source: { library: 'P122' }, project: proj });
+  const lib = await readLibraryHash('#library=' + b64u(deflateRawSync(Buffer.from(file))));
+  ok(lib.source === 'P122' && lib.fields.P01 === 'The Borough' && lib.fields.P02 === 'DXB-243', 'Library link read (compressed)');
+  ok((await readLibraryHash('#library-json=' + b64u(Buffer.from(file)))).fields.P13 === 'B+G+5P+17F+Roof', 'Library link read (plain JSON)');
+  ok(!('R05' in lib.fields) && !('P08' in lib.fields) && !('K01' in lib.fields) && !('D06' in lib.fields) && !('R10' in lib.fields), 'Only Library fields are taken (Our Role, Disciplines, people, document control stay inputs; bad image dropped)');
+  ok(JSON.stringify(lib.fields.R06) === '["DM","DEWA"]', 'Unknown authority left out');
+  let bad = false; try { await readLibraryHash('#library=' + b64u(deflateRawSync(Buffer.from('{"x":1}')))); } catch { bad = true; }
+  ok(bad, 'A link without a project is refused');
+  const fresh = migrate(applyLibrary(newProject(s), lib.fields, false));
+  ok(isBlankProject(newProject(s)) && !isBlankProject(fresh), 'Blank project detected');
+  ok(docRef(fresh) === 'OPEM-DXB-243-QM-PQP-001' && fresh.R05 === 'MEP Subcontractor' && fresh.P08.length === 0 && fresh.D07 === 'QA/QC Engineer', 'New PQP from the Library keeps PQP Maker defaults for the rest');
+  const mine = { ...testProject(s), P02: 'DXB-243', R10: { name: 'mine.jpg', type: 'image/jpeg', dataUrl: 'data:image/jpeg;base64,AAAA' } };
+  const upd = applyLibrary(mine, { ...lib.fields, R10: { name: 'lib.jpg', type: 'image/jpeg', dataUrl: 'data:image/jpeg;base64,BBBB' } }, true);
+  ok(upd.P01 === 'The Borough' && upd.D06 === mine.D06 && upd.K01.name === mine.K01.name && upd.R10!.name === 'mine.jpg' && upd.Q07.length === 1, 'Update keeps the people, document control and own cover photo');
+  ok(Object.keys(cleanFields({ P04: 'Mars', P10: '27.10.2026', Q07: 'x' })).length === 0, 'Wrong emirate, date format and list type left out');
+}

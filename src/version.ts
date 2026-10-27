@@ -1,11 +1,20 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.5.1';
-export const APP_DATE = '23 Oct 2026';
+export const APP_VERSION = '1.6.0';
+export const APP_DATE = '27 Oct 2026';
 export const WEB_URL = 'https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
 
 /** Version history shown in the About PQP Maker panel (newest first). Keep README.txt in step. */
 export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.6.0',
+    date: '27 Oct 2026',
+    items: [
+      'Send to PQP Maker from the Oxypro Project Library: the web version opens with the PQP already created from the Library project (name, project code, location, building, scope, client, consultant, main contractor, approving authorities, codes and standards, and the main photo as cover photo) and shows it on the Review page.',
+      'Our Role, Disciplines, document control, key personnel, ISO certificates and the amendment record stay yours to fill in, starting from your settings and defaults.',
+      'If the PQP open now has the same project code, you can update it with the Library details and keep everything you entered. Otherwise you are asked before the project open now is replaced, with the option to save it first.',
+    ],
+  },
   {
     v: '1.5.1',
     date: '23 Oct 2026',
