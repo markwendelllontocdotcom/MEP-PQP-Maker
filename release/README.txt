@@ -76,12 +76,13 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   Exported files are named:  <Doc Ref> Rev <NN> - PQP - <Project name>.docx / .pdf
   For example:  OPEM-DXB-101-QM-PQP-001 Rev 00 - PQP - Sample Residential Tower (G+20).pdf
 
-  From the Oxypro Project Library: open the project in the Library and click "Send to PQP
-  Maker". The web version of PQP Maker opens in a new tab with the PQP already created from
-  the Library details and shows it on the Review page. Then add the cover photo, fill in Our
-  Role, Disciplines, document control, key personnel and the rest, and export. (In the Library,
-  "PQP details and file" saves a .pqp file that also carries the cover photo; Open it here.) If the PQP open in PQP Maker has
-  the same project code, you can update it instead and keep everything you entered.
+  From the Oxypro Project Library: open the project in the Library, click "PQP details and
+  file", then "Open in PQP Maker". The web version of PQP Maker opens in a new tab with the
+  PQP already created from the Library details and shows it on the Review page. Then add the
+  cover photo, fill in Our Role, Disciplines, document control, key personnel and the rest,
+  and export. (Save PQP file in the same Library window saves a .pqp file that also carries
+  the cover photo; Open it here.) If the PQP open in PQP Maker has the same project code,
+  you can update it instead and keep everything you entered.
   (The double-click copy of PQP Maker.html cannot receive projects from the Library.)
 
   Want to see a finished PQP first? Click "Load sample data" to fill every field with
@@ -150,8 +151,9 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 ------------------
 
   1.6.0  (27 Oct 2026)
-    - Send to PQP Maker from the Oxypro Project Library: the web version opens with the PQP
-      already created from the Library project and shows it on the Review page.
+    - From the Oxypro Project Library (PQP details and file, then Open in PQP Maker): the
+      web version opens with the PQP already created from the Library project and shows it
+      on the Review page.
     - Our Role, Disciplines, document control, key personnel, ISO certificates and the
       amendment record stay yours to fill in.
     - A PQP with the same project code can be updated with the Library details, keeping
