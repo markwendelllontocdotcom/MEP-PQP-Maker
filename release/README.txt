@@ -82,9 +82,11 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
   in a new tab with the PQP already created from the Library details and shows it on the
   Review page. If you chose a photo, PQP Maker asks you to paste it: press Ctrl+V (Cmd+V on
   a Mac) or click Paste photo. Then fill in Our Role, Disciplines, document control, key
-  personnel and the rest, and export. (Save PQP file in the same Library window saves a .pqp
-  file with the chosen cover photo; Open it here.) If the PQP open in PQP Maker has the same
-  project code, you can update it instead and keep everything you entered.
+  personnel and the rest, and export. (Save PQP file in the same Library window saves the
+  project with the chosen cover photo as a file ending in .pqp.json, for example DXB-243 -
+  The Borough - Rev 00.pqp.json, because claude.ai saves .json but not .pqp files; Open it
+  here as it is.) If the PQP open in PQP Maker has the same project code, you can update it
+  instead and keep everything you entered.
   (The double-click copy of PQP Maker.html cannot receive projects from the Library.)
 
   Want to see a finished PQP first? Click "Load sample data" to fill every field with
