@@ -16,6 +16,6 @@ const OUT = process.argv[2];
   await page.waitForTimeout(1500);
   await page.reload();
   await page.waitForSelector('.sheet h1');
-  console.log('file:// mode ok | after reload:', await page.textContent('.tb-wide .v'), '| errors:', JSON.stringify(logs));
+  console.log('file:// mode ok | after reload:', await page.textContent('.plan.current .plan-name'), '| errors:', JSON.stringify(logs));
   await browser.close();
 })().catch((e) => { console.error('FAILED', e); process.exit(1); });

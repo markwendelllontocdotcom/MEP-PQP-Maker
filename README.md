@@ -18,7 +18,7 @@ Your projects never leave the device: there is no login, no server and no upload
 
 ## Daily use
 
-1. **New** starts a blank project with the Oxypro defaults. **Load sample data** fills fictitious test data.
+1. **My PQPs** (top of the left menu) lists every PQP made in this browser, with Preview, Word, PDF and Print on each line, and Duplicate, Save as .pqp file and Delete under More. The app opens there when there are PQPs. **New** starts a blank project with the Oxypro defaults; the one open before stays in the list. **Load sample data** fills fictitious test data.
 2. Fill in the groups on the left. A red number shows how many fields in a group still need attention. Required fields are marked `*`.
 3. **PQP Sections** lets you leave out any section. The sections after it are renumbered and the "Refer Annexure" references follow.
 4. **Review** (left menu or toolbar) shows what still needs fixing, the key details and a preview of the whole PQP before it goes out. **Print** opens the print dialog in Edge and Chrome; in the double-click copy, Safari and iPhone the PDF opens in a new tab to print from.

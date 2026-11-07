@@ -1,7 +1,7 @@
 PQP MAKER - READ ME
 ===================
 
-Version 1.5.1 (23 Oct 2026)
+Version 1.7.0 (7 Nov 2026)
 Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.
 
 PQP Maker writes the Project Quality Plan (PQP) for an MEP project. You enter the project
@@ -53,6 +53,13 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
 3. MAKING A PQP
 ---------------
+
+  My PQPs (top of the menu on the left, and in the toolbar) lists every PQP made in this
+  browser, newest first, with its project code, Doc Ref, revision, date and status. Click a
+  name to open it, or use Preview, Word, PDF or Print on its line. More: Duplicate, Save as
+  .pqp file and Delete. The app opens on My PQPs when there are PQPs, and the menu shows the
+  name of the PQP open now under My PQPs. New, Open and Load sample data start or open
+  another PQP; the one open before stays in the list. Empty PQPs are not kept.
 
   1. Fill in the groups on the left, from 1. Project Information to 7. Annexures.
      A red number on a group shows how many entries are still empty or need fixing.
@@ -125,8 +132,10 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
     opened; Save as suggests the name with the current revision, so each revision can keep
     its own file.
   - Open brings a .pqp file back, for example to prepare the next revision.
-  - The app also autosaves the current project in the browser about a second after each
-    change, so it is still there when you reopen the app.
+  - The app also autosaves every PQP in the browser about a second after each change and
+    lists it under My PQPs, so it is still there when you reopen the app.
+  - The web version and the double-click copy (PQP Maker.html) keep separate My PQPs lists.
+    To move a PQP between them, save it as a .pqp file and open it in the other one.
   - Browser storage can be cleared (for example by clearing browsing data), so always keep
     a saved .pqp file for each project.
 
@@ -157,6 +166,12 @@ Plan - Template R1), aligned with ISO 9001:2015, as an editable Word file and a 
 
 8. VERSION HISTORY
 ------------------
+
+  1.7.0  (7 Nov 2026)
+    - My PQPs at the top of the menu: every PQP made in this browser, with Preview, Word,
+      PDF and Print on each line, and Duplicate, Save as .pqp file and Delete under More.
+    - The app opens on My PQPs. New, Open and Load sample data keep the PQP open before in
+      the list. Empty PQPs are not kept.
 
   1.6.2  (27 Oct 2026)
     - Project files are named with the project number, name and revision, for example

@@ -2,13 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import type { Project, Settings } from './model/types';
 import { FIELDS, GROUPS, fieldError, allErrors, missingMandatory, type FieldSpec } from './model/fields';
-import { defaultSettings, newProject, testProject, migrate } from './model/defaults';
+import { defaultSettings, newProject, testProject, migrate, uid } from './model/defaults';
 import { docRef, revLabel, dmy, durationDays, DOC_REF_FORMAT } from './model/format';
 import { sectionUnits } from './content/build';
-import { store } from './storage';
+import { store, type PqpInfo } from './storage';
 import { saveProjectFile, openProjectFile, type Handle } from './files';
 import { hasLibraryHash, readLibraryHash, applyLibrary, isBlankProject, coverFromBlob, LIBRARY_LABELS } from './library';
-import { exportWord, exportPdf, pdfFor } from './exporter';
+import { exportWord, exportPdf, pdfFor, type PdfEntry } from './exporter';
 import { printPdf, openPdfTab, isIOS } from './print';
 import { canPickFolder, loadExportDir, chooseExportDir, forgetExportDir, ensureWritable, wasAsked, markAsked } from './exportdir';
 import { ASSET_URLS } from './platform-browser';
@@ -16,6 +16,7 @@ import { Row, TextInput, TextArea, Select, Multi, Toggle, ImagePick, Images, Per
 import { OrgPreview } from './ui/orgpreview';
 import { AboutPanel } from './ui/about';
 import { Review } from './ui/review';
+import { MyPqps, PreviewModal, toInfo, upToDate } from './ui/plans';
 import { QE_MAX } from './content/orgchart';
 import { APP_NAME, APP_VERSION, CREDIT } from './version';
 import iconUrl from './assets/icon-app.png?inline';
@@ -61,12 +62,15 @@ export function App() {
   const [aboutOpen, setAboutOpen] = useState(false); // About PQP Maker panel
   const [exportDir, setExportDir] = useState<any>(null); // folder every export is saved into (Edge / Chrome)
   const [askedFolder, setAskedFolder] = useState(true);
+  const [plans, setPlans] = useState<PqpInfo[]>([]); // My PQPs: every PQP kept in this browser
+  const [preview, setPreview] = useState<{ plan: Project; pdf: PdfEntry | null; failed: string } | null>(null);
   const lastSnap = useRef(0);
   const first = useRef(true);
   // the latest project, settings and export folder, for a Library link that arrives while the app is open
   const live = useRef<{ p: Project | null; s: Settings; dir: any }>({ p: null, s: settings, dir: null });
   live.current = { p, s: settings, dir: exportDir };
   const photoWait = useRef(false); // a cover photo from the Library is waiting to be pasted
+  const refreshPlans = async (s: Settings = live.current.s) => setPlans((await store.allProjects()).map((r) => toInfo(r, s)));
 
   // ---------------- load
   useEffect(() => {
@@ -77,6 +81,9 @@ export function App() {
       const id = await store.loadCurrentId();
       const saved = id ? await store.loadProject(id) : undefined;
       const cur = saved ? migrate({ ...newProject(s), ...saved }) : newProject(s);
+      const list = (await store.allProjects()).map((r) => toInfo(r, s));
+      setPlans(list);
+      if (!hasLibraryHash(location.hash) && list.some((x) => !x.blank)) setGroup('plans'); // open on My PQPs
       setP(cur);
       store.persist();
       const dir = await loadExportDir();
@@ -92,7 +99,14 @@ export function App() {
     })();
   }, []);
 
-  /** Creates the PQP from a Library project, or updates the PQP open now when it has the same project code. */
+  /** Makes another PQP the open one. The one open before stays under My PQPs (an empty one is not kept). */
+  function switchTo(n: Project, opts: { handle?: Handle | null; name?: string; dirty?: boolean } = {}) {
+    const old = live.current.p;
+    if (old && old.id !== n.id && isBlankProject(old)) store.removeProject(old.id);
+    setP(n); setHandle(opts.handle ?? null); setFileName(opts.name ?? ''); setDirtyFile(!!opts.dirty);
+    store.saveProject(n).then(() => store.touchRecent(n)).then(() => refreshPlans());
+  }
+
   /** The cover photo chosen in the Library arrives by paste (Ctrl+V or Paste photo). */
   async function takeCoverPhoto(b: Blob) {
     try {
@@ -124,9 +138,9 @@ export function App() {
   function receiveLibrary(lib: { fields: Partial<Project>; source: string; photo: boolean }, cur: Project, s: Settings, dir: any) {
     const f = lib.fields, name = f.P01 || f.P02 || 'the project';
     const take = (n: Project, msg: string, fresh: boolean) => {
-      setP(n); store.saveProject(n); store.touchRecent(n);
-      if (fresh) { setHandle(null); setFileName(''); }
-      setDirtyFile(true); setDialog(null); setGroup('review'); window.scrollTo({ top: 0 });
+      if (fresh) switchTo(n, { dirty: true });
+      else { setP(n); setDirtyFile(true); store.saveProject(n).then(() => refreshPlans()); }
+      setDialog(null); setGroup('review'); window.scrollTo({ top: 0 });
       setToast(msg);
       if (lib.photo && !f.R10) askCoverPhoto(!!n.R10);
     };
@@ -149,10 +163,9 @@ export function App() {
     }
     setDialog({
       title: `${name} from the Project Library`,
-      body: <><p>Creating this PQP replaces the project open now ({cur.P01.trim() || 'Untitled project'}) in this browser. If that project is not saved to a .pqp file yet, save it first.</p><p class="muted">From the Library: {list}.</p></>,
+      body: <><p>A new PQP is created for {name}. The PQP open now ({cur.P01.trim() || 'Untitled project'}) stays under <b>My PQPs</b>.</p><p class="muted">From the Library: {list}.</p></>,
       actions: [
         { label: 'Cancel', run: () => setDialog(null) },
-        { label: 'Save current project first', run: async () => { const r = await saveProjectFile(cur, null, true, dir); if (r) create(); } },
         { label: 'Create the PQP', primary: true, run: create },
       ],
     });
@@ -190,6 +203,7 @@ export function App() {
       await store.touchRecent(p);
       if (Date.now() - lastSnap.current > 120000) { lastSnap.current = Date.now(); await store.snapshot(p); }
       setAutosaved(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      refreshPlans();
     }, 1000);
     return () => clearTimeout(t);
   }, [p]);
@@ -229,62 +243,107 @@ export function App() {
   };
   const showError = (m: string) => setDialog({ title: 'Image not added', body: <p>{m}</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] });
 
-  // ---------------- file actions
-  const confirmDiscard = (then: () => void) => {
-    if (!dirtyFile) return then();
-    setDialog({
-      title: 'Unsaved changes',
-      body: <p>This project has changes that are not saved to a file yet. They stay in this browser, but the .pqp file will not have them.</p>,
-      actions: [
-        { label: 'Cancel', run: () => setDialog(null) },
-        { label: 'Continue', primary: true, run: () => { setDialog(null); then(); } },
-      ],
-    });
-  };
-  const doNew = () => confirmDiscard(() => { const n = newProject(settings); setP(n); setHandle(null); setFileName(''); setDirtyFile(false); setGroup('project'); store.saveProject(n); setToast('New project started'); });
-  const doSample = () => confirmDiscard(() => { const n = testProject(settings); setP(n); setHandle(null); setFileName(''); setDirtyFile(true); setGroup('project'); store.saveProject(n); setToast('Sample data loaded (column J of the fields sheet)'); });
-  const doOpen = () => confirmDiscard(async () => {
+  // ---------------- file actions (every PQP stays under My PQPs, so nothing is lost when another one opens)
+  const top = () => window.scrollTo({ top: 0 });
+  const doNew = () => { switchTo(newProject(settings)); setGroup('project'); top(); setToast('New PQP started. It is kept under My PQPs as you type.'); };
+  const doSample = () => { switchTo(testProject(settings), { dirty: true }); setGroup('project'); top(); setToast('Sample data loaded (made-up test data). It is listed under My PQPs.'); };
+  const doOpen = async () => {
     try {
       const r = await openProjectFile();
       if (!r) return;
-      const merged = migrate({ ...newProject(settings), ...r.project });
-      setP(merged); setHandle(r.handle); setFileName(r.name); setDirtyFile(false); store.saveProject(merged);
+      const n = migrate({ ...newProject(settings), ...r.project });
+      const kept = plans.find((x) => x.id === n.id);
+      if (kept && n.id !== p.id && String(n.modified || '') < kept.modified) n.id = uid(); // an older copy of a PQP kept here opens as its own entry
+      switchTo(n, { handle: r.handle, name: r.name });
+      setGroup('project'); top();
       setToast(`Opened ${r.name}`);
     } catch (e: any) {
       setDialog({ title: 'Could not open the file', body: <p>{e.message || String(e)}</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] });
     }
-  });
-  const doSave = async (saveAs: boolean) => {
-    const r = await saveProjectFile(p, handle, saveAs, exportDir);
+  };
+  const doSave = async (saveAs: boolean, plan: Project = p) => {
+    const mine = plan.id === p.id;
+    const r = await saveProjectFile(plan, mine ? handle : null, saveAs, exportDir);
     if (!r) return;
-    setHandle(r.handle); setFileName(r.name); setDirtyFile(false);
+    if (mine) { setHandle(r.handle); setFileName(r.name); setDirtyFile(false); }
     setToast(r.handle ? `Saved to ${r.name}` : `Downloaded ${r.name}`);
   };
 
+  // ---------------- My PQPs
+  const planById = async (id: string): Promise<Project | null> => {
+    if (id === p.id) return p;
+    const raw = await store.loadProject(id);
+    return raw ? upToDate(raw, settings) : null;
+  };
+  const withPlan = (fn: (plan: Project) => void) => async (id: string) => { const plan = await planById(id); if (plan) fn(plan); else refreshPlans(); };
+  const openPlan = async (id: string, view = 'project') => {
+    setPreview(null);
+    if (id !== p.id) {
+      const plan = await planById(id);
+      if (!plan) return refreshPlans();
+      switchTo(plan);
+    }
+    setGroup(view); top();
+  };
+  const duplicate = withPlan(async (plan) => {
+    const now = new Date().toISOString();
+    await store.putProject({ ...plan, id: uid(), created: now, modified: now, P01: (plan.P01.trim() || 'Untitled project') + ' (copy)' });
+    await refreshPlans();
+    setToast('Duplicated. The copy is at the top of My PQPs.');
+  });
+  const remove = (id: string) => {
+    const x = plans.find((y) => y.id === id);
+    setDialog({
+      title: 'Delete this PQP?',
+      body: <><p><b>{x?.name || 'Untitled project'}</b>{x?.docRef ? ` (${x.docRef})` : ''} is removed from this browser.</p><p class="muted">Saved .pqp files and exported Word and PDF files are not affected.</p></>,
+      actions: [
+        { label: 'Cancel', run: () => setDialog(null) },
+        { label: 'Delete', primary: true, run: async () => {
+          setDialog(null);
+          await store.removeProject(id);
+          if (id === p.id) { const n = newProject(settings); setP(n); setHandle(null); setFileName(''); setDirtyFile(false); await store.saveProject(n); }
+          await refreshPlans();
+          setToast('PQP deleted');
+        } },
+      ],
+    });
+  };
+  const openPreview = withPlan(async (plan) => {
+    setPreview({ plan, pdf: null, failed: '' });
+    await new Promise((r) => setTimeout(r, 60)); // let the window show first
+    try { const pdf = await pdfFor(plan, settings); setPreview((v) => (v && v.plan.id === plan.id ? { ...v, pdf } : v)); }
+    catch (e: any) { console.error(e); setPreview((v) => (v && v.plan.id === plan.id ? { ...v, failed: e?.message || String(e) } : v)); }
+  });
+
   /** Entries that are not allowed stop exporting and printing; empty required fields ask first. */
-  const prechecked = (verb: 'exporting' | 'printing', go: () => void) => {
-    if (errors.length) {
+  const prechecked = (verb: 'exporting' | 'printing', go: () => void, plan: Project = p) => {
+    const mine = plan.id === p.id;
+    const errs = mine ? errors : allErrors(plan);
+    const miss = mine ? missing : missingMandatory(plan);
+    const of = mine ? '' : ` in ${plan.P01.trim() || 'this PQP'}`;
+    const fix = (f: FieldSpec) => { setDialog(null); setPreview(null); if (mine) goTo(f); else openPlan(plan.id, f.group).then(() => goTo(f)); };
+    if (errs.length) {
       setDialog({
-        title: `Fix ${errors.length} ${errors.length === 1 ? 'entry' : 'entries'} before ${verb}`,
-        body: <ul class="issues">{errors.map((e) => <li><button class="linkbtn" onClick={() => { setDialog(null); goTo(e.f); }}>{e.f.label}</button>: {e.msg}</li>)}</ul>,
+        title: `Fix ${errs.length} ${errs.length === 1 ? 'entry' : 'entries'}${of} before ${verb}`,
+        body: <ul class="issues">{errs.map((e) => <li><button class="linkbtn" onClick={() => fix(e.f)}>{e.f.label}</button>: {e.msg}</li>)}</ul>,
         actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }],
       });
       return;
     }
-    if (missing.length) {
+    if (miss.length) {
       setDialog({
-        title: `${missing.length} required ${missing.length === 1 ? 'field is' : 'fields are'} empty`,
-        body: <><p>They will show as placeholders such as [PROJECT NAME] in the document.</p><ul class="issues">{missing.slice(0, 12).map((f) => <li><button class="linkbtn" onClick={() => { setDialog(null); goTo(f); }}>{f.label}</button></li>)}{missing.length > 12 && <li>and {missing.length - 12} more</li>}</ul></>,
+        title: `${miss.length} required ${miss.length === 1 ? 'field is' : 'fields are'} empty${of}`,
+        body: <><p>They will show as placeholders such as [PROJECT NAME] in the document.</p><ul class="issues">{miss.slice(0, 12).map((f) => <li><button class="linkbtn" onClick={() => fix(f)}>{f.label}</button></li>)}{miss.length > 12 && <li>and {miss.length - 12} more</li>}</ul></>,
         actions: [{ label: 'Go back', run: () => setDialog(null) }, { label: verb === 'printing' ? 'Print anyway' : 'Export anyway', primary: true, run: go }],
       });
     } else go();
   };
 
-  const doPrint = () => prechecked('printing', async () => {
+  const doPrint = (plan: Project = p) => prechecked('printing', async () => {
     setDialog(null);
     setBusy('Preparing the print…');
     try {
-      const pdf = await pdfFor(p, settings);
+      const pdf = await pdfFor(plan, settings);
       setBusy('');
       if (await printPdf(pdf.url)) return;
       // the double-click copy, Safari and iPhone print from the PDF itself
@@ -301,16 +360,16 @@ export function App() {
       setBusy('');
       setDialog({ title: 'Print failed', body: <p>{e?.message || String(e)}</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] });
     }
-  });
+  }, plan);
 
-  const exportDoc = (kind: 'word' | 'pdf') => {
+  const exportDoc = (kind: 'word' | 'pdf', plan: Project = p) => {
     const run = async (picked?: any) => {
       setDialog(null);
       let dir = picked !== undefined ? picked : exportDir;
       if (dir && !(await ensureWritable(dir))) dir = null; // permission refused: download instead
       setBusy(kind === 'word' ? 'Building the Word file…' : 'Building the PDF…');
       try {
-        const r = kind === 'word' ? await exportWord(p, settings, dir) : await exportPdf(p, settings, dir);
+        const r = kind === 'word' ? await exportWord(plan, settings, dir) : await exportPdf(plan, settings, dir);
         setToast((r.folder ? `Saved to ${r.folder}: ${r.name}` : `Downloaded ${r.name}`) + (r.pages ? ` (${r.pages} pages)` : ''));
         if (r.note) setDialog({ title: 'Saved to Downloads instead', body: <p>{r.note} Close the file and export again to save it in {exportDir?.name || 'the export folder'}.</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] });
       } catch (e: any) {
@@ -330,7 +389,7 @@ export function App() {
         ],
       });
     };
-    prechecked('exporting', start);
+    prechecked('exporting', start, plan);
   };
 
   const pickFolder = async (): Promise<any> => {
@@ -391,8 +450,9 @@ export function App() {
 
   const groupFields = FIELDS.filter((f) => f.group === group);
   const groupIssues = (g: string) => FIELDS.filter((f) => f.group === g && (fieldError(f, p) || (f.mandatory && missing.includes(f)))).length;
-  const isReview = group === 'review';
-  const title = isReview ? 'Review' : GROUPS.find((g) => g.id === group)!.title;
+  const isReview = group === 'review', isPlans = group === 'plans';
+  const title = isReview ? 'Review' : isPlans ? 'My PQPs' : GROUPS.find((g) => g.id === group)!.title;
+  const shown = plans.filter((x) => !x.blank || x.id === p.id); // empty PQPs are not listed, except the one open now
   const leftOut = numberedUnits(new Set(p.Q08off), settings.companyShort || 'OXYPRO').filter((u) => !u.on && !u.parentOff).map((u) => u.title.replace(' (added)', ''));
   const openReview = () => { setGroup('review'); window.scrollTo({ top: 0 }); };
   const ref = docRef(p);
@@ -405,12 +465,13 @@ export function App() {
           <div>
             <div class="appname">{APP_NAME}</div>
             <div class="filestate">
-              <span>{fileName ? fileName : 'Not saved to a file yet'}{dirtyFile && fileName ? ' (changed)' : ''}</span>
+              <span>{p.P01.trim() || 'Untitled project'}{fileName ? ` · ${fileName}` : ' · not saved to a file yet'}{dirtyFile && fileName ? ' (changed)' : ''}</span>
               {autosaved && <span class="autosave">Autosaved {autosaved}</span>}
             </div>
           </div>
         </div>
         <nav class="actions" aria-label="File">
+          <button class="btn bar" onClick={() => { setGroup('plans'); top(); }}>My PQPs</button>
           <button class="btn bar" onClick={doNew}>New</button>
           <button class="btn bar" onClick={doOpen}>Open</button>
           <button class="btn bar" onClick={() => doSave(false)}>Save</button>
@@ -418,15 +479,19 @@ export function App() {
           <button class="btn bar" onClick={doSample}>Load sample data</button>
           <span class="sep" />
           <button class="btn bar" onClick={openReview}>Review</button>
-          <button class="btn bar" onClick={doPrint}>Print</button>
+          <button class="btn bar" onClick={() => doPrint()}>Print</button>
           <span class="sep" />
           <button class="btn bar primary" onClick={() => exportDoc('word')}>Export Word</button>
           <button class="btn bar primary" onClick={() => exportDoc('pdf')}>Export PDF</button>
         </nav>
       </header>
 
-      <div class="body">
+      <div class={'body' + (isPlans ? ' wide' : '')}>
         <aside class="nav" aria-label="Input groups">
+          <button class={'navitem navplans' + (isPlans ? ' active' : '')} onClick={() => setGroup('plans')} aria-current={isPlans ? 'page' : undefined}>
+            <span>My PQPs</span><span class="navcount" title={`${shown.length} PQP${shown.length === 1 ? '' : 's'} in this browser`}>{shown.length}</span>
+          </button>
+          <div class="navlabel" title="The PQP open now">{p.P01.trim() || 'Untitled project'}</div>
           {GROUPS.map((g) => {
             const n = g.id === 'sections' ? 0 : groupIssues(g.id);
             return (
@@ -447,9 +512,13 @@ export function App() {
 
         <main class="sheet" aria-labelledby="sheet-title">
           <h1 id="sheet-title">{title}</h1>
-          {isReview ? (
+          {isPlans ? (
+            <MyPqps plans={shown} currentId={p.id} busyId="" onOpen={(id) => openPlan(id)} onNew={doNew} onOpenFile={doOpen} onSample={doSample}
+              onPreview={openPreview} onWord={withPlan((x) => exportDoc('word', x))} onPdf={withPlan((x) => exportDoc('pdf', x))} onPrint={withPlan((x) => doPrint(x))}
+              onSaveFile={withPlan((x) => doSave(true, x))} onDuplicate={duplicate} onDelete={remove} />
+          ) : isReview ? (
             <Review p={p} s={settings} errors={errors} missing={missing} leftOut={leftOut} fileName={fileName} dirtyFile={dirtyFile}
-              onGo={setGroup} goTo={goTo} onExport={exportDoc} onPrint={doPrint} onSave={() => doSave(false)} />
+              onGo={setGroup} goTo={goTo} onExport={(k) => exportDoc(k)} onPrint={() => doPrint()} onSave={() => doSave(false)} />
           ) : <>
           {group === 'branding' && <p class="lead">These come from Settings for each new project. Change them here for this project only.</p>}
           {group === 'revisions' && <p class="lead">The last row sets the revision shown on the cover and in the footer.</p>}
@@ -459,7 +528,7 @@ export function App() {
           </>}
         </main>
 
-        <aside class="titleblock" aria-label="Document summary">
+        {!isPlans && <aside class="titleblock" aria-label="Document summary">
           <div class="tb">
             <div class="tb-cell tb-wide"><span class="k">Project</span><span class="v">{p.P01 || '—'}</span></div>
             <div class="tb-cell tb-wide tb-ref"><span class="k">Doc Ref</span><span class="v ref">{ref}</span></div>
@@ -482,7 +551,7 @@ export function App() {
           <div class="exports">
             <button class="btn primary block" onClick={() => exportDoc('word')}>Export Word (.docx)</button>
             <button class="btn block" onClick={() => exportDoc('pdf')}>Export PDF</button>
-            <button class="btn block" onClick={doPrint}>Print</button>
+            <button class="btn block" onClick={() => doPrint()}>Print</button>
             {canPickFolder ? (
               <div class="expdir">
                 <span class="k">Exports are saved to</span>
@@ -494,11 +563,13 @@ export function App() {
               </div>
             ) : <p class="expdir-note">Exports go to your Downloads folder.</p>}
           </div>
-        </aside>
+        </aside>}
       </div>
 
       <footer class="credit">{CREDIT} <span class="ver">v{APP_VERSION}</span> <button class="linkbtn about-link" onClick={() => setAboutOpen(true)} aria-haspopup="dialog">About</button></footer>
 
+      {preview && <PreviewModal plan={preview.plan} pdf={preview.pdf} failed={preview.failed} onClose={() => setPreview(null)}
+        onWord={() => exportDoc('word', preview.plan)} onPdf={() => exportDoc('pdf', preview.plan)} onPrint={() => doPrint(preview.plan)} onOpen={() => openPlan(preview.plan.id)} />}
       {aboutOpen && <AboutPanel onClose={() => setAboutOpen(false)} exportFolder={exportDir?.name || null} canPickFolder={canPickFolder} onGo={(g) => { setGroup(g); window.scrollTo({ top: 0 }); }} />}
 
       {busy && <div class="overlay" role="status"><div class="busy">{busy}</div></div>}

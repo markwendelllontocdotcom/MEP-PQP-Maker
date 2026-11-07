@@ -1,11 +1,20 @@
 export const APP_NAME = 'PQP Maker';
-export const APP_VERSION = '1.6.2';
-export const APP_DATE = '27 Oct 2026';
+export const APP_VERSION = '1.7.0';
+export const APP_DATE = '7 Nov 2026';
 export const WEB_URL = 'https://markwendelllontocdotcom.github.io/MEP-PQP-Maker/';
 export const CREDIT = 'Developed by Mark Lontoc | Dubai, United Arab Emirates | © 2026 MLWorks. All rights reserved.';
 
 /** Version history shown in the About PQP Maker panel (newest first). Keep README.txt in step. */
 export const CHANGES: { v: string; date: string; items: string[] }[] = [
+  {
+    v: '1.7.0',
+    date: '7 Nov 2026',
+    items: [
+      'My PQPs at the top of the left menu (and in the toolbar), as My HSE Plans in HSE Plan Maker: every PQP made in this browser, newest first, with its project code, Doc Ref, revision, date and status. Open one to edit it, or get its Preview, Word file, PDF or print straight from the list. More: Duplicate, Save as .pqp file and Delete. The menu shows the name of the PQP open now under My PQPs.',
+      'The app opens on My PQPs when there are PQPs. New, Open and Load sample data no longer replace the PQP open now: it stays in the list. Empty PQPs are not kept.',
+      'The PQPs you already had in this browser are in the list. The web version and the double-click copy keep separate lists.',
+    ],
+  },
   {
     v: '1.6.2',
     date: '27 Oct 2026',

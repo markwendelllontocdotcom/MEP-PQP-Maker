@@ -54,7 +54,7 @@ const OUT = process.argv[2];
   await page.waitForTimeout(1500);
   await page.reload();
   await page.waitForSelector('.sheet h1');
-  console.log('After reload project name:', await page.textContent('.tb-wide .v'));
+  console.log('After reload opens on:', await page.textContent('#sheet-title'), '| open now:', await page.textContent('.plan.current .plan-name'));
   // offline reload (service worker)
   await page.waitForTimeout(1500);
   const sw = await page.evaluate(async () => !!(await navigator.serviceWorker.getRegistration()));

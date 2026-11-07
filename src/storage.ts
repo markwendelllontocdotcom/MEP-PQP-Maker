@@ -1,10 +1,17 @@
-import { get, set, del } from 'idb-keyval';
+import { get, set, del, entries } from 'idb-keyval';
 import type { Project, Settings } from './model/types';
 
 /** Local storage on this device (IndexedDB). Every call is guarded: storage can be unavailable in private windows. */
 async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try { return await fn(); } catch { return fallback; }
 }
+
+/** A PQP Maker project. The same browser database can still hold HSE plans that HSE Plan Maker 1.0.5 and
+ *  earlier kept here (same web address); My PQPs leaves those out. */
+const isPqp = (v: any) => !!v && typeof v === 'object' && typeof v.id === 'string' && Array.isArray(v.Q08off) && !(Array.isArray(v.POL) && Array.isArray(v.S01));
+
+/** One line of My PQPs. */
+export interface PqpInfo { id: string; name: string; code: string; docRef: string; rev: string; date: string; status: string; modified: string; created: string; blank: boolean }
 
 export const store = {
   loadSettings: () => safe(() => get<Settings>('settings'), undefined),
@@ -34,5 +41,19 @@ export const store = {
   async persist() {
     try { if (navigator.storage?.persist) await navigator.storage.persist(); } catch { /* ignore */ }
   },
-  removeProject: (id: string) => safe(() => del('proj:' + id), undefined),
+  /** Saves a project without making it the open one (duplicates). */
+  putProject: (p: Project) => safe(() => set('proj:' + p.id, p), undefined),
+  /** Every PQP kept in this browser, newest first (raw records; the caller turns them into list lines). */
+  async allProjects(): Promise<any[]> {
+    const all = await safe(() => entries<IDBValidKey, any>(), [] as [IDBValidKey, any][]);
+    return all.filter(([k, v]) => typeof k === 'string' && k.startsWith('proj:') && isPqp(v)).map(([, v]) => v)
+      .sort((a, b) => String(b.modified || '').localeCompare(String(a.modified || '')));
+  },
+  /** Removes a project, its snapshots and its place in the recent list from this browser. */
+  async removeProject(id: string) {
+    await safe(() => del('proj:' + id), undefined);
+    await safe(() => del('snaps:' + id), undefined);
+    const r = (await this.recent()).filter((x) => x.id !== id);
+    await safe(() => set('recent', r), undefined);
+  },
 };
