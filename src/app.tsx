@@ -62,7 +62,7 @@ export function App() {
   const [aboutOpen, setAboutOpen] = useState(false); // About PQP Maker panel
   const [exportDir, setExportDir] = useState<any>(null); // folder every export is saved into (Edge / Chrome)
   const [askedFolder, setAskedFolder] = useState(true);
-  const [plans, setPlans] = useState<PqpInfo[]>([]); // My PQPs: every PQP kept in this browser
+  const [plans, setPlans] = useState<PqpInfo[]>([]); // My PQP Plans: every PQP kept in this browser
   const [preview, setPreview] = useState<{ plan: Project; pdf: PdfEntry | null; failed: string } | null>(null);
   const lastSnap = useRef(0);
   const first = useRef(true);
@@ -83,7 +83,7 @@ export function App() {
       const cur = saved ? migrate({ ...newProject(s), ...saved }) : newProject(s);
       const list = (await store.allProjects()).map((r) => toInfo(r, s));
       setPlans(list);
-      if (!hasLibraryHash(location.hash) && list.some((x) => !x.blank)) setGroup('plans'); // open on My PQPs
+      if (!hasLibraryHash(location.hash) && list.some((x) => !x.blank)) setGroup('plans'); // open on My PQP Plans
       setP(cur);
       store.persist();
       const dir = await loadExportDir();
@@ -99,7 +99,7 @@ export function App() {
     })();
   }, []);
 
-  /** Makes another PQP the open one. The one open before stays under My PQPs (an empty one is not kept). */
+  /** Makes another PQP the open one. The one open before stays under My PQP Plans (an empty one is not kept). */
   function switchTo(n: Project, opts: { handle?: Handle | null; name?: string; dirty?: boolean } = {}) {
     const old = live.current.p;
     if (old && old.id !== n.id && isBlankProject(old)) store.removeProject(old.id);
@@ -163,7 +163,7 @@ export function App() {
     }
     setDialog({
       title: `${name} from the Project Library`,
-      body: <><p>A new PQP is created for {name}. The PQP open now ({cur.P01.trim() || 'Untitled project'}) stays under <b>My PQPs</b>.</p><p class="muted">From the Library: {list}.</p></>,
+      body: <><p>A new PQP is created for {name}. The PQP open now ({cur.P01.trim() || 'Untitled project'}) stays under <b>My PQP Plans</b>.</p><p class="muted">From the Library: {list}.</p></>,
       actions: [
         { label: 'Cancel', run: () => setDialog(null) },
         { label: 'Create the PQP', primary: true, run: create },
@@ -243,10 +243,10 @@ export function App() {
   };
   const showError = (m: string) => setDialog({ title: 'Image not added', body: <p>{m}</p>, actions: [{ label: 'OK', primary: true, run: () => setDialog(null) }] });
 
-  // ---------------- file actions (every PQP stays under My PQPs, so nothing is lost when another one opens)
+  // ---------------- file actions (every PQP stays under My PQP Plans, so nothing is lost when another one opens)
   const top = () => window.scrollTo({ top: 0 });
-  const doNew = () => { switchTo(newProject(settings)); setGroup('project'); top(); setToast('New PQP started. It is kept under My PQPs as you type.'); };
-  const doSample = () => { switchTo(testProject(settings), { dirty: true }); setGroup('project'); top(); setToast('Sample data loaded (made-up test data). It is listed under My PQPs.'); };
+  const doNew = () => { switchTo(newProject(settings)); setGroup('project'); top(); setToast('New PQP started. It is kept under My PQP Plans as you type.'); };
+  const doSample = () => { switchTo(testProject(settings), { dirty: true }); setGroup('project'); top(); setToast('Sample data loaded (made-up test data). It is listed under My PQP Plans.'); };
   const doOpen = async () => {
     try {
       const r = await openProjectFile();
@@ -269,7 +269,7 @@ export function App() {
     setToast(r.handle ? `Saved to ${r.name}` : `Downloaded ${r.name}`);
   };
 
-  // ---------------- My PQPs
+  // ---------------- My PQP Plans
   const planById = async (id: string): Promise<Project | null> => {
     if (id === p.id) return p;
     const raw = await store.loadProject(id);
@@ -289,7 +289,7 @@ export function App() {
     const now = new Date().toISOString();
     await store.putProject({ ...plan, id: uid(), created: now, modified: now, P01: (plan.P01.trim() || 'Untitled project') + ' (copy)' });
     await refreshPlans();
-    setToast('Duplicated. The copy is at the top of My PQPs.');
+    setToast('Duplicated. The copy is at the top of My PQP Plans.');
   });
   const remove = (id: string) => {
     const x = plans.find((y) => y.id === id);
@@ -451,7 +451,7 @@ export function App() {
   const groupFields = FIELDS.filter((f) => f.group === group);
   const groupIssues = (g: string) => FIELDS.filter((f) => f.group === g && (fieldError(f, p) || (f.mandatory && missing.includes(f)))).length;
   const isReview = group === 'review', isPlans = group === 'plans';
-  const title = isReview ? 'Review' : isPlans ? 'My PQPs' : GROUPS.find((g) => g.id === group)!.title;
+  const title = isReview ? 'Review' : isPlans ? 'My PQP Plans' : GROUPS.find((g) => g.id === group)!.title;
   const shown = plans.filter((x) => !x.blank || x.id === p.id); // empty PQPs are not listed, except the one open now
   const leftOut = numberedUnits(new Set(p.Q08off), settings.companyShort || 'OXYPRO').filter((u) => !u.on && !u.parentOff).map((u) => u.title.replace(' (added)', ''));
   const openReview = () => { setGroup('review'); window.scrollTo({ top: 0 }); };
@@ -471,7 +471,7 @@ export function App() {
           </div>
         </div>
         <nav class="actions" aria-label="File">
-          <button class="btn bar" onClick={() => { setGroup('plans'); top(); }}>My PQPs</button>
+          <button class="btn bar" onClick={() => { setGroup('plans'); top(); }}>My PQP Plans</button>
           <button class="btn bar" onClick={doNew}>New</button>
           <button class="btn bar" onClick={doOpen}>Open</button>
           <button class="btn bar" onClick={() => doSave(false)}>Save</button>
@@ -489,7 +489,7 @@ export function App() {
       <div class={'body' + (isPlans ? ' wide' : '')}>
         <aside class="nav" aria-label="Input groups">
           <button class={'navitem navplans' + (isPlans ? ' active' : '')} onClick={() => setGroup('plans')} aria-current={isPlans ? 'page' : undefined}>
-            <span>My PQPs</span><span class="navcount" title={`${shown.length} PQP${shown.length === 1 ? '' : 's'} in this browser`}>{shown.length}</span>
+            <span>My PQP Plans</span><span class="navcount" title={`${shown.length} PQP${shown.length === 1 ? '' : 's'} in this browser`}>{shown.length}</span>
           </button>
           <div class="navlabel" title="The PQP open now">{p.P01.trim() || 'Untitled project'}</div>
           {GROUPS.map((g) => {

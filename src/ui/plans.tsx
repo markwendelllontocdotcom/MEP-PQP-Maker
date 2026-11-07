@@ -12,7 +12,7 @@ export function upToDate(raw: any, s: Settings): Project {
   return migrate({ ...newProject(s), ...raw, id: raw.id, created: raw.created, modified: raw.modified });
 }
 
-/** One line of My PQPs, from a saved project. */
+/** One line of My PQP Plans, from a saved project. */
 export function toInfo(raw: any, s: Settings): PqpInfo {
   const p = upToDate(raw, s);
   return {
@@ -44,7 +44,7 @@ export interface PqpsProps {
   onDelete: (id: string) => void;
 }
 
-/** My PQPs: every PQP created in this browser, each with Preview, Word, PDF and Print (as My HSE Plans in HSE Plan Maker). */
+/** My PQP Plans: every PQP created in this browser, each with Preview, Word, PDF and Print (as My HSE Plans in HSE Plan Maker). */
 export function MyPqps(props: PqpsProps) {
   const [q, setQ] = useState('');
   const [menu, setMenu] = useState('');

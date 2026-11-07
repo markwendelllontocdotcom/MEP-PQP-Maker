@@ -52,7 +52,7 @@ export function About(props: { exportFolder: string | null; canPickFolder: boole
       <section>
         <h2>How to use it</h2>
         <ol class="about-steps">
-          <li>{go('plans', 'My PQPs')} at the top of the menu lists every PQP made in this browser. Open one to edit it, or get its Preview, Word, PDF or print from the list. <b>New</b> starts another PQP; the one open before stays in the list.</li>
+          <li>{go('plans', 'My PQP Plans')} at the top of the menu lists every PQP made in this browser. Open one to edit it, or get its Preview, Word, PDF or print from the list. <b>New</b> starts another PQP; the one open before stays in the list.</li>
           <li>Fill in the groups on the left, from {go('project', '1. Project Information')} to {go('annex', '7. Annexures')}. A red number shows how many entries are still empty or need fixing. Fields marked <span class="req">*</span> are required.</li>
           <li>Untick any section you do not need under {go('sections', 'PQP Sections')}. The sections after it are renumbered.</li>
           <li>Open {go('review', 'Review')} to check the PQP before it goes out: what still needs fixing, the key details and a preview of every page.</li>
@@ -77,7 +77,7 @@ export function About(props: { exportFolder: string | null; canPickFolder: boole
         <h2>Your data</h2>
         <ul>
           <li>Everything stays on this device. There is no login and nothing is uploaded.</li>
-          <li>Every PQP is autosaved in this browser about a second after each change and listed under <b>My PQPs</b>, so it is still there when you reopen the app.</li>
+          <li>Every PQP is autosaved in this browser about a second after each change and listed under <b>My PQP Plans</b>, so it is still there when you reopen the app.</li>
           <li>Browser storage can be cleared (for example by clearing browsing data), so save important projects as .pqp files as well.</li>
           <li>The app works offline: open <b>PQP Maker.html</b> from the project folder, or the installed web version.</li>
         </ul>

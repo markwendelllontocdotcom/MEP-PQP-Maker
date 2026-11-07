@@ -275,7 +275,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .rv-missing { color: var(--red); }
 .check .rv-link { display: block; margin-top: 8px; font-size: 13.5px; }
 
-/* ---------- My PQPs (same as My HSE Plans in HSE Plan Maker) */
+/* ---------- My PQP Plans (same as My HSE Plans in HSE Plan Maker) */
 .body.wide { grid-template-columns: 230px minmax(0, 1fr); }
 .navplans { font-weight: 700; }
 .navcount { min-width: 22px; padding: 0 6px; border-radius: 11px; background: var(--navy); color: #fff; font-size: 12px; text-align: center; font-weight: 700; }

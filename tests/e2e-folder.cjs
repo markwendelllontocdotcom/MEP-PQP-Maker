@@ -36,7 +36,7 @@ const OUT = process.argv[2];
   console.log('Folder now holds:', JSON.stringify(await files()));
   await page.reload();
   await page.waitForSelector('.sheet h1');
-  if (await page.$('.navplans.active')) await page.click('.nav >> text=1. Project Information'); // the app opens on My PQPs
+  if (await page.$('.navplans.active')) await page.click('.nav >> text=1. Project Information'); // the app opens on My PQP Plans
   await page.waitForSelector('.expdir');
   console.log('After reload:', (await page.textContent('.expdir')).replace(/\s+/g, ' '));
   await page.screenshot({ path: OUT + '/folder-panel.png', clip: { x: 1100, y: 60, width: 340, height: 420 } });

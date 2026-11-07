@@ -7,10 +7,10 @@ async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
 }
 
 /** A PQP Maker project. The same browser database can still hold HSE plans that HSE Plan Maker 1.0.5 and
- *  earlier kept here (same web address); My PQPs leaves those out. */
+ *  earlier kept here (same web address); My PQP Plans leaves those out. */
 const isPqp = (v: any) => !!v && typeof v === 'object' && typeof v.id === 'string' && Array.isArray(v.Q08off) && !(Array.isArray(v.POL) && Array.isArray(v.S01));
 
-/** One line of My PQPs. */
+/** One line of My PQP Plans. */
 export interface PqpInfo { id: string; name: string; code: string; docRef: string; rev: string; date: string; status: string; modified: string; created: string; blank: boolean }
 
 export const store = {

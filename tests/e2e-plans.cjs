@@ -1,4 +1,4 @@
-// My PQPs: list of every PQP in this browser (as My HSE Plans in HSE Plan Maker).
+// My PQP Plans: list of every PQP in this browser (as My HSE Plans in HSE Plan Maker).
 const { chromium } = require('/opt/npm-tools/node_modules/playwright');
 const OUT = process.argv[2];
 (async () => {
@@ -16,7 +16,7 @@ const OUT = process.argv[2];
   const names = () => page.$$eval('.plan-name', (e) => e.map((x) => x.textContent));
   await page.goto('http://localhost:4176/');
   await page.waitForSelector('.sheet h1');
-  console.log('First start opens on:', await page.textContent('#sheet-title'), '| My PQPs count:', await count());
+  console.log('First start opens on:', await page.textContent('#sheet-title'), '| My PQP Plans count:', await count());
   // one PQP from the sample, one typed by hand
   await page.click('.actions >> text=Load sample data'); await page.waitForTimeout(1500);
   await page.click('.actions >> text=New'); await page.waitForTimeout(300);
@@ -62,7 +62,7 @@ const OUT = process.argv[2];
   console.log('Delete asks:', await page.textContent('.dialog h2'));
   await page.click('.dialog >> button:text-is("Delete")'); await page.waitForTimeout(500);
   console.log('After delete:', JSON.stringify(await names()), '| count:', await count());
-  // open from the list, then reload: the app opens on My PQPs again with both
+  // open from the list, then reload: the app opens on My PQP Plans again with both
   await page.click('.plan-name:text("Sample Residential Tower (G+20)")'); await page.waitForTimeout(400);
   console.log('Opened from the list:', await page.textContent('#sheet-title'), '|', await page.inputValue('#f-P01'));
   await page.waitForTimeout(1500);
